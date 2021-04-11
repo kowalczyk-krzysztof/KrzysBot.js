@@ -7,22 +7,8 @@ dotenv.config({ path: 'config.env' });
 // Command prefix
 const prefix: string = process.env.PREFIX as string;
 
-const test = (msg: Message) => {
-  console.log(msg.author);
-
-  console.log('test');
-};
-
-const yolo = (msg: Message, ...args: number[]) => {
-  console.log(msg);
-
-  console.log(args);
-};
-
 // List of commands, type has to be any unfortunately
 const commands: any = {
-  yolo,
-  test,
   tenor,
 };
 
