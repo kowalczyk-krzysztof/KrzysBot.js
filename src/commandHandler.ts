@@ -25,6 +25,13 @@ export const commandList: {
   rsn,
   playercountry,
 };
+// Alias handler
+// Take a command name and check if it has an alias then return the original name
+const aliasHandler = (commandName: string) => {
+  if (commandName === 'help') return 'commands';
+  else return commandName;
+};
+
 // Command handler
 export const commandHandler = (msg: Message) => {
   // If msg doesn't start with prefix or author is bot return
@@ -32,8 +39,9 @@ export const commandHandler = (msg: Message) => {
   // msg.content is a string, slice the prefix then remove whitespace
   const content: string[] = msg.content.slice(prefix.length).split(/ +/);
   // first index is the command
-  const command: string = content[0];
-  // if there is no command with name = content[0] return, else execute the command and pass msg (so I can get properties like author, etc) and args (string[])
+  const commandName: string = content[0];
+  const command: string = aliasHandler(commandName);
+  // if there is no command with name = command return, else execute the command and pass msg (so I can get properties like author, etc) and args (string[])
   if (!commandList[command]) return;
   else {
     // args is anything after the command
