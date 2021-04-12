@@ -25,7 +25,7 @@ const usedRecently = new Set();
 export const commands = async (msg: Message): Promise<Message> => {
   if (usedRecently.has(msg.author.id))
     return msg.channel.send(
-      `You have recently used this command. Wait 1 mintue before trying again.`
+      `You have recently used this command. Wait 1 minute before trying again.`
     );
   else {
     // Adds the user to the set so that they can't talk for a minute
