@@ -1,8 +1,9 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
-import { Message, MessageEmbed } from 'discord.js';
+import { Message } from 'discord.js';
 // Utils
 import { runescapeNameValidator } from '../../utils/runescapeNameValidator';
 import { stringOrArray } from '../../utils/stringOrArray';
+import { TempleEmbed } from '../../utils/embed';
 
 export const ehb = async (
   msg: Message,
@@ -29,21 +30,34 @@ export const ehb = async (
       const ehp: Element | null = document.querySelector(
         'div[class="stat-display"]:nth-child(2) > p:nth-child(2)'
       );
+      const rank: Element | null = document.querySelector(
+        'div[class="stat-display"]:nth-child(2) > a > p'
+      );
       if (ehp !== null && title !== null) {
-        const data = [title.innerHTML.slice(1, -1), ehp.innerHTML.slice(1)];
-        return data;
+        // This check is done so if user doesn't exist (his page exists either way) it won't throw an error and instead result rank as unranked
+        if (rank !== null) {
+          const data: string[] = [
+            title.innerHTML,
+            ehp.innerHTML,
+            rank.innerHTML,
+          ];
+          return data;
+        } else {
+          const data: string[] = [title.innerHTML, ehp.innerHTML, 'Unranked'];
+          return data;
+        }
       }
     });
 
     await browser.close();
 
     if (data !== undefined) {
-      const embed: MessageEmbed = new MessageEmbed()
-        .setColor('#E67E22')
-        .addFields(
-          { name: 'Username', value: `${args.join(' ')}` },
-          { name: `${data[0]}`, value: `${data[1]}` }
-        );
+      const embed: TempleEmbed = new TempleEmbed().addFields(
+        { name: 'Username', value: `${args.join(' ')}` },
+        { name: `${data[0]}`, value: `${data[1]}` },
+        { name: `Rank`, value: `${data[2]}` }
+      );
+
       return msg.channel.send(embed);
     } else return msg.channel.send('Error');
   } catch (err) {
