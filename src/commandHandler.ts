@@ -3,23 +3,27 @@ import dotenv from 'dotenv';
 // Discord
 import { Message } from 'discord.js';
 // Commands
+import { commands } from './commands/commands';
 import { tenor } from './commands/tenor';
 // Commands: TempleOSRS
 import { ehp } from './commands/templeosrs/ehp';
 import { ehb } from './commands/templeosrs/ehb';
 import { rsn } from './commands/templeosrs/rsn';
+import { playercountry } from './commands/templeosrs/playercountry';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
 const prefix: string = process.env.PREFIX as string;
 // List of commands
-const commands: {
+export const commandList: {
   [key: string]: (msg: Message, ...args: string[]) => Promise<Message>;
 } = {
+  commands,
   tenor,
   ehp,
   ehb,
   rsn,
+  playercountry,
 };
 // Command handler
 export const commandHandler = (msg: Message) => {
@@ -30,10 +34,10 @@ export const commandHandler = (msg: Message) => {
   // first index is the command
   const command: string = content[0];
   // if there is no command with name = content[0] return, else execute the command and pass msg (so I can get properties like author, etc) and args (string[])
-  if (!commands[command]) return;
+  if (!commandList[command]) return;
   else {
     // args is anything after the command
     const args: string[] = content.slice(1);
-    commands[command](msg, ...args);
+    commandList[command](msg, ...args);
   }
 };
