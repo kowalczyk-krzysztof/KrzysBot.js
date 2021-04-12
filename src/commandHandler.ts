@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { Message } from 'discord.js';
 // Commands
 import { tenor } from './commands/tenor';
+import { ehp } from './commands/ehp';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -13,6 +14,7 @@ const commands: {
   [key: string]: (msg: Message, ...args: string[]) => Promise<Message>;
 } = {
   tenor,
+  ehp,
 };
 // Command handler
 export const commandHandler = (msg: Message) => {
