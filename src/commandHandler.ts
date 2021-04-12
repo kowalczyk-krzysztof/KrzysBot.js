@@ -4,7 +4,10 @@ import dotenv from 'dotenv';
 import { Message } from 'discord.js';
 // Commands
 import { tenor } from './commands/tenor';
-import { ehp } from './commands/ehp';
+// Commands: TempleOSRS
+import { ehp } from './commands/templeosrs/ehp';
+import { ehb } from './commands/templeosrs/ehb';
+import { rsn } from './commands/templeosrs/rsn';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -15,6 +18,8 @@ const commands: {
 } = {
   tenor,
   ehp,
+  ehb,
+  rsn,
 };
 // Command handler
 export const commandHandler = (msg: Message) => {
