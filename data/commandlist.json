@@ -1,0 +1,48 @@
+{
+  "random": {
+    "tenor": {
+      "name": "tenor",
+      "description": "Search for a random image with provided keyword",
+      "example": ".tenor cat",
+      "category": "Random",
+      "aliases": []
+    }
+  },
+  "templeosrs": {
+    "ehp": {
+      "name": "ehp",
+      "description": "Get player's EHP",
+      "example": ".ehp zezima",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "ehb": {
+      "name": "ehb",
+      "description": "Get player's EHP",
+      "example": ".ehb zezima",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "rsn": {
+      "name": "rsn",
+      "description": "Get a list of player's current and previous usernames",
+      "example": ".rsn zezima",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "playercountry": {
+      "name": "playercountry",
+      "description": "Get player's country of origin",
+      "example": ".playercountry zezima",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "updateplayer": {
+      "name": "updateplayer",
+      "description": "Fetch new data and update player",
+      "example": ".updateplayer zezima",
+      "category": "Temple OSRS",
+      "aliases": []
+    }
+  }
+}
