@@ -37,14 +37,19 @@ export const setCooldown = (msg: Message, cooldownInSec: number): boolean => {
   if (cacheItem in cache) {
     const addedToCache: number = cache[cacheItem];
     const now: number = Date.now();
+    const cooldownDecimal = cooldown - (now - addedToCache) / 1000;
 
-    const timeLeft: number = parseInt(
-      (cooldown - (now - addedToCache) / 1000).toString()
-    );
+    const timeLeft: number = parseInt(cooldownDecimal.toString());
 
-    msg.channel.send(
-      `You have used this command recently. Please wait ${timeLeft}s and try again.`
-    );
+    if (cooldownDecimal >= 1)
+      msg.channel.send(
+        `You have used this command recently. Please wait ${timeLeft}s and try again.`
+      );
+    else
+      msg.channel.send(
+        `You have used this command recently. Please wait ${cooldownDecimal}s and try again.`
+      );
+
     return true;
   } else {
     addCacheItem(cacheItem, cooldown);
