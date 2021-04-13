@@ -1,54 +1,53 @@
 import { Message } from 'discord.js';
 import dotenv from 'dotenv';
+import { aliasHandler } from './commandHandler';
 
 dotenv.config({ path: 'config.env' });
 const prefix: string = process.env.PREFIX as string;
 
-// Cache containing strings in format userid + command name + time
-const cache: Set<string> = new Set();
+// Object which contains keys with names in format user.id + command name. The value for each key is date when it was created
+const cache: { [key: string]: number } = {};
 // Creates cache item (string)
-const createCacheItem = (msg: Message, cooldownInSec: number): string => {
-  const time: string = cooldownInSec.toString();
+const createCacheItem = (msg: Message): string => {
   const content: string[] = msg.content.slice(prefix.length).split(/ +/);
   const commandName: string = content[0];
-  const cacheItem: string = msg.author.id + commandName + time;
+  // I need to use alias handler here too otherwise I would generate two different keys because it creates the command name based on msg.content which will always be original message
+  const command: string = aliasHandler(commandName);
+  const cacheItem: string = msg.author.id + command;
   return cacheItem;
 };
-// Adds items to cache and then removes it after specified time
-export const setCooldown = (msg: Message, cooldownInSec: number): void => {
-  const time: number = cooldownInSec;
+
+// Generates cache item, then checks if it exists in cache. If true, sends a msng to user with time left and returns true. If item is not in cache, add it to cache and return false
+export const setCooldown = (msg: Message, cooldownInSec: number): boolean => {
+  const cooldown: number = cooldownInSec;
   const message: Message = msg;
 
-  // Adds item to cache
-  const addCacheItem = (cacheItem: string): void => {
-    const item: string = cacheItem;
-    cache.add(item);
-  };
-
-  // Removes item from cache
-  const deleteCacheItem = (cacheItem: string, cooldownInSec: number): void => {
-    const item: string = cacheItem;
+  // Adds item to cache and sets a timer on when to delete it
+  const addCacheItem = (cacheItem: string, cooldownInSec: number): void => {
     const cooldownInMs: number = cooldownInSec * 1000;
+    const item: string = cacheItem;
+    cache[item] = Date.now();
     setTimeout(() => {
-      cache.delete(item);
+      delete cache[item];
     }, cooldownInMs);
   };
 
-  const cacheItem: string = createCacheItem(message, time);
-  addCacheItem(cacheItem);
-  deleteCacheItem(cacheItem, time);
-};
-// Check if command is on cooldown
-export const hasCooldown = (msg: Message, timeInSec: number): boolean => {
-  const message: Message = msg;
-  const time: number = timeInSec;
-  const item = createCacheItem(message, time);
-  const hasItem = cache.has(item);
+  const cacheItem: string = createCacheItem(message);
 
-  if (hasItem === true) {
+  if (cacheItem in cache) {
+    const addedToCache: number = cache[cacheItem];
+    const now: number = Date.now();
+
+    const timeLeft: number = parseInt(
+      (cooldown - (now - addedToCache) / 1000).toString()
+    );
+
     msg.channel.send(
-      `You have used this command recently. Please wait ${time}s and try again.`
+      `You have used this command recently. Please wait ${timeLeft}s and try again.`
     );
     return true;
-  } else return false;
+  } else {
+    addCacheItem(cacheItem, cooldown);
+    return false;
+  }
 };
