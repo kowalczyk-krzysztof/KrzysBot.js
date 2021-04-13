@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 // Discord
 import { Message } from 'discord.js';
-// Commands
+// Commands: random
 import { commands } from './commands/commands';
 import { tenor } from './commands/tenor';
 // Commands: TempleOSRS
@@ -16,7 +16,10 @@ dotenv.config({ path: 'config.env' });
 const prefix: string = process.env.PREFIX as string;
 // List of commands
 export const commandList: {
-  [key: string]: (msg: Message, ...args: string[]) => Promise<Message>;
+  [key: string]: (
+    msg: Message,
+    ...args: string[]
+  ) => Promise<Message | undefined>;
 } = {
   commands,
   tenor,
@@ -41,8 +44,10 @@ export const commandHandler = (msg: Message) => {
   // first index is the command
   const commandName: string = content[0];
   const command: string = aliasHandler(commandName);
+  // if (cooldownHandler(msg, command) === true) return msg.channel.send('Bye');
   // if there is no command with name = command return, else execute the command and pass msg (so I can get properties like author, etc) and args (string[])
-  if (!commandList[command]) return;
+  // in keyword  checks if a key exists on an object returns a boolean
+  if (command in commandList === false) return;
   else {
     // args is anything after the command
     const args: string[] = content.slice(1);
