@@ -1,62 +1,38 @@
-import puppeteer, { Browser, Page } from 'puppeteer';
 import { Message } from 'discord.js';
 // Utils
 import { runescapeNameValidator } from '../../utils/runescapeNameValidator';
 import { stringOrArray } from '../../utils/stringOrArray';
 import { TempleEmbed } from '../../utils/embed';
-
-let localCache: { [key: string]: any } = {};
+import { playerNames, fetchPlayerNames } from '../../cache/templeCache';
 
 export const rsn = async (
   msg: Message,
   ...args: string[]
-): Promise<Message> => {
+): Promise<Message | undefined> => {
   const nameCheck: boolean = runescapeNameValidator(...args);
   if (nameCheck === false) return msg.channel.send('Invalid username');
   const keyword: string = stringOrArray(...args);
-  if (Object.keys(localCache).length > 100) localCache = {};
 
-  if (keyword in localCache) {
-    const result = localCache[keyword];
-    const embed: TempleEmbed = new TempleEmbed().addField('Names', `${result}`);
+  if (keyword in playerNames) {
+    const aliases = playerNames[keyword].aliases;
+    const names = [];
+    for (const alias in aliases) {
+      names.push(alias);
+    }
+    const data = names.join('\n');
+    const embed: TempleEmbed = new TempleEmbed().addField('Names', `${data}`);
     return msg.channel.send(embed);
   } else {
-    try {
-      const browser: Browser = await puppeteer.launch();
-      const page: Page = await browser.newPage();
-
-      await page.goto(
-        `https://templeosrs.com/player/names.php?player=${keyword}`,
-        {
-          waitUntil: 'networkidle0',
-        }
-      );
-
-      const data: string[] = await page.evaluate(() => {
-        return Array.from(
-          document.querySelectorAll('table.competition-table:nth-of-type(2) td')
-        ).map((column: Element) => column.innerHTML);
-      });
-
-      await browser.close();
-
-      if (data !== undefined && data.length > 0) {
-        const names: string[] = [];
-        data.map((el: string, index: number) => {
-          if (index % 4 === 0) names.push(el);
-        });
-        const set: string = Array.from(new Set(names)).join('\n');
-        localCache[keyword] = set;
-        const embed: TempleEmbed = new TempleEmbed().addField(
-          'Names',
-          `${set}`
-        );
-
-        return msg.channel.send(embed);
-      } else if (data.length === 0) return msg.channel.send('User not found');
-      else return msg.channel.send('Error');
-    } catch (err) {
-      return msg.channel.send('Error');
-    }
+    const isFetched: boolean = await fetchPlayerNames(msg, keyword);
+    if (isFetched === true) {
+      const aliases = playerNames[keyword].aliases;
+      const names = [];
+      for (const alias in aliases) {
+        names.push(alias);
+      }
+      const data = names.join('\n');
+      const embed: TempleEmbed = new TempleEmbed().addField('Names', `${data}`);
+      return msg.channel.send(embed);
+    } else return;
   }
 };

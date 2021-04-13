@@ -10,6 +10,7 @@ import { ehp } from './commands/templeosrs/ehp';
 import { ehb } from './commands/templeosrs/ehb';
 import { rsn } from './commands/templeosrs/rsn';
 import { playercountry } from './commands/templeosrs/playercountry';
+import { updateplayer } from './commands/templeosrs/updateplayer';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -19,7 +20,7 @@ export const commandList: {
   [key: string]: (
     msg: Message,
     ...args: string[]
-  ) => Promise<Message | undefined>;
+  ) => Promise<Message | undefined | void>;
 } = {
   commands,
   tenor,
@@ -27,12 +28,14 @@ export const commandList: {
   ehb,
   rsn,
   playercountry,
+  updateplayer,
 };
 // Alias handler
 // Take a command name and check if it has an alias then return the original name
 export const aliasHandler = (commandName: string) => {
-  if (commandName === 'help') return 'commands';
-  else return commandName;
+  const alias: string = commandName.toLowerCase();
+  if (alias === 'help') return 'commands';
+  else return alias;
 };
 
 // Command handler

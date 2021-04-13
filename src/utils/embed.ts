@@ -13,5 +13,6 @@ export class TempleEmbed extends Embed {
     this.setDescription(
       `Data provided by: [TempleOSRS](https://templeosrs.com/ 'TempleOSRS')`
     );
+    this.setFooter('Incorrect data? .updateplayer <username>');
   }
 }
