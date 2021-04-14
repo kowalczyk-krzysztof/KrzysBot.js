@@ -28,7 +28,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
     if (isOnCooldown(msg, cooldown) === true) return;
     else {
       fs.readFile(dir, (err, data: Buffer) => {
-        if (err) return msg.channel.send('Error');
+        if (err) return msg.channel.send('**Error**');
         const json: CommandList = JSON.parse(data.toString());
         const categories: string[] = [];
         // Here I'm mapping each category and getting the first object in it, then getting its category property. I'm doing it like this so I can have easily indexable lowercase category names as keys and still be able to return category names nicely formatted to user.
@@ -47,7 +47,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
   } else {
     // If user provided arguments e.g ".commands foo bar" then join them into lowercase string and check if category with such name exists (keyword in json). If not return a msg to user. If category exists then check if it's on cooldown, if not return list of commands in that category. If a category has aliases, include them, if not then don't include aliases
     fs.readFile(dir, (err, data: Buffer) => {
-      if (err) return msg.channel.send('Error');
+      if (err) return msg.channel.send('**Error**');
       const keyword: string = content.join('').toLowerCase();
       const json: CommandList = JSON.parse(data.toString());
       if (keyword in json === true) {
