@@ -60,26 +60,36 @@ export const isOnCooldown = (
   if (cacheItem in cache) {
     const addedToCache: number = cache[cacheItem];
     const now: number = Date.now();
-    const timeLeftDecimal = cooldown - (now - addedToCache) / 1000;
-    const timeLeft: number = parseInt(timeLeftDecimal.toString());
+    const timeLeftSecondsDecimal = cooldown - (now - addedToCache) / 1000;
+    const timeLeftSeconds: number = parseInt(timeLeftSecondsDecimal.toString());
+    const timeLeftMinDecimal: number = timeLeftSeconds / 60;
+    const timeLeftMin: number = parseInt(timeLeftMinDecimal.toString());
 
     if (isAuthorOptional == false) {
-      if (timeLeftDecimal >= 1)
+      if (timeLeftSecondsDecimal > 60) {
         msg.channel.send(
-          `You have used this command recently. Please wait **${timeLeft}s** and try again`
+          `You have used this command recently. Please wait **${timeLeftMin} min** and try again`
+        );
+      } else if (timeLeftSecondsDecimal >= 1)
+        msg.channel.send(
+          `You have used this command recently. Please wait **${timeLeftSeconds} s** and try again`
         );
       else
         msg.channel.send(
-          `You have used this command recently. Please wait **${timeLeftDecimal}s** and try again`
+          `You have used this command recently. Please wait **${timeLeftSecondsDecimal} s** and try again`
         );
     } else {
-      if (timeLeftDecimal >= 1)
+      if (timeLeftSecondsDecimal > 60)
         msg.channel.send(
-          `This command has been used recently. Please wait **${timeLeft}s** and try again`
+          `This command has been used recently. Please wait **${timeLeftMin} min** and try again`
+        );
+      else if (timeLeftSecondsDecimal >= 1)
+        msg.channel.send(
+          `This command has been used recently. Please wait **${timeLeftSeconds}s** and try again`
         );
       else
         msg.channel.send(
-          `This command has been used recently. Please wait **${timeLeftDecimal}s** and try again`
+          `This command has been used recently. Please wait **${timeLeftSecondsDecimal}s** and try again`
         );
     }
     return true;
