@@ -168,13 +168,13 @@ export const fetchTemple = async (msg: Message, playerName: string) => {
 
     if (res.data.error) {
       if (res.data.error.Code === 402) {
-        const embed = new Embed();
+        const embed: Embed = new Embed();
         embed.addField(
           'ERROR',
-          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
+          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
         );
         msg.channel.send(embed);
-      } else errorHandler(null, msg);
+      } else errorHandler(res.data.error, msg);
       return false;
     } else {
       setPlayerStats(keyword, res.data.data);
@@ -195,13 +195,13 @@ export const fetchPlayerNames = async (msg: Message, playerName: string) => {
 
     if (res.data.error) {
       if (res.data.error.Code === 402) {
-        const embed = new Embed();
+        const embed: Embed = new Embed();
         embed.addField(
           'ERROR',
-          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
+          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
         );
         msg.channel.send(embed);
-      } else errorHandler(null, msg);
+      } else errorHandler(res.data.error, msg);
       return false;
     } else {
       setPlayerNames(keyword, res.data.data);

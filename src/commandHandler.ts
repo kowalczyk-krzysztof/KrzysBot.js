@@ -10,8 +10,9 @@ import { ehp } from './commands/templeosrs/ehp';
 import { ehb } from './commands/templeosrs/ehb';
 import { rsn } from './commands/templeosrs/rsn';
 import { playercountry } from './commands/templeosrs/playercountry';
-import { updateplayer } from './commands/templeosrs/updateplayer';
+import { templefetch } from './commands/templeosrs/templefetch';
 import { datapoint } from './commands/templeosrs/datapoint';
+import { fetchrsn } from './commands/templeosrs/fetchrsn';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -29,8 +30,9 @@ export const commandList: {
   ehb,
   rsn,
   playercountry,
-  updateplayer,
+  templefetch,
   datapoint,
+  fetchrsn,
 };
 // Alias handler
 // Take a command name and check if it has an alias then return the original name

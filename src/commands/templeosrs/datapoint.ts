@@ -5,6 +5,7 @@ import { stringOrArray } from '../../utils/stringOrArray';
 import { runescapeNameValidator } from '../../utils/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
 import { errorHandler } from '../../utils/errorHandler';
+import { Embed } from '../../utils/embed';
 
 dotenv.config({ path: 'config.env' });
 
@@ -16,7 +17,7 @@ export const datapoint = async (
   const nameCheck: boolean = runescapeNameValidator(...args);
   if (nameCheck === false) return msg.channel.send('Invalid username');
   const keyword: string = stringOrArray(...args);
-  if (isOnCooldown(msg, cooldown, keyword, true) == true) return;
+  if (isOnCooldown(msg, cooldown, true, keyword) == true) return;
   else {
     try {
       const res: AxiosResponse = await axios.get(
@@ -24,23 +25,26 @@ export const datapoint = async (
       );
 
       if (res.status === 200) {
+        const embed: Embed = new Embed();
         const data: string = res.data.toString();
         const notOnHiscores: string =
           '<p style="text-align: center; color: black;"> Name not found on hiscores </p>';
         const recentlyUpdated: string =
           '<p style="text-align: center; color: black;"> User has already been updated in the last 60 seconds. </p>';
-        if (data.includes(notOnHiscores))
-          return msg.channel.send(
-            `Player **${keyword}** not found on hiscores`
+        if (data.includes(notOnHiscores)) {
+          embed.setDescription(
+            `Player **${keyword}** was not found on hiscores`
           );
-        else if (data.includes(recentlyUpdated))
-          return msg.channel.send(
+          return msg.channel.send(embed);
+        } else if (data.includes(recentlyUpdated)) {
+          embed.setDescription(
             `Player **${keyword}** has already been updated in the last 60 seconds`
           );
-        else
-          return msg.channel.send(
-            `Datapoints for player **${keyword}** have been updated`
-          );
+          return msg.channel.send(embed);
+        } else {
+          embed.setDescription(`Updated datapoints for player: **${keyword}**`);
+          return msg.channel.send(embed);
+        }
       } else return errorHandler(null, msg);
     } catch (err) {
       return errorHandler(err, msg);

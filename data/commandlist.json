@@ -37,10 +37,10 @@
       "category": "Temple OSRS",
       "aliases": []
     },
-    "updateplayer": {
-      "name": "updateplayer",
+    "templefetch": {
+      "name": "templefetch",
       "description": "Fetch new data and update player",
-      "example": ".updateplayer zezima",
+      "example": ".templefetch zezima",
       "category": "Temple OSRS",
       "aliases": []
     },

@@ -21,7 +21,7 @@ export const ehb = async (
     const lastChecked = templeDateParser(
       playerStats[keyword].info['Last checked']
     );
-    embed.addField('Last change', `${lastChecked}`);
+    embed.addField('Last datapoint', `${lastChecked}`);
     let title: string;
     if (gameMode !== GameMode.MAIN) {
       const data = parseInt(playerStats[keyword].Im_ehb.toString());
@@ -46,7 +46,7 @@ export const ehb = async (
       const lastChecked = templeDateParser(
         playerStats[keyword].info['Last checked']
       );
-      embed.addField('Last change', `${lastChecked}`);
+      embed.addField('Last datapoint', `${lastChecked}`);
       const gameMode: GameMode = playerStats[keyword].info['Game mode'];
       let title: string;
       if (gameMode !== GameMode.MAIN) {
