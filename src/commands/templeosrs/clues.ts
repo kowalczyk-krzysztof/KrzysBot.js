@@ -4,23 +4,24 @@ import { TempleEmbed } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
 import { argsWithPrefixToString } from '../../utils/argsToString';
+import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
+
+const types: string[] = [
+  'all',
+  'beginner',
+  'easy',
+  'medium',
+  'hard',
+  'elite',
+  'master',
+];
 
 export const clues = async (
   msg: Message,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (args.length === 0) return msg.channel.send('Invalid clue type');
-  const prefix: string = args[0].toLowerCase().trim();
-  const types = [
-    'all',
-    'beginner',
-    'easy',
-    'medium',
-    'hard',
-    'elite',
-    'master',
-  ];
-  if (!types.includes(prefix)) return msg.channel.send('Invalid clue type');
+  const prefix: string | null = isPrefixValid(msg, args, types, 'clues');
+  if (prefix === null) return;
   const usernameWithoutSpaces: string = args.slice(1).join('');
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
   if (nameCheck === false) return msg.channel.send('Invalid username');
@@ -48,7 +49,7 @@ export const clues = async (
   }
 };
 
-// Clue types
+// Clue key names
 enum Clues {
   ALL = 'Clue_all',
   BEGINNER = 'Clue_beginner',
@@ -80,13 +81,31 @@ const clueTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
   const type: string = prefix;
   const playerStats = playerObject;
   let cluesDoneNumber: number;
-  if (type === 'all') cluesDoneNumber = playerStats[Clues.ALL];
-  else if (type === 'beginner') cluesDoneNumber = playerStats[Clues.BEGINNER];
-  else if (type === 'easy') cluesDoneNumber = playerStats[Clues.EASY];
-  else if (type === 'medium') cluesDoneNumber = playerStats[Clues.MEDIUM];
-  else if (type === 'hard') cluesDoneNumber = playerStats[Clues.HARD];
-  else if (type === 'elite') cluesDoneNumber = playerStats[Clues.ELITE];
-  else if (type === 'master') cluesDoneNumber = playerStats[Clues.MASTER];
-  else return 0;
+  // else return 0;
+  switch (type) {
+    case 'all':
+      cluesDoneNumber = playerStats[Clues.ALL];
+      break;
+    case 'beginner':
+      cluesDoneNumber = playerStats[Clues.BEGINNER];
+      break;
+    case 'easy':
+      cluesDoneNumber = playerStats[Clues.EASY];
+      break;
+    case 'medium':
+      cluesDoneNumber = playerStats[Clues.MEDIUM];
+      break;
+    case 'hard':
+      cluesDoneNumber = playerStats[Clues.HARD];
+      break;
+    case 'elite':
+      cluesDoneNumber = playerStats[Clues.MEDIUM];
+      break;
+    case 'master':
+      cluesDoneNumber = playerStats[Clues.MEDIUM];
+      break;
+    default:
+      cluesDoneNumber = 0;
+  }
   return cluesDoneNumber;
 };

@@ -64,6 +64,13 @@
       "example": ".clues tier username",
       "category": "Temple OSRS",
       "aliases": []
+    },
+    "kc": {
+      "name": "kc",
+      "description": "Get boss kill stats for player",
+      "example": ".kc boss username",
+      "category": "Temple OSRS",
+      "aliases": []
     }
   }
 }
