@@ -4,7 +4,7 @@ import { TempleEmbed } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
 import { argsWithPrefixToString } from '../../utils/argsToString';
-import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
+import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
 
 const types: string[] = [
   'all',
@@ -20,7 +20,12 @@ export const clues = async (
   msg: Message,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(msg, args, types, 'clues');
+  const prefix: string | null = isPrefixValid(
+    msg,
+    args,
+    types,
+    Categories.CLUES
+  );
   if (prefix === null) return;
   const usernameWithoutSpaces: string = args.slice(1).join('');
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
