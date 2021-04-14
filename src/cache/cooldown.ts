@@ -8,7 +8,7 @@ const prefix: string = process.env.PREFIX as string;
 // Object which contains keys with names in format user.id + command name. The value for each key is date when it was created
 const cache: { [key: string]: number } = {};
 // Generates cache item, then checks if it exists in cache. If true, sends a msng to user with time left and returns true. If item is not in cache, add it to cache and return false
-export const setCooldown = (
+export const isOnCooldown = (
   msg: Message,
   cooldownInSec: number,
   keyword: string = '',
@@ -66,20 +66,20 @@ export const setCooldown = (
     if (isAuthorOptional == false) {
       if (timeLeftDecimal >= 1)
         msg.channel.send(
-          `You have used this command recently. Please wait ${timeLeft}s and try again.`
+          `You have used this command recently. Please wait **${timeLeft}s** and try again`
         );
       else
         msg.channel.send(
-          `You have used this command recently. Please wait ${timeLeftDecimal}s and try again.`
+          `You have used this command recently. Please wait **${timeLeftDecimal}s** and try again`
         );
     } else {
       if (timeLeftDecimal >= 1)
         msg.channel.send(
-          `This command has been used recently. Please wait ${timeLeft}s and try again.`
+          `This command has been used recently. Please wait **${timeLeft}s** and try again`
         );
       else
         msg.channel.send(
-          `This command has been used recently. Please wait ${timeLeftDecimal}s and try again.`
+          `This command has been used recently. Please wait **${timeLeftDecimal}s** and try again`
         );
     }
     return true;

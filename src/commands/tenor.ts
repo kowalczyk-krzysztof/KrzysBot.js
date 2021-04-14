@@ -16,9 +16,8 @@ export const tenor = async (
   ...args: string[]
 ): Promise<Message> => {
   if (args.length === 0) return msg.channel.send('Provide a keyword');
-  const keyword: string | string[] = stringOrArray(...args);
+  const keyword: string = stringOrArray(...args);
   const url: string = `https://api.tenor.com/v1/search?q=${keyword}&key=${key}&contentfilter=${filter}`;
-
   try {
     const res: AxiosResponse = await axios.get(`${url}`);
     if (res.data.results.length === 0)
