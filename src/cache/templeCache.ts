@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import axios, { AxiosResponse } from 'axios';
 import { Message } from 'discord.js';
 import { Embed } from '../utils/embed';
+import { errorHandler } from '../utils/errorHandler';
 
 export let playerStats: { [key: string]: PlayerStats } = {};
 export let playerNames: { [key: string]: PlayerNames } = {};
@@ -173,14 +174,14 @@ export const fetchTemple = async (msg: Message, playerName: string) => {
           `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
         );
         msg.channel.send(embed);
-      } else msg.channel.send('**Error**');
+      } else errorHandler(null, msg);
       return false;
     } else {
       setPlayerStats(keyword, res.data.data);
       return true;
     }
   } catch (err) {
-    msg.channel.send('**Error**');
+    errorHandler(err, msg);
     return false;
   }
 };
@@ -200,14 +201,14 @@ export const fetchPlayerNames = async (msg: Message, playerName: string) => {
           `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
         );
         msg.channel.send(embed);
-      } else msg.channel.send('**Error**');
+      } else errorHandler(null, msg);
       return false;
     } else {
       setPlayerNames(keyword, res.data.data);
       return true;
     }
   } catch (err) {
-    msg.channel.send('**Error**');
+    errorHandler(err, msg);
     return false;
   }
 };
