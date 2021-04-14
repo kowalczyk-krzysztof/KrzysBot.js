@@ -12,42 +12,56 @@
     "ehp": {
       "name": "ehp",
       "description": "Get player's EHP",
-      "example": ".ehp zezima",
+      "example": ".ehp username",
       "category": "Temple OSRS",
       "aliases": []
     },
     "ehb": {
       "name": "ehb",
       "description": "Get player's EHP",
-      "example": ".ehb zezima",
+      "example": ".ehb username",
       "category": "Temple OSRS",
       "aliases": []
     },
     "rsn": {
       "name": "rsn",
       "description": "Get a list of player's current and previous usernames",
-      "example": ".rsn zezima",
+      "example": ".rsn username",
       "category": "Temple OSRS",
       "aliases": []
     },
     "playercountry": {
       "name": "playercountry",
       "description": "Get player's country of origin",
-      "example": ".playercountry zezima",
+      "example": ".playercountry username",
       "category": "Temple OSRS",
       "aliases": []
     },
     "templefetch": {
       "name": "templefetch",
-      "description": "Fetch new data and update player",
-      "example": ".templefetch zezima",
+      "description": "Fetch latest player data",
+      "example": ".templefetch username",
+      "category": "Temple OSRS",
+      "aliases": ["fetchtemple"]
+    },
+    "fetchrsn": {
+      "name": "fetchrsn",
+      "description": "Fetch latest list of player's usernames",
+      "example": ".fetchrsn username",
       "category": "Temple OSRS",
       "aliases": []
     },
     "datapoint": {
       "name": "datapoint",
       "description": "Create a new datapoint for player",
-      "example": ".datapoint zezima",
+      "example": ".datapoint username",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "clues": {
+      "name": "clues",
+      "description": "Get clue stats for player",
+      "example": ".clues tier username",
       "category": "Temple OSRS",
       "aliases": []
     }

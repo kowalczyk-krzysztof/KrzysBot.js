@@ -33,7 +33,7 @@ interface PlayerInfo {
   'Last changed': string;
 }
 
-interface PlayerStats {
+export interface PlayerStats {
   Date: string;
   Overall: number;
   Attack: number;
@@ -129,7 +129,7 @@ interface PlayerHistory {
   xp: number;
 }
 
-interface PlayerNames {
+export interface PlayerNames {
   aliases: {
     [key: string]: {
       name: string;

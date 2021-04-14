@@ -39,7 +39,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
         return msg.channel.send(
           embed
             .setFooter(
-              `To get a list of commands in a category use\n.commands <category> (case insensitive)`
+              `To get a list of commands in a category use\n.commands category`
             )
             .addField('Command Categories', `\n${categories.join('\n')}`)
         );
