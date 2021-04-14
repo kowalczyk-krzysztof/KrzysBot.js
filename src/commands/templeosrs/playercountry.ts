@@ -17,14 +17,14 @@ export const playercountry = async (
   if (keyword in playerStats) {
     const data = playerStats[keyword].info.Country;
     if (data === '-')
-      return msg.channel.send(embed.addField('Country', `No info`));
+      return msg.channel.send(embed.addField('Country', `No Info`));
     else return msg.channel.send(embed.addField('Country', `${data}`));
   } else {
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
       const data = playerStats[keyword].info.Country;
       if (data === '-') {
-        return msg.channel.send(embed.addField('Country', 'No info'));
+        return msg.channel.send(embed.addField('Country', 'No Info'));
       } else {
         return msg.channel.send(embed.addField('Country', `${data}`));
       }

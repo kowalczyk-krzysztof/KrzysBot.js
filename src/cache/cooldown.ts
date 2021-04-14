@@ -1,6 +1,7 @@
 import { Message } from 'discord.js';
 import dotenv from 'dotenv';
 import { aliasHandler } from '../commandHandler';
+import { Embed } from '../utils/embed';
 
 dotenv.config({ path: 'config.env' });
 const prefix: string = process.env.PREFIX as string;
@@ -11,8 +12,9 @@ const cache: { [key: string]: number } = {};
 export const isOnCooldown = (
   msg: Message,
   cooldownInSec: number,
-  keyword: string = '',
-  authorOptional: boolean = false
+
+  authorOptional: boolean = false,
+  keyword: string = ''
 ): boolean => {
   const cooldown: number = cooldownInSec;
   const message: Message = msg;
@@ -64,33 +66,41 @@ export const isOnCooldown = (
     const timeLeftSeconds: number = parseInt(timeLeftSecondsDecimal.toString());
     const timeLeftMinDecimal: number = timeLeftSeconds / 60;
     const timeLeftMin: number = parseInt(timeLeftMinDecimal.toString());
-
+    const embed: Embed = new Embed();
     if (isAuthorOptional == false) {
       if (timeLeftSecondsDecimal > 60) {
-        msg.channel.send(
+        embed.setDescription(
           `You have used this command recently. Please wait **${timeLeftMin} min** and try again`
         );
-      } else if (timeLeftSecondsDecimal >= 1)
-        msg.channel.send(
+        msg.channel.send(embed);
+      } else if (timeLeftSecondsDecimal >= 1) {
+        embed.setDescription(
           `You have used this command recently. Please wait **${timeLeftSeconds} s** and try again`
         );
-      else
-        msg.channel.send(
+        msg.channel.send(embed);
+      } else {
+        embed.setDescription(
           `You have used this command recently. Please wait **${timeLeftSecondsDecimal} s** and try again`
         );
+        msg.channel.send(embed);
+      }
     } else {
-      if (timeLeftSecondsDecimal > 60)
-        msg.channel.send(
+      if (timeLeftSecondsDecimal > 60) {
+        embed.setDescription(
           `This command has been used recently. Please wait **${timeLeftMin} min** and try again`
         );
-      else if (timeLeftSecondsDecimal >= 1)
-        msg.channel.send(
+        msg.channel.send(embed);
+      } else if (timeLeftSecondsDecimal >= 1) {
+        embed.setDescription(
           `This command has been used recently. Please wait **${timeLeftSeconds}s** and try again`
         );
-      else
-        msg.channel.send(
+        msg.channel.send(embed);
+      } else {
+        embed.setDescription(
           `This command has been used recently. Please wait **${timeLeftSecondsDecimal}s** and try again`
         );
+        msg.channel.send(embed);
+      }
     }
     return true;
   } else {

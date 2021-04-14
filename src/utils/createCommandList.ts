@@ -39,7 +39,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
         return msg.channel.send(
           embed
             .setFooter(
-              `To get a list of commands in a category use\n.commands <category>`
+              `To get a list of commands in a category use\n.commands <category> (case insensitive)`
             )
             .addField('Command Categories', `\n${categories.join('\n')}`)
         );
@@ -52,7 +52,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
       const keyword: string = content.join('').toLowerCase();
       const json: CommandList = JSON.parse(data.toString());
       if (keyword in json === true) {
-        if (isOnCooldown(msg, cooldown, keyword) === true) return;
+        if (isOnCooldown(msg, cooldown, false, keyword) === true) return;
         else {
           embed.setTitle('Commands');
           Object.values(json[keyword]).forEach((command: Command) => {
