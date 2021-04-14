@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import axios, { AxiosResponse } from 'axios';
 import { Message } from 'discord.js';
+import { Embed } from '../utils/embed';
 
 export let playerStats: { [key: string]: PlayerStats } = {};
 export let playerNames: { [key: string]: PlayerNames } = {};
@@ -165,8 +166,14 @@ export const fetchTemple = async (msg: Message, playerName: string) => {
     );
 
     if (res.data.error) {
-      if (res.data.error.Code === 402) msg.channel.send('Player not found');
-      else msg.channel.send('Error');
+      if (res.data.error.Code === 402) {
+        const embed = new Embed();
+        embed.addField(
+          'ERROR',
+          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
+        );
+        msg.channel.send(embed);
+      } else msg.channel.send('Error');
       return false;
     } else {
       setPlayerStats(keyword, res.data.data);
@@ -186,8 +193,14 @@ export const fetchPlayerNames = async (msg: Message, playerName: string) => {
     );
 
     if (res.data.error) {
-      if (res.data.error.Code === 402) msg.channel.send('Player not found');
-      else msg.channel.send('Error');
+      if (res.data.error.Code === 402) {
+        const embed = new Embed();
+        embed.addField(
+          'ERROR',
+          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
+        );
+        msg.channel.send(embed);
+      } else msg.channel.send('Error');
       return false;
     } else {
       setPlayerNames(keyword, res.data.data);

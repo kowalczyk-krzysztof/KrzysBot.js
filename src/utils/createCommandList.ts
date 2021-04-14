@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Message } from 'discord.js';
 import { Embed } from '../utils/embed';
-import { setCooldown } from '../cache/cooldown';
+import { isOnCooldown } from '../cache/cooldown';
 // Command list
 const dir = path.join(__dirname, '../../data/commandlist.json');
 interface Command {
@@ -25,7 +25,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
   const content: string[] = args;
   // If command was used without arguments (".commands") then check if it's on cooldown, if not the send send user list of cateogires
   if (content.length === 0) {
-    if (setCooldown(msg, cooldown) === true) return;
+    if (isOnCooldown(msg, cooldown) === true) return;
     else {
       fs.readFile(dir, (err, data: Buffer) => {
         if (err) return msg.channel.send('Error');
@@ -38,7 +38,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
         return msg.channel.send(
           embed
             .setFooter(
-              `To get list of commands in a category use\n.commands <category>`
+              `To get a list of commands in a category use\n.commands <category>`
             )
             .addField('Command Categories', `\n${categories.join('\n')}`)
         );
@@ -51,7 +51,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
       const keyword: string = content.join('').toLowerCase();
       const json: CommandList = JSON.parse(data.toString());
       if (keyword in json === true) {
-        if (setCooldown(msg, cooldown, keyword) === true) return;
+        if (isOnCooldown(msg, cooldown, keyword) === true) return;
         else {
           embed.setTitle('Commands');
           Object.values(json[keyword]).forEach((command: Command) => {

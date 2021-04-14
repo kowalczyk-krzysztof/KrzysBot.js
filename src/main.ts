@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
-import Discord, { Client } from 'discord.js';
+import { Client } from 'discord.js';
 import { commandHandler } from './commandHandler';
 
 dotenv.config({ path: 'config.env' });
 
 const AUTH_TOKEN: string = process.env.AUTH_TOKEN as string;
 
-const client: Client = new Discord.Client();
+const client: Client = new Client();
 
 client.on('ready', () => {
   console.log(`Connected`);

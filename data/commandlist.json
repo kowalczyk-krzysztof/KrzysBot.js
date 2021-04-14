@@ -43,6 +43,13 @@
       "example": ".updateplayer zezima",
       "category": "Temple OSRS",
       "aliases": []
+    },
+    "datapoint": {
+      "name": "datapoint",
+      "description": "Create a new datapoint for player",
+      "example": ".datapoint zezima",
+      "category": "Temple OSRS",
+      "aliases": []
     }
   }
 }
