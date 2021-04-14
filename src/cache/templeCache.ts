@@ -173,14 +173,14 @@ export const fetchTemple = async (msg: Message, playerName: string) => {
           `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
         );
         msg.channel.send(embed);
-      } else msg.channel.send('Error');
+      } else msg.channel.send('**Error**');
       return false;
     } else {
       setPlayerStats(keyword, res.data.data);
       return true;
     }
   } catch (err) {
-    msg.channel.send('Error');
+    msg.channel.send('**Error**');
     return false;
   }
 };
@@ -200,14 +200,14 @@ export const fetchPlayerNames = async (msg: Message, playerName: string) => {
           `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint <username>\`\`\``
         );
         msg.channel.send(embed);
-      } else msg.channel.send('Error');
+      } else msg.channel.send('**Error**');
       return false;
     } else {
       setPlayerNames(keyword, res.data.data);
       return true;
     }
   } catch (err) {
-    msg.channel.send('Error');
+    msg.channel.send('**Error**');
     return false;
   }
 };

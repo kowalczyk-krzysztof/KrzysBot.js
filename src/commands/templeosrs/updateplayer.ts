@@ -18,7 +18,7 @@ export const updateplayer = async (
     const isPlayerFetched = await fetchTemple(msg, keyword);
     const isPlayerNamesFetched = await fetchPlayerNames(msg, keyword);
     if (isPlayerFetched === true && isPlayerNamesFetched == true)
-      return msg.channel.send(`Updated player **${keyword}**`);
+      return msg.channel.send(`Updated cache for player **${keyword}**`);
     else return;
   }
 };

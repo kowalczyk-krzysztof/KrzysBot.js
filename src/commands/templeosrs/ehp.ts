@@ -2,6 +2,7 @@ import { Message } from 'discord.js';
 import { runescapeNameValidator } from '../../utils/runescapeNameValidator';
 import { stringOrArray } from '../../utils/stringOrArray';
 import { TempleEmbed } from '../../utils/embed';
+import { templeDateParser } from '../../utils/templeDateParse';
 import { playerStats, fetchTemple, GameMode } from '../../cache/templeCache';
 
 export const ehp = async (
@@ -17,6 +18,10 @@ export const ehp = async (
   );
   if (keyword in playerStats) {
     const gameMode: GameMode = playerStats[keyword].info['Game mode'];
+    const lastChecked = templeDateParser(
+      playerStats[keyword].info['Last checked']
+    );
+    embed.addField('Last change', `${lastChecked}`);
     let title: string;
     if (gameMode !== GameMode.MAIN) {
       const data = parseInt(playerStats[keyword].Im_ehp.toString());
@@ -39,6 +44,10 @@ export const ehp = async (
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
       const gameMode: GameMode = playerStats[keyword].info['Game mode'];
+      const lastChecked = templeDateParser(
+        playerStats[keyword].info['Last checked']
+      );
+      embed.addField('Last change', `${lastChecked}`);
       let title: string;
       if (gameMode !== GameMode.MAIN) {
         const data = parseInt(playerStats[keyword].Im_ehp.toString());

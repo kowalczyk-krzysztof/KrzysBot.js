@@ -40,9 +40,9 @@ export const datapoint = async (
           return msg.channel.send(
             `Datapoints for player **${keyword}** have been updated`
           );
-      }
+      } else return msg.channel.send('**Error**');
     } catch (err) {
-      return msg.channel.send('Error');
+      return msg.channel.send('**Error**');
     }
   }
 };
