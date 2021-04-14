@@ -1,9 +1,10 @@
 import { Message } from 'discord.js';
-import { runescapeNameValidator } from '../../utils/runescapeNameValidator';
-import { stringOrArray } from '../../utils/stringOrArray';
+import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
+import { argsToString } from '../../utils/argsToString';
 import { TempleEmbed } from '../../utils/embed';
-import { templeDateParser } from '../../utils/templeDateParse';
-import { playerStats, fetchTemple, GameMode } from '../../cache/templeCache';
+import { templeDateParser } from '../../utils/osrs/templeDateParser';
+import { gameModeCheck } from '../../utils/osrs/gameModeCheck';
+import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
 
 export const ehb = async (
   msg: Message,
@@ -11,61 +12,39 @@ export const ehb = async (
 ): Promise<Message | undefined> => {
   const nameCheck: boolean = runescapeNameValidator(...args);
   if (nameCheck === false) return msg.channel.send('Invalid username');
-  const keyword: string = stringOrArray(...args);
+  const keyword: string = argsToString(...args);
   const embed: TempleEmbed = new TempleEmbed().addField(
     'Username',
     `${args.join(' ')}`
   );
   if (keyword in playerStats) {
-    const gameMode: GameMode = playerStats[keyword].info['Game mode'];
-    const lastChecked = templeDateParser(
-      playerStats[keyword].info['Last checked']
-    );
-    embed.addField('Last datapoint', `${lastChecked}`);
-    let title: string;
-    if (gameMode !== GameMode.MAIN) {
-      const data = parseInt(playerStats[keyword].Im_ehb.toString());
-      if (gameMode === GameMode.IM) {
-        title = 'EHB-IM';
-        return msg.channel.send(embed.addField(`${title}`, `${data}`));
-      } else if (gameMode === GameMode.UIM) {
-        title = 'EHB-UIM';
-        return msg.channel.send(embed.addField(`${title}`, `${data}`));
-      } else if (gameMode === GameMode.HCIM) {
-        title = 'EHB-HCIM';
-        return msg.channel.send(embed.addField(`${title}`, `${data}`));
-      } else return;
-    } else {
-      const data = parseInt(playerStats[keyword].Ehb.toString());
-      const title = 'EHB';
-      return msg.channel.send(embed.addField(`${title}`, `${data}`));
-    }
+    const result = generateEmbed(embed, playerStats[keyword], keyword);
+    return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
-      const lastChecked = templeDateParser(
-        playerStats[keyword].info['Last checked']
-      );
-      embed.addField('Last datapoint', `${lastChecked}`);
-      const gameMode: GameMode = playerStats[keyword].info['Game mode'];
-      let title: string;
-      if (gameMode !== GameMode.MAIN) {
-        const data = parseInt(playerStats[keyword].Im_ehb.toString());
-        if (gameMode === GameMode.IM) {
-          title = 'EHB-IM';
-          return msg.channel.send(embed.addField(`${title}`, `${data}`));
-        } else if (gameMode === GameMode.UIM) {
-          title = 'EHB-UIM';
-          return msg.channel.send(embed.addField(`${title}`, `${data}`));
-        } else if (gameMode === GameMode.HCIM) {
-          title = 'EHB-HCIM';
-          return msg.channel.send(embed.addField(`${title}`, `${data}`));
-        } else return;
-      } else {
-        const data = parseInt(playerStats[keyword].Ehb.toString());
-        const title = 'EHB';
-        return msg.channel.send(embed.addField(`${title}`, `${data}`));
-      }
+      const result = generateEmbed(embed, playerStats[keyword], keyword);
+      return msg.channel.send(result);
     } else return;
   }
+};
+
+// Generate result
+const generateEmbed = (
+  inputEmbed: TempleEmbed,
+  playerObject: PlayerStats,
+  keyword: string
+): TempleEmbed => {
+  const username: string = keyword;
+  const embed: TempleEmbed = inputEmbed;
+  const lastChecked: { title: string; time: string } = templeDateParser(
+    playerObject.info['Last checked']
+  );
+  const gameMode: string = gameModeCheck(username);
+  embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
+  let data: number;
+  if (gameMode === '') data = parseInt(playerObject.Ehb.toString());
+  else data = parseInt(playerObject.Im_ehb.toString());
+  embed.addField(`EHB ${gameMode}`, `${data}`);
+  return embed;
 };

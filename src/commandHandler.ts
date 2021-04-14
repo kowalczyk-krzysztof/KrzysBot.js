@@ -13,6 +13,7 @@ import { playercountry } from './commands/templeosrs/playercountry';
 import { templefetch } from './commands/templeosrs/templefetch';
 import { datapoint } from './commands/templeosrs/datapoint';
 import { fetchrsn } from './commands/templeosrs/fetchrsn';
+import { clues } from './commands/templeosrs/clues';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -33,12 +34,14 @@ export const commandList: {
   templefetch,
   datapoint,
   fetchrsn,
+  clues,
 };
 // Alias handler
 // Take a command name and check if it has an alias then return the original name
 export const aliasHandler = (commandName: string) => {
   const alias: string = commandName.toLowerCase();
   if (alias === 'help') return 'commands';
+  if (alias === 'fetchtemple') return 'templefetch';
   else return alias;
 };
 

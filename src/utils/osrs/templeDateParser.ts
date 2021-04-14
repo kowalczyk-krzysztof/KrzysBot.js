@@ -1,6 +1,9 @@
-export const templeDateParser = (userInput: string): string => {
+export const templeDateParser = (
+  userInput: string
+): { title: string; time: string } => {
   // TempleOSRS data is displayed as a format like this "2021-04-14 06:48:44" which when converted to parsetDate gives a date that is off by 2h so I need to remove 2h from it
   const templeFormatting: number = 7200;
+  const title: string = 'Last datapoint';
 
   const input: string = userInput;
   const parsedDate: number = new Date(input).getTime();
@@ -8,10 +11,17 @@ export const templeDateParser = (userInput: string): string => {
   const timeInSeconds: number = (now - parsedDate) / 1000 - templeFormatting;
   const secondsAsInt: number = parseInt(timeInSeconds.toString());
 
-  if (secondsAsInt <= 60) return `${secondsAsInt}s ago`;
+  if (secondsAsInt <= 60)
+    return {
+      title,
+      time: `${secondsAsInt}s ago`,
+    };
   else {
     const minutesDecimal: number = secondsAsInt / 60;
     const minutes: number = parseInt(minutesDecimal.toString());
-    return `${minutes} min ago`;
+    return {
+      title,
+      time: `${minutes} min ago`,
+    };
   }
 };
