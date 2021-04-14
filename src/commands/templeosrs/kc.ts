@@ -5,6 +5,7 @@ import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
 import { argsWithPrefixToString } from '../../utils/argsToString';
 import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
+import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 
 const bosses: string[] = [
   'sire',
@@ -121,10 +122,11 @@ export const kc = async (
 
 // Generates embed sent to user
 const generateEmbed = (
-  prefix: string,
+  inputPrefix: string,
   inputEmbed: TempleEmbed,
   playerObject: PlayerStats
 ): TempleEmbed => {
+  const prefix: string = inputPrefix;
   const embed: TempleEmbed = inputEmbed;
   const player: PlayerStats = playerObject;
   const lastChecked: { title: string; time: string } = templeDateParser(
@@ -132,8 +134,7 @@ const generateEmbed = (
   );
   embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
   const bossName: number = bossTypeCheck(prefix, player);
-  const formattedPrefix: string =
-    prefix.charAt(0).toUpperCase() + prefix.slice(1);
+  const formattedPrefix: string = capitalizeFirstLetter(prefix);
   embed.addField(`${formattedPrefix} kills`, `${bossName}`);
   return embed;
 };
