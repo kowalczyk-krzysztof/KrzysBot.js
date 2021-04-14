@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { stringOrArray } from '../../utils/stringOrArray';
 import { runescapeNameValidator } from '../../utils/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
+import { errorHandler } from '../../utils/errorHandler';
 
 dotenv.config({ path: 'config.env' });
 
@@ -40,9 +41,9 @@ export const datapoint = async (
           return msg.channel.send(
             `Datapoints for player **${keyword}** have been updated`
           );
-      } else return msg.channel.send('**Error**');
+      } else return errorHandler(null, msg);
     } catch (err) {
-      return msg.channel.send('**Error**');
+      return errorHandler(err, msg);
     }
   }
 };

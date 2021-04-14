@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import dotenv from 'dotenv';
 import { Message } from 'discord.js';
 import { stringOrArray } from '../utils/stringOrArray';
+import { errorHandler } from '../utils/errorHandler';
 
 dotenv.config({ path: 'config.env' });
 // Tenor auth key
@@ -25,6 +26,6 @@ export const tenor = async (
     const index: number = Math.floor(Math.random() * res.data.results.length);
     return msg.channel.send(res.data.results[index].url);
   } catch (err) {
-    return msg.channel.send('**Error**');
+    return errorHandler(err, msg);
   }
 };
