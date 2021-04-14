@@ -1,0 +1,27 @@
+Format (all skill names are CaSe InSensItive):
+Name: valid prefixes (separated by comma)
+ 
+Overall: total, overall
+Attack: attack, att
+Defence: defence, def
+Strength: strength, str
+Hitpoints: hitpoints, hp
+Ranged: ranged, range
+Prayer: prayer, pray
+Magic: magic, mage
+Cooking: cooking, cook
+Woodcutting: woodcutting, wc
+Fletching: fletching, fletch
+Fishing: fishing, fish
+Firemaking: firemaking, firemake, fm
+Crafting: crafting, craft
+Smithing: smithing, smith
+Mining: mining, mine
+Herblore: herblore, herb
+Agility: agility, agil
+Thieving: thieving, thiev
+Slayer: slayer, slay
+Farming: farming, farm
+Runecrafting: runecrafting, runecraft, rc
+Hunter: hunter, hunt
+Construction: construction, const, con

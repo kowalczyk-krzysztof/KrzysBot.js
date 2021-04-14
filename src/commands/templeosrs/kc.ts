@@ -4,11 +4,13 @@ import { TempleEmbed } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
 import { argsWithPrefixToString } from '../../utils/argsToString';
-import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
+import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 
 const bosses: string[] = [
+  'abyssal_sire',
   'sire',
+  'alchemical_hydra',
   'hydra',
   'barrows',
   'bryo',
@@ -43,14 +45,19 @@ const bosses: string[] = [
   'guardians',
   'gg',
   'grotesque',
+  'noon',
+  'dusk',
   'hespori',
   'kq',
   'kalphite',
   'kbd',
   'kraken',
   'kree',
+  `kree'arra`,
+  'kreearra',
   'arma',
   'armadyl',
+  `k'ril`,
   'kril',
   'zammy',
   'zamorak',
@@ -59,7 +66,7 @@ const bosses: string[] = [
   'nightmare',
   'obor',
   'sarachnis',
-  'scropia',
+  'scorpia',
   'skotizo',
   'gauntlet',
   'hunllef',
@@ -91,7 +98,12 @@ export const kc = async (
   msg: Message,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(msg, args, bosses, 'boss');
+  const prefix: string | null = isPrefixValid(
+    msg,
+    args,
+    bosses,
+    Categories.BOSS
+  );
   if (prefix === null) return;
   const usernameWithoutSpaces: string = args.slice(1).join('');
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
@@ -145,8 +157,14 @@ const bossTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
   let bossesKilled: number;
 
   switch (type) {
+    case 'abyssal_sire':
+      bossesKilled = playerStats[Bosses.SIRE];
+      break;
     case 'sire':
       bossesKilled = playerStats[Bosses.SIRE];
+      break;
+    case 'alchemical_hydra':
+      bossesKilled = playerStats[Bosses.HYDRA];
       break;
     case 'hydra':
       bossesKilled = playerStats[Bosses.HYDRA];
@@ -250,6 +268,12 @@ const bossTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
     case 'grotesque':
       bossesKilled = playerStats[Bosses.GUARDIANS];
       break;
+    case 'noon':
+      bossesKilled = playerStats[Bosses.GUARDIANS];
+      break;
+    case 'dusk':
+      bossesKilled = playerStats[Bosses.GUARDIANS];
+      break;
     case 'hespori':
       bossesKilled = playerStats[Bosses.GUARDIANS];
       break;
@@ -268,6 +292,12 @@ const bossTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
     case 'kree':
       bossesKilled = playerStats[Bosses.KREE];
       break;
+    case `kree'arra`:
+      bossesKilled = playerStats[Bosses.KREE];
+      break;
+    case 'kreearra':
+      bossesKilled = playerStats[Bosses.KREE];
+      break;
     case 'arma':
       bossesKilled = playerStats[Bosses.KREE];
       break;
@@ -275,6 +305,9 @@ const bossTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
       bossesKilled = playerStats[Bosses.KREE];
       break;
     case 'kril':
+      bossesKilled = playerStats[Bosses.KRIL];
+      break;
+    case `k'ril`:
       bossesKilled = playerStats[Bosses.KRIL];
       break;
     case 'zammy':
@@ -298,8 +331,8 @@ const bossTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
     case 'sarachnis':
       bossesKilled = playerStats[Bosses.SARACHNIS];
       break;
-    case 'scropia':
-      bossesKilled = playerStats[Bosses.SCROPIA];
+    case 'scorpia':
+      bossesKilled = playerStats[Bosses.SCORPIA];
       break;
     case 'skotizo':
       bossesKilled = playerStats[Bosses.SKOTIZO];
@@ -414,7 +447,7 @@ enum Bosses {
   NIGHTMARE = 'The Nightmare',
   OBOR = 'Obor',
   SARACHNIS = 'Sarachnis',
-  SCROPIA = 'Scorpia',
+  SCORPIA = 'Scorpia',
   SKOTIZO = 'Skotizo',
   GAUNTLET = 'The Gauntlet',
   CORR_GAUNTLET = 'The Corrupted Gauntlet',

@@ -1,0 +1,47 @@
+Format (all boss names are CaSe InSensItive):
+Name: valid prefixes (separated by comma)
+ 
+Abyssal Sire: abyssal_sire, sire
+Alchemical Hydra: alchemical_hydra, hydra
+Barrows Brothers: barrows
+Bryophyta: bryophyta, bryo
+Callisto: callisto
+Cerberus: cerb, cerberus
+Chambers of Xeric: cox, chambers
+Chambers of Xeric Challnge Mode: coxcm
+Chaos Elemental: ele, chaos_ele
+Chaos Fanatic: chaos_fanatic
+Commander Zilyana: sara, saradomin, zilyana, zilly
+Corporeal Beast: corp
+Crazy Archeologist: crazy_arch
+Dagannoth Prime: prime, dagannoth_prime
+Dagannoth Rex: rex, dagannoth_rex
+Dagannoth Supreme: supreme, dagannoth_supreme
+Deranged Archeologist: deranged_arch
+General Graardor: graardor, bandos
+Giant Mole: mole
+Grotesque Guardians: guardians, gg, grotesque, dusk, noon
+Hespori: hespori
+Kalphite Queen: kq, kalphite
+King Black Dragon: kbd
+Kraken: kraken
+Kree'arra: kree, arma, armadyl, kree'arra, kreearra
+K'ril Tsutsaroth: kril, k'ril, zammy, zamorak, kril_tsutsaroth
+Mimic: mimic
+The Nightmare: nightmare
+Obor: obor
+Sarachnis: sarachnis
+Scorpia: scorpia
+Skotizo: skotizo
+The Gauntlet: gauntlet, hunllef
+Corrupted Gauntlet: corr_gauntlet, corr, corr_hunllef
+Theatre of Blood: tob, theatre
+Thermonuclear Smokedevil: thermonuclear, thermy
+TzKal-Zuk: zuk, inferno
+TzTok-Jad: jad, fight_caves
+Venenatis: vene, venenatis
+Vetion: vetion
+Vorkath: vork, vorkath
+Wintertodt: wintertodt, wt
+Zalcano: zalc, zalcano
+Zulrah: zulrah
