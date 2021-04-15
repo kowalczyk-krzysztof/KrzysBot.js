@@ -1,4 +1,7 @@
-export const osrsDataParser = (data: any) => {
+import { OsrsPlayer } from '../../cache/osrsCache';
+
+// Read: https://runescape.wiki/w/Application_programming_interface#Hiscores_Lite_2
+export const osrsDataParser = (data: string) => {
   const stringToArray: string[] = data.split('\n');
   const rankLevelExpString = stringToArray.map((el: string) => {
     return el.split(',');
@@ -9,7 +12,7 @@ export const osrsDataParser = (data: any) => {
     });
   });
 
-  const playerObject = {
+  const playerObject: OsrsPlayer = {
     Overall: {
       rank: rankLevelExp[0][0],
       level: rankLevelExp[0][1],
