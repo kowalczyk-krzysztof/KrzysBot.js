@@ -35,7 +35,7 @@ export const clues = async (
     .setTitle('Clues')
     .addField('Username', `${usernameWithSpaces}`);
   if (usernameWithSpaces in playerStats) {
-    const result = generateEmbed(
+    const result = generateResult(
       prefix,
       embed,
       playerStats[usernameWithSpaces]
@@ -44,7 +44,7 @@ export const clues = async (
   } else {
     const isFetched: boolean = await fetchTemple(msg, usernameWithSpaces);
     if (isFetched === true) {
-      const result = generateEmbed(
+      const result = generateResult(
         prefix,
         embed,
         playerStats[usernameWithSpaces]
@@ -66,7 +66,7 @@ enum Clues {
 }
 
 // Generates embed sent to user
-const generateEmbed = (
+const generateResult = (
   prefix: string,
   inputEmbed: TempleEmbed,
   playerObject: PlayerStats

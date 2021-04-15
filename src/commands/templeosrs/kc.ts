@@ -5,7 +5,472 @@ import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
 import { argsWithPrefixToString } from '../../utils/argsToString';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
-import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
+
+export const kc = async (
+  msg: Message,
+  ...args: string[]
+): Promise<Message | undefined> => {
+  const prefix: string | null = isPrefixValid(
+    msg,
+    args,
+    bosses,
+    Categories.BOSS
+  );
+  if (prefix === null) return;
+  const usernameWithoutSpaces: string = args.slice(1).join('');
+  const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
+  if (nameCheck === false) return msg.channel.send('Invalid username');
+  const usernameWithSpaces: string = argsWithPrefixToString(...args);
+  const embed: TempleEmbed = new TempleEmbed()
+    .setTitle('Bosses')
+    .addField('Username', `${usernameWithSpaces}`);
+  if (usernameWithSpaces in playerStats) {
+    const result = generateResult(
+      prefix,
+      embed,
+      playerStats[usernameWithSpaces]
+    );
+    return msg.channel.send(result);
+  } else {
+    const isFetched: boolean = await fetchTemple(msg, usernameWithSpaces);
+    if (isFetched === true) {
+      const result = generateResult(
+        prefix,
+        embed,
+        playerStats[usernameWithSpaces]
+      );
+      return msg.channel.send(result);
+    } else return;
+  }
+};
+
+// Generates embed sent to user
+const generateResult = (
+  inputPrefix: string,
+  inputEmbed: TempleEmbed,
+  playerObject: PlayerStats
+): TempleEmbed => {
+  const prefix: string = inputPrefix;
+  const embed: TempleEmbed = inputEmbed;
+  const player: PlayerStats = playerObject;
+  const lastChecked: { title: string; time: string } = templeDateParser(
+    player.info['Last checked']
+  );
+  embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
+  const boss: {
+    bossKc: number;
+    bossName: string;
+  } = bossTypeCheck(prefix, player);
+  embed.addField(`${boss.bossName} kills`, `${boss.bossKc}`);
+  return embed;
+};
+
+const bossTypeCheck = (
+  prefix: string,
+  playerObject: PlayerStats
+): {
+  bossKc: number;
+  bossName: string;
+} => {
+  const type: string = prefix;
+  const playerStats = playerObject;
+  let bossKc: number;
+  let bossName: string;
+
+  switch (type) {
+    case 'abyssal_sire':
+      bossKc = playerStats[Bosses.SIRE];
+      bossName = Bosses.SIRE;
+      break;
+    case 'sire':
+      bossKc = playerStats[Bosses.SIRE];
+      bossName = Bosses.SIRE;
+      break;
+    case 'alchemical_hydra':
+      bossKc = playerStats[Bosses.HYDRA];
+      bossName = Bosses.HYDRA;
+      break;
+    case 'hydra':
+      bossKc = playerStats[Bosses.HYDRA];
+      bossName = Bosses.HYDRA;
+      break;
+    case 'barrows':
+      bossKc = playerStats[Bosses.BARROWS];
+      bossName = Bosses.BARROWS;
+      break;
+    case 'bryo':
+      bossKc = playerStats[Bosses.BRYOPHYTA];
+      bossName = Bosses.BRYOPHYTA;
+      break;
+    case 'bryophyta':
+      bossKc = playerStats[Bosses.BRYOPHYTA];
+      bossName = Bosses.BRYOPHYTA;
+      break;
+    case 'callisto':
+      bossKc = playerStats[Bosses.CALLISTO];
+      bossName = Bosses.CALLISTO;
+      break;
+    case 'cerberus':
+      bossKc = playerStats[Bosses.CERBERUS];
+      bossName = Bosses.CERBERUS;
+      break;
+    case 'cerb':
+      bossKc = playerStats[Bosses.CERBERUS];
+      bossName = Bosses.CERBERUS;
+      break;
+    case 'cox':
+      bossKc = playerStats[Bosses.COX];
+      bossName = Bosses.COX;
+      break;
+    case 'chambers':
+      bossKc = playerStats[Bosses.COX];
+      bossName = Bosses.COX;
+      break;
+    case 'cm':
+      bossKc = playerStats[Bosses.COXCM];
+      bossName = Bosses.COXCM;
+      break;
+    case 'coxcm':
+      bossKc = playerStats[Bosses.COXCM];
+      bossName = Bosses.COXCM;
+      break;
+    case 'ele':
+      bossKc = playerStats[Bosses.CHAOS_ELE];
+      bossName = Bosses.CHAOS_ELE;
+      break;
+    case 'chaos_ele':
+      bossKc = playerStats[Bosses.CHAOS_ELE];
+      bossName = Bosses.CHAOS_ELE;
+      break;
+    case 'fanatic':
+      bossKc = playerStats[Bosses.CHAOS_FANATIC];
+      bossName = Bosses.CHAOS_FANATIC;
+      break;
+    case 'chaos_fanatic':
+      bossKc = playerStats[Bosses.CHAOS_FANATIC];
+      bossName = Bosses.CHAOS_FANATIC;
+      break;
+    case 'sara':
+      bossKc = playerStats[Bosses.ZILYANA];
+      bossName = Bosses.ZILYANA;
+      break;
+    case 'saradomin':
+      bossKc = playerStats[Bosses.ZILYANA];
+      bossName = Bosses.ZILYANA;
+      break;
+    case 'zilyana':
+      bossKc = playerStats[Bosses.ZILYANA];
+      bossName = Bosses.ZILYANA;
+      break;
+    case 'zilly':
+      bossKc = playerStats[Bosses.ZILYANA];
+      bossName = Bosses.ZILYANA;
+      break;
+    case 'corp':
+      bossKc = playerStats[Bosses.CORP];
+      bossName = Bosses.CORP;
+      break;
+    case 'crazy_arch':
+      bossKc = playerStats[Bosses.CRAZY_ARCH];
+      bossName = Bosses.CRAZY_ARCH;
+      break;
+    case 'prime':
+      bossKc = playerStats[Bosses.PRIME];
+      bossName = Bosses.PRIME;
+      break;
+    case 'dagannoth_prime':
+      bossKc = playerStats[Bosses.PRIME];
+      bossName = Bosses.PRIME;
+      break;
+    case 'rex':
+      bossKc = playerStats[Bosses.REX];
+      bossName = Bosses.REX;
+      break;
+    case 'dagannoth_rex':
+      bossKc = playerStats[Bosses.REX];
+      bossName = Bosses.REX;
+      break;
+    case 'supreme':
+      bossKc = playerStats[Bosses.SUPREME];
+      bossName = Bosses.SUPREME;
+      break;
+    case 'dagannoth_supreme':
+      bossKc = playerStats[Bosses.SUPREME];
+      bossName = Bosses.SUPREME;
+      break;
+    case 'deranged_arch':
+      bossKc = playerStats[Bosses.DER_ARCH];
+      bossName = Bosses.DER_ARCH;
+      break;
+    case 'graardor':
+      bossKc = playerStats[Bosses.GRAARDOR];
+      bossName = Bosses.GRAARDOR;
+      break;
+    case 'bandos':
+      bossKc = playerStats[Bosses.GRAARDOR];
+      bossName = Bosses.GRAARDOR;
+      break;
+    case 'mole':
+      bossKc = playerStats[Bosses.MOLE];
+      bossName = Bosses.MOLE;
+      break;
+    case 'guardians':
+      bossKc = playerStats[Bosses.GUARDIANS];
+      bossName = Bosses.GUARDIANS;
+      break;
+    case 'gg':
+      bossKc = playerStats[Bosses.GUARDIANS];
+      bossName = Bosses.GUARDIANS;
+      break;
+    case 'grotesque':
+      bossKc = playerStats[Bosses.GUARDIANS];
+      bossName = Bosses.GUARDIANS;
+      break;
+    case 'noon':
+      bossKc = playerStats[Bosses.GUARDIANS];
+      bossName = Bosses.GUARDIANS;
+      break;
+    case 'dusk':
+      bossKc = playerStats[Bosses.GUARDIANS];
+      bossName = Bosses.GUARDIANS;
+      break;
+    case 'hespori':
+      bossKc = playerStats[Bosses.GUARDIANS];
+      bossName = Bosses.GUARDIANS;
+      break;
+    case 'kq':
+      bossKc = playerStats[Bosses.KQ];
+      bossName = Bosses.KQ;
+      break;
+    case 'kalphite':
+      bossKc = playerStats[Bosses.KQ];
+      bossName = Bosses.KQ;
+      break;
+    case 'kbd':
+      bossKc = playerStats[Bosses.KBD];
+      bossName = Bosses.KBD;
+      break;
+    case 'kraken':
+      bossKc = playerStats[Bosses.KRAKEN];
+      bossName = Bosses.KRAKEN;
+      break;
+    case 'kree':
+      bossKc = playerStats[Bosses.KREE];
+      bossName = Bosses.KREE;
+      break;
+    case `kree'arra`:
+      bossKc = playerStats[Bosses.KREE];
+      bossName = Bosses.KREE;
+      break;
+    case 'kreearra':
+      bossKc = playerStats[Bosses.KREE];
+      bossName = Bosses.KREE;
+      break;
+    case 'arma':
+      bossKc = playerStats[Bosses.KREE];
+      bossName = Bosses.KREE;
+      break;
+    case 'armadyl':
+      bossKc = playerStats[Bosses.KREE];
+      bossName = Bosses.KREE;
+      break;
+    case 'kril':
+      bossKc = playerStats[Bosses.KRIL];
+      bossName = Bosses.KRIL;
+      break;
+    case `k'ril`:
+      bossKc = playerStats[Bosses.KRIL];
+      bossName = Bosses.KRIL;
+      break;
+    case 'zammy':
+      bossKc = playerStats[Bosses.KRIL];
+      bossName = Bosses.KRIL;
+      break;
+    case 'zamorak':
+      bossKc = playerStats[Bosses.KRIL];
+      bossName = Bosses.KRIL;
+      break;
+    case 'kril_tsutsaroth':
+      bossKc = playerStats[Bosses.KRIL];
+      bossName = Bosses.KRIL;
+      break;
+    case 'mimic':
+      bossKc = playerStats[Bosses.MIMIC];
+      bossName = Bosses.MIMIC;
+      break;
+    case 'nightmare':
+      bossKc = playerStats[Bosses.NIGHTMARE];
+      bossName = Bosses.NIGHTMARE;
+      break;
+    case 'obor':
+      bossKc = playerStats[Bosses.OBOR];
+      bossName = Bosses.OBOR;
+      break;
+    case 'sarachnis':
+      bossKc = playerStats[Bosses.SARACHNIS];
+      bossName = Bosses.SARACHNIS;
+      break;
+    case 'scorpia':
+      bossKc = playerStats[Bosses.SCORPIA];
+      bossName = Bosses.SCORPIA;
+      break;
+    case 'skotizo':
+      bossKc = playerStats[Bosses.SKOTIZO];
+      bossName = Bosses.SKOTIZO;
+      break;
+    case 'gauntlet':
+      bossKc = playerStats[Bosses.GAUNTLET];
+      bossName = Bosses.GAUNTLET;
+      break;
+    case 'hunllef':
+      bossKc = playerStats[Bosses.GAUNTLET];
+      bossName = Bosses.GAUNTLET;
+      break;
+    case 'corr_gauntlet':
+      bossKc = playerStats[Bosses.CORR_GAUNTLET];
+      bossName = Bosses.CORR_GAUNTLET;
+      break;
+    case 'corr':
+      bossKc = playerStats[Bosses.CORR_GAUNTLET];
+      bossName = Bosses.CORR_GAUNTLET;
+      break;
+    case 'corrupted':
+      bossKc = playerStats[Bosses.CORR_GAUNTLET];
+      bossName = Bosses.CORR_GAUNTLET;
+      break;
+    case 'corr_hunllef':
+      bossKc = playerStats[Bosses.CORR_GAUNTLET];
+      bossName = Bosses.CORR_GAUNTLET;
+      break;
+    case 'tob':
+      bossKc = playerStats[Bosses.TOB];
+      bossName = Bosses.TOB;
+      break;
+    case 'theatre':
+      bossKc = playerStats[Bosses.TOB];
+      bossName = Bosses.TOB;
+      break;
+    case 'thermy':
+      bossKc = playerStats[Bosses.THERMY];
+      bossName = Bosses.THERMY;
+      break;
+    case 'thermonuclear':
+      bossKc = playerStats[Bosses.THERMY];
+      bossName = Bosses.THERMY;
+      break;
+    case 'zuk':
+      bossKc = playerStats[Bosses.ZUK];
+      bossName = Bosses.ZUK;
+      break;
+    case 'inferno':
+      bossKc = playerStats[Bosses.ZUK];
+      bossName = Bosses.ZUK;
+      break;
+    case 'jad':
+      bossKc = playerStats[Bosses.JAD];
+      bossName = Bosses.JAD;
+      break;
+    case 'fight_caves':
+      bossKc = playerStats[Bosses.JAD];
+      bossName = Bosses.JAD;
+      break;
+    case 'venenatis':
+      bossKc = playerStats[Bosses.VENE];
+      bossName = Bosses.VENE;
+      break;
+    case 'vene':
+      bossKc = playerStats[Bosses.VENE];
+      bossName = Bosses.VENE;
+      break;
+    case 'vetion':
+      bossKc = playerStats[Bosses.VETION];
+      bossName = Bosses.VETION;
+      break;
+    case 'vork':
+      bossKc = playerStats[Bosses.VORKATH];
+      bossName = Bosses.VORKATH;
+      break;
+    case 'vorkath':
+      bossKc = playerStats[Bosses.VORKATH];
+      bossName = Bosses.VORKATH;
+      break;
+    case 'wt':
+      bossKc = playerStats[Bosses.WT];
+      bossName = Bosses.WT;
+      break;
+    case 'wintertodt':
+      bossKc = playerStats[Bosses.WT];
+      bossName = Bosses.WT;
+      break;
+    case 'zalc':
+      bossKc = playerStats[Bosses.ZALCANO];
+      bossName = Bosses.ZALCANO;
+      break;
+    case 'zalcano':
+      bossKc = playerStats[Bosses.ZALCANO];
+      bossName = Bosses.ZALCANO;
+      break;
+    case 'zulrah':
+      bossKc = playerStats[Bosses.ZULRAH];
+      bossName = Bosses.ZULRAH;
+      break;
+    default:
+      bossKc = 0;
+      bossName = '';
+  }
+  return {
+    bossKc,
+    bossName,
+  };
+};
+
+// Boss key names
+enum Bosses {
+  SIRE = 'Abyssal Sire',
+  HYDRA = 'Alchemical Hydra',
+  BARROWS = 'Barrows Chests',
+  BRYOPHYTA = 'Bryophyta',
+  CALLISTO = 'Callisto',
+  CERBERUS = 'Cerberus',
+  COX = 'Chambers of Xeric',
+  COXCM = 'Chambers of Xeric Challenge Mode',
+  CHAOS_ELE = 'Chaos Elemental',
+  CHAOS_FANATIC = 'Chaos Fanatic',
+  ZILYANA = 'Commander Zilyana',
+  CORP = 'Corporeal Beast',
+  CRAZY_ARCH = 'Crazy Archaeologist',
+  PRIME = 'Dagannoth Prime',
+  REX = 'Dagannoth Rex',
+  SUPREME = 'Dagannoth Supreme',
+  DER_ARCH = 'Deranged Archaeologist',
+  GRAARDOR = 'General Graardor',
+  MOLE = 'Giant Mole',
+  GUARDIANS = 'Grotesque Guardians',
+  HESPORI = 'Hespori',
+  KQ = 'Kalphite Queen',
+  KBD = 'King Black Dragon',
+  KRAKEN = 'Kraken',
+  KREE = 'KreeArra',
+  KRIL = 'Kril Tsutsaroth',
+  MIMIC = 'Mimic',
+  NIGHTMARE = 'The Nightmare',
+  OBOR = 'Obor',
+  SARACHNIS = 'Sarachnis',
+  SCORPIA = 'Scorpia',
+  SKOTIZO = 'Skotizo',
+  GAUNTLET = 'The Gauntlet',
+  CORR_GAUNTLET = 'The Corrupted Gauntlet',
+  TOB = 'Theatre of Blood',
+  THERMY = 'Thermonuclear Smoke Devil',
+  ZUK = 'TzKal-Zuk',
+  JAD = 'TzTok-Jad',
+  VENE = 'Venenatis',
+  VETION = 'Vetion',
+  VORKATH = 'Vorkath',
+  WT = 'Wintertodt',
+  ZALCANO = 'Zalcano',
+  ZULRAH = 'Zulrah',
+}
 
 const bosses: string[] = [
   'abyssal_sire',
@@ -93,372 +558,3 @@ const bosses: string[] = [
   'zalcano',
   'zulrah',
 ];
-
-export const kc = async (
-  msg: Message,
-  ...args: string[]
-): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(
-    msg,
-    args,
-    bosses,
-    Categories.BOSS
-  );
-  if (prefix === null) return;
-  const usernameWithoutSpaces: string = args.slice(1).join('');
-  const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const usernameWithSpaces: string = argsWithPrefixToString(...args);
-  const embed: TempleEmbed = new TempleEmbed()
-    .setTitle('Bosses')
-    .addField('Username', `${usernameWithSpaces}`);
-  if (usernameWithSpaces in playerStats) {
-    const result = generateEmbed(
-      prefix,
-      embed,
-      playerStats[usernameWithSpaces]
-    );
-    return msg.channel.send(result);
-  } else {
-    const isFetched: boolean = await fetchTemple(msg, usernameWithSpaces);
-    if (isFetched === true) {
-      const result = generateEmbed(
-        prefix,
-        embed,
-        playerStats[usernameWithSpaces]
-      );
-      return msg.channel.send(result);
-    } else return;
-  }
-};
-
-// Generates embed sent to user
-const generateEmbed = (
-  inputPrefix: string,
-  inputEmbed: TempleEmbed,
-  playerObject: PlayerStats
-): TempleEmbed => {
-  const prefix: string = inputPrefix;
-  const embed: TempleEmbed = inputEmbed;
-  const player: PlayerStats = playerObject;
-  const lastChecked: { title: string; time: string } = templeDateParser(
-    player.info['Last checked']
-  );
-  embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
-  const bossName: number = bossTypeCheck(prefix, player);
-  const formattedPrefix: string = capitalizeFirstLetter(prefix);
-  embed.addField(`${formattedPrefix} kills`, `${bossName}`);
-  return embed;
-};
-
-const bossTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
-  const type: string = prefix;
-  const playerStats = playerObject;
-  let bossesKilled: number;
-
-  switch (type) {
-    case 'abyssal_sire':
-      bossesKilled = playerStats[Bosses.SIRE];
-      break;
-    case 'sire':
-      bossesKilled = playerStats[Bosses.SIRE];
-      break;
-    case 'alchemical_hydra':
-      bossesKilled = playerStats[Bosses.HYDRA];
-      break;
-    case 'hydra':
-      bossesKilled = playerStats[Bosses.HYDRA];
-      break;
-    case 'barrows':
-      bossesKilled = playerStats[Bosses.BARROWS];
-      break;
-    case 'bryo':
-      bossesKilled = playerStats[Bosses.BRYOPHYTA];
-      break;
-    case 'bryophyta':
-      bossesKilled = playerStats[Bosses.BRYOPHYTA];
-      break;
-    case 'callisto':
-      bossesKilled = playerStats[Bosses.CALLISTO];
-      break;
-    case 'cerberus':
-      bossesKilled = playerStats[Bosses.CERBERUS];
-      break;
-    case 'cerb':
-      bossesKilled = playerStats[Bosses.CERBERUS];
-      break;
-    case 'cox':
-      bossesKilled = playerStats[Bosses.COX];
-      break;
-    case 'chambers':
-      bossesKilled = playerStats[Bosses.COX];
-      break;
-    case 'cm':
-      bossesKilled = playerStats[Bosses.COXCM];
-      break;
-    case 'coxcm':
-      bossesKilled = playerStats[Bosses.COXCM];
-      break;
-    case 'ele':
-      bossesKilled = playerStats[Bosses.CHAOS_ELE];
-      break;
-    case 'chaos_ele':
-      bossesKilled = playerStats[Bosses.CHAOS_ELE];
-      break;
-    case 'fanatic':
-      bossesKilled = playerStats[Bosses.CHAOS_FANATIC];
-      break;
-    case 'chaos_fanatic':
-      bossesKilled = playerStats[Bosses.CHAOS_FANATIC];
-      break;
-    case 'sara':
-      bossesKilled = playerStats[Bosses.ZILYANA];
-      break;
-    case 'saradomin':
-      bossesKilled = playerStats[Bosses.ZILYANA];
-      break;
-    case 'zilyana':
-      bossesKilled = playerStats[Bosses.ZILYANA];
-      break;
-    case 'zilly':
-      bossesKilled = playerStats[Bosses.ZILYANA];
-      break;
-    case 'corp':
-      bossesKilled = playerStats[Bosses.CORP];
-      break;
-    case 'crazy_arch':
-      bossesKilled = playerStats[Bosses.CRAZY_ARCH];
-      break;
-    case 'prime':
-      bossesKilled = playerStats[Bosses.PRIME];
-      break;
-    case 'dagannoth_prime':
-      bossesKilled = playerStats[Bosses.PRIME];
-      break;
-    case 'rex':
-      bossesKilled = playerStats[Bosses.REX];
-      break;
-    case 'dagannoth_rex':
-      bossesKilled = playerStats[Bosses.REX];
-      break;
-    case 'supreme':
-      bossesKilled = playerStats[Bosses.SUPREME];
-      break;
-    case 'dagannoth_supreme':
-      bossesKilled = playerStats[Bosses.SUPREME];
-      break;
-    case 'deranged_arch':
-      bossesKilled = playerStats[Bosses.DER_ARCH];
-      break;
-    case 'graardor':
-      bossesKilled = playerStats[Bosses.GRAARDOR];
-      break;
-    case 'bandos':
-      bossesKilled = playerStats[Bosses.GRAARDOR];
-      break;
-    case 'mole':
-      bossesKilled = playerStats[Bosses.MOLE];
-      break;
-    case 'guardians':
-      bossesKilled = playerStats[Bosses.GUARDIANS];
-      break;
-    case 'gg':
-      bossesKilled = playerStats[Bosses.GUARDIANS];
-      break;
-    case 'grotesque':
-      bossesKilled = playerStats[Bosses.GUARDIANS];
-      break;
-    case 'noon':
-      bossesKilled = playerStats[Bosses.GUARDIANS];
-      break;
-    case 'dusk':
-      bossesKilled = playerStats[Bosses.GUARDIANS];
-      break;
-    case 'hespori':
-      bossesKilled = playerStats[Bosses.GUARDIANS];
-      break;
-    case 'kq':
-      bossesKilled = playerStats[Bosses.KQ];
-      break;
-    case 'kalphite':
-      bossesKilled = playerStats[Bosses.KQ];
-      break;
-    case 'kbd':
-      bossesKilled = playerStats[Bosses.KBD];
-      break;
-    case 'kraken':
-      bossesKilled = playerStats[Bosses.KRAKEN];
-      break;
-    case 'kree':
-      bossesKilled = playerStats[Bosses.KREE];
-      break;
-    case `kree'arra`:
-      bossesKilled = playerStats[Bosses.KREE];
-      break;
-    case 'kreearra':
-      bossesKilled = playerStats[Bosses.KREE];
-      break;
-    case 'arma':
-      bossesKilled = playerStats[Bosses.KREE];
-      break;
-    case 'armadyl':
-      bossesKilled = playerStats[Bosses.KREE];
-      break;
-    case 'kril':
-      bossesKilled = playerStats[Bosses.KRIL];
-      break;
-    case `k'ril`:
-      bossesKilled = playerStats[Bosses.KRIL];
-      break;
-    case 'zammy':
-      bossesKilled = playerStats[Bosses.KRIL];
-      break;
-    case 'zamorak':
-      bossesKilled = playerStats[Bosses.KRIL];
-      break;
-    case 'kril_tsutsaroth':
-      bossesKilled = playerStats[Bosses.KRIL];
-      break;
-    case 'mimic':
-      bossesKilled = playerStats[Bosses.MIMIC];
-      break;
-    case 'nightmare':
-      bossesKilled = playerStats[Bosses.NIGHTMARE];
-      break;
-    case 'obor':
-      bossesKilled = playerStats[Bosses.OBOR];
-      break;
-    case 'sarachnis':
-      bossesKilled = playerStats[Bosses.SARACHNIS];
-      break;
-    case 'scorpia':
-      bossesKilled = playerStats[Bosses.SCORPIA];
-      break;
-    case 'skotizo':
-      bossesKilled = playerStats[Bosses.SKOTIZO];
-      break;
-    case 'gauntlet':
-      bossesKilled = playerStats[Bosses.GAUNTLET];
-      break;
-    case 'hunllef':
-      bossesKilled = playerStats[Bosses.GAUNTLET];
-      break;
-    case 'corr_gauntlet':
-      bossesKilled = playerStats[Bosses.CORR_GAUNTLET];
-      break;
-    case 'corr':
-      bossesKilled = playerStats[Bosses.CORR_GAUNTLET];
-      break;
-    case 'corrupted':
-      bossesKilled = playerStats[Bosses.CORR_GAUNTLET];
-      break;
-    case 'corr_hunllef':
-      bossesKilled = playerStats[Bosses.CORR_GAUNTLET];
-      break;
-    case 'tob':
-      bossesKilled = playerStats[Bosses.TOB];
-      break;
-    case 'theatre':
-      bossesKilled = playerStats[Bosses.TOB];
-      break;
-    case 'thermy':
-      bossesKilled = playerStats[Bosses.THERMY];
-      break;
-    case 'thermonuclear':
-      bossesKilled = playerStats[Bosses.THERMY];
-      break;
-    case 'zuk':
-      bossesKilled = playerStats[Bosses.ZUK];
-      break;
-    case 'inferno':
-      bossesKilled = playerStats[Bosses.ZUK];
-      break;
-    case 'jad':
-      bossesKilled = playerStats[Bosses.JAD];
-      break;
-    case 'fight_caves':
-      bossesKilled = playerStats[Bosses.JAD];
-      break;
-    case 'venenatis':
-      bossesKilled = playerStats[Bosses.VENE];
-      break;
-    case 'vene':
-      bossesKilled = playerStats[Bosses.VENE];
-      break;
-    case 'vetion':
-      bossesKilled = playerStats[Bosses.VETION];
-      break;
-    case 'vork':
-      bossesKilled = playerStats[Bosses.VORKATH];
-      break;
-    case 'vorkath':
-      bossesKilled = playerStats[Bosses.VORKATH];
-      break;
-    case 'wt':
-      bossesKilled = playerStats[Bosses.WT];
-      break;
-    case 'wintertodt':
-      bossesKilled = playerStats[Bosses.WT];
-      break;
-    case 'zalc':
-      bossesKilled = playerStats[Bosses.ZALCANO];
-      break;
-    case 'zalcano':
-      bossesKilled = playerStats[Bosses.ZALCANO];
-      break;
-    case 'zulrah':
-      bossesKilled = playerStats[Bosses.ZULRAH];
-      break;
-    default:
-      bossesKilled = 0;
-  }
-  return bossesKilled;
-};
-
-// Boss key names
-enum Bosses {
-  SIRE = 'Abyssal Sire',
-  HYDRA = 'Alchemical Hydra',
-  BARROWS = 'Barrows Chests',
-  BRYOPHYTA = 'Bryophyta',
-  CALLISTO = 'Callisto',
-  CERBERUS = 'Cerberus',
-  COX = 'Chambers of Xeric',
-  COXCM = 'Chambers of Xeric Challenge Mode',
-  CHAOS_ELE = 'Chaos Elemental',
-  CHAOS_FANATIC = 'Chaos Fanatic',
-  ZILYANA = 'Commander Zilyana',
-  CORP = 'Corporeal Beast',
-  CRAZY_ARCH = 'Crazy Archaeologist',
-  PRIME = 'Dagannoth Prime',
-  REX = 'Dagannoth Rex',
-  SUPREME = 'Dagannoth Supreme',
-  DER_ARCH = 'Deranged Archaeologist',
-  GRAARDOR = 'General Graardor',
-  MOLE = 'Giant Mole',
-  GUARDIANS = 'Grotesque Guardians',
-  HESPORI = 'Hespori',
-  KQ = 'Kalphite Queen',
-  KBD = 'King Black Dragon',
-  KRAKEN = 'Kraken',
-  KREE = 'KreeArra',
-  KRIL = 'Kril Tsutsaroth',
-  MIMIC = 'Mimic',
-  NIGHTMARE = 'The Nightmare',
-  OBOR = 'Obor',
-  SARACHNIS = 'Sarachnis',
-  SCORPIA = 'Scorpia',
-  SKOTIZO = 'Skotizo',
-  GAUNTLET = 'The Gauntlet',
-  CORR_GAUNTLET = 'The Corrupted Gauntlet',
-  TOB = 'Theatre of Blood',
-  THERMY = 'Thermonuclear Smoke Devil',
-  ZUK = 'TzKal-Zuk',
-  JAD = 'TzTok-Jad',
-  VENE = 'Venenatis',
-  VETION = 'Vetion',
-  VORKATH = 'Vorkath',
-  WT = 'Wintertodt',
-  ZALCANO = 'Zalcano',
-  ZULRAH = 'Zulrah',
-}

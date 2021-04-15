@@ -71,6 +71,13 @@
       "example": ".kc boss username",
       "category": "Temple OSRS",
       "aliases": []
+    },
+    "lvl": {
+      "name": "lvl",
+      "description": "Get skill lvl and experience points for player",
+      "example": ".lvl skill username",
+      "category": "Temple OSRS",
+      "aliases": []
     }
   }
 }

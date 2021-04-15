@@ -15,6 +15,7 @@ import { datapoint } from './commands/templeosrs/datapoint';
 import { fetchrsn } from './commands/templeosrs/fetchrsn';
 import { clues } from './commands/templeosrs/clues';
 import { kc } from './commands/templeosrs/kc';
+import { lvl } from './commands/templeosrs/lvl';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -37,6 +38,7 @@ export const commandList: {
   fetchrsn,
   clues,
   kc,
+  lvl,
 };
 // Alias handler
 // Take a command name and check if it has an alias then return the original name

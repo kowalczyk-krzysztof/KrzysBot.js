@@ -18,19 +18,19 @@ export const ehp = async (
     `${args.join(' ')}`
   );
   if (keyword in playerStats) {
-    const result = generateEmbed(embed, playerStats[keyword], keyword);
+    const result = generateResult(embed, playerStats[keyword], keyword);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
-      const result = generateEmbed(embed, playerStats[keyword], keyword);
+      const result = generateResult(embed, playerStats[keyword], keyword);
       return msg.channel.send(result);
     } else return;
   }
 };
 
 // Generate result
-const generateEmbed = (
+const generateResult = (
   inputEmbed: TempleEmbed,
   playerObject: PlayerStats,
   keyword: string

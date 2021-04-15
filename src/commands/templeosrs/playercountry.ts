@@ -14,19 +14,19 @@ export const playercountry = async (
   const keyword: string = argsToString(...args);
   const embed: TempleEmbed = new TempleEmbed().addField('Username', `${args}`);
   if (keyword in playerStats) {
-    const result = generateEmbed(embed, playerStats[keyword]);
+    const result = generateResult(embed, playerStats[keyword]);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
-      const result = generateEmbed(embed, playerStats[keyword]);
+      const result = generateResult(embed, playerStats[keyword]);
       return msg.channel.send(result);
     } else return;
   }
 };
 
 // Generate result
-const generateEmbed = (
+const generateResult = (
   inputEmbed: TempleEmbed,
   playerObject: PlayerStats
 ): TempleEmbed => {
