@@ -57,27 +57,64 @@
       "example": ".datapoint username",
       "category": "Temple OSRS",
       "aliases": []
-    },
+    }
+  },
+  "osrs": {
     "clues": {
       "name": "clues",
       "description": "Get clue stats for player",
       "example": ".clues tier username",
-      "category": "Temple OSRS",
+      "category": "OSRS",
       "aliases": []
     },
     "kc": {
       "name": "kc",
       "description": "Get boss kill stats for player",
       "example": ".kc boss username",
-      "category": "Temple OSRS",
+      "category": "OSRS",
       "aliases": []
     },
     "lvl": {
       "name": "lvl",
       "description": "Get skill lvl and experience points for player",
       "example": ".lvl skill username",
-      "category": "Temple OSRS",
+      "category": "OSRS",
       "aliases": []
+    },
+    "osrsfetch": {
+      "name": "osrsfetch",
+      "description": "Fetch latest player data",
+      "example": ".osrsfetch username",
+      "category": "OSRS",
+      "aliases": ["fetchosrs"]
+    },
+    "lms": {
+      "name": "lms",
+      "description": "Get player's LMS score",
+      "example": ".lms username",
+      "category": "OSRS",
+      "aliases": []
+    },
+    "bh": {
+      "name": "bh",
+      "description": "Get player's BH Rogue or Hunter score",
+      "example": ".bh type username",
+      "category": "OSRS",
+      "aliases": []
+    },
+    "soulwars": {
+      "name": "soulwars",
+      "description": "Get player's Soul Wars Zeals score",
+      "example": ".soulwars username",
+      "category": "OSRS",
+      "aliases": []
+    },
+    "leaguepoints": {
+      "name": "leaguepoints",
+      "description": "Get player's League Points score",
+      "example": ".leaguepoints username",
+      "category": "OSRS",
+      "aliases": ["leaguepts"]
     }
   }
 }

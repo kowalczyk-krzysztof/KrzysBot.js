@@ -1,9 +1,13 @@
 import { Message } from 'discord.js';
+import { isOnCooldown } from '../cache/cooldown';
 import { createCommandList } from '../utils/createCommandList';
 
 export const commands = async (
   msg: Message,
+  commandName: string,
   ...args: string[]
 ): Promise<void> => {
-  return createCommandList(msg, args);
+  const cooldown: number = 60;
+  if (isOnCooldown(msg, commandName, cooldown, false, args)) return;
+  else return createCommandList(msg, args);
 };

@@ -1,7 +1,9 @@
 import { Message } from 'discord.js';
-// Utils
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argsToString } from '../../utils/argsToString';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { Embed } from '../../utils/embed';
 import {
   playerNames,
@@ -11,11 +13,12 @@ import {
 
 export const rsn = async (
   msg: Message,
+  commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const nameCheck: boolean = runescapeNameValidator(...args);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const keyword: string = argsToString(...args);
+  const nameCheck: boolean = runescapeNameValidator(args);
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   const embed: Embed = new Embed().setFooter(
     'Incorrect? Fetch latest names:\n.fetchrsn username'
   );

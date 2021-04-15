@@ -1,20 +1,24 @@
 import { Message } from 'discord.js';
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argsToString } from '../../utils/argsToString';
-import { TempleEmbed } from '../../utils/embed';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
+import { TempleEmbed, usernameString } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { gameModeCheck } from '../../utils/osrs/gameModeCheck';
 import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
 
 export const ehb = async (
   msg: Message,
+  commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const nameCheck: boolean = runescapeNameValidator(...args);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const keyword: string = argsToString(...args);
+  const nameCheck: boolean = runescapeNameValidator(args);
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   const embed: TempleEmbed = new TempleEmbed().addField(
-    'Username',
+    usernameString,
     `${args.join(' ')}`
   );
   if (keyword in playerStats) {

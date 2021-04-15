@@ -35,86 +35,10 @@ interface PlayerInfo {
 
 export interface PlayerStats {
   Date: string;
-  Overall: number;
-  Attack: number;
-  Defence: number;
-  Strength: number;
-  Hitpoints: number;
-  Ranged: number;
-  Prayer: number;
-  Magic: number;
-  Cooking: number;
-  Woodcutting: number;
-  Fletching: number;
-  Fishing: number;
-  Firemaking: number;
-  Crafting: number;
-  Smithing: number;
-  Mining: number;
-  Herblore: number;
-  Agility: number;
-  Thieving: number;
-  Slayer: number;
-  Farming: number;
-  Runecraft: number;
-  Hunter: number;
-  Construction: number;
   Ehp: number;
   Im_ehp: number;
   Lvl3_ehp: number;
   F2p_ehp: number;
-  Clue_all: number;
-  Clue_beginner: number;
-  Clue_easy: number;
-  Clue_medium: number;
-  Clue_hard: number;
-  Clue_elite: number;
-  Clue_master: number;
-  LMS: number;
-  'Abyssal Sire': number;
-  'Alchemical Hydra': number;
-  'Barrows Chests': number;
-  Bryophyta: number;
-  Callisto: number;
-  Cerberus: number;
-  'Chambers of Xeric': number;
-  'Chambers of Xeric Challenge Mode': number;
-  'Chaos Elemental': number;
-  'Chaos Fanatic': number;
-  'Commander Zilyana': number;
-  'Corporeal Beast': number;
-  'Crazy Archaeologist': number;
-  'Dagannoth Prime': number;
-  'Dagannoth Rex': number;
-  'Dagannoth Supreme': number;
-  'Deranged Archaeologist': number;
-  'General Graardor': number;
-  'Giant Mole': number;
-  'Grotesque Guardians': number;
-  Hespori: number;
-  'Kalphite Queen': number;
-  'King Black Dragon': number;
-  Kraken: number;
-  KreeArra: number;
-  'Kril Tsutsaroth': number;
-  Mimic: number;
-  'The Nightmare': number;
-  Obor: number;
-  Sarachnis: number;
-  Scorpia: number;
-  Skotizo: number;
-  'The Gauntlet': number;
-  'The Corrupted Gauntlet': number;
-  'Theatre of Blood': number;
-  'Thermonuclear Smoke Devil': number;
-  'TzKal-Zuk': number;
-  'TzTok-Jad': number;
-  Venenatis: number;
-  Vetion: number;
-  Vorkath: number;
-  Wintertodt: number;
-  Zalcano: number;
-  Zulrah: number;
   Ehb: number;
   Im_ehb: number;
   info: PlayerInfo;
@@ -162,10 +86,7 @@ const setPlayerNames = (username: string, data: PlayerNames) => {
 export const fetchTemple = async (msg: Message, playerName: string) => {
   const keyword = playerName;
   try {
-    const res: AxiosResponse = await axios.get(
-      `${TEMPLE_LINK}${keyword}&bosses=1`
-    );
-
+    const res: AxiosResponse = await axios.get(`${TEMPLE_LINK}${keyword}`);
     if (res.data.error) {
       if (res.data.error.Code === 402) {
         const embed: Embed = new Embed();

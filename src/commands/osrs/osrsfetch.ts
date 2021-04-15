@@ -4,11 +4,12 @@ import {
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
 import { argumentParser, ParserTypes } from '../../utils/argumentParser';
-import { fetchPlayerNames } from '../../cache/templeCache';
+import { fetchOsrsStats } from '../../cache/osrsCache';
 import { isOnCooldown } from '../../cache/cooldown';
 import { Embed } from '../../utils/embed';
+import { errorHandler } from '../../utils/errorHandler';
 
-export const fetchrsn = async (
+export const osrsfetch = async (
   msg: Message,
   commandName: string,
   ...args: string[]
@@ -19,14 +20,14 @@ export const fetchrsn = async (
   const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (isOnCooldown(msg, commandName, cooldown, true, args) === true) return;
   else {
-    const areNamesFetched = await fetchPlayerNames(msg, keyword);
+    const isPlayerFetched = await fetchOsrsStats(msg, keyword);
 
-    if (areNamesFetched === true) {
+    if (isPlayerFetched === true) {
       const embed: Embed = new Embed();
       embed.setDescription(
-        `Fetched latest names available for player:\`\`\`${keyword}\`\`\`To get more recent data - add a new datapoint and fetch again`
+        `Fetched latest data available for player:\`\`\`${keyword}\`\`\``
       );
       return msg.channel.send(embed);
-    } else return;
+    } else return errorHandler(null, msg);
   }
 };

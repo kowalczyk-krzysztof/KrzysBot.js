@@ -1,19 +1,22 @@
 import { Message } from 'discord.js';
-import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
-import { TempleEmbed } from '../../utils/embed';
-import { templeDateParser } from '../../utils/osrs/templeDateParser';
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argsWithPrefixToString } from '../../utils/argsToString';
+import {
+  fetchOsrsStats,
+  osrsStats,
+  OsrsPlayer,
+  OsrsSkill,
+} from '../../cache/osrsCache';
+import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
-import { osrsLevelCalculator } from '../../utils/osrs/levelCalculator';
-import axios, { AxiosResponse } from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config({ path: 'config.env' });
-const HISCORE_API: string = process.env.OSRS_HISCORE_API as string;
+import { isOnCooldown } from '../../cache/cooldown';
 
 export const lvl = async (
   msg: Message,
+  commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
   const prefix: string | null = isPrefixValid(
@@ -23,27 +26,29 @@ export const lvl = async (
     Categories.SKILL
   );
   if (prefix === null) return;
-  const usernameWithoutSpaces: string = args.slice(1).join('');
+  const cooldown: number = 30;
+  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
+  const usernameWithoutSpaces: string[] = args.slice(1);
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const usernameWithSpaces: string = argsWithPrefixToString(...args);
-  const embed: TempleEmbed = new TempleEmbed()
-    .setTitle('Lvl')
-    .addField('Username', `${usernameWithSpaces}`);
-  if (usernameWithSpaces in playerStats) {
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const usernameWithSpaces: string = argumentParser(args, 1, ParserTypes.OSRS);
+  const embed: OsrsEmbed = new OsrsEmbed()
+    .setTitle(OsrsEmbedTitles.LVL)
+    .addField(usernameString, `${usernameWithSpaces}`);
+  if (usernameWithSpaces in osrsStats) {
     const result = await generateResult(
       prefix,
       embed,
-      playerStats[usernameWithSpaces]
+      osrsStats[usernameWithSpaces]
     );
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchTemple(msg, usernameWithSpaces);
+    const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
       const result = await generateResult(
         prefix,
         embed,
-        playerStats[usernameWithSpaces]
+        osrsStats[usernameWithSpaces]
       );
       return msg.channel.send(result);
     } else return;
@@ -51,52 +56,40 @@ export const lvl = async (
 };
 
 // Generates embed sent to user
-const generateResult = async (
+const generateResult = (
   inputPrefix: string,
-  inputEmbed: TempleEmbed,
-  playerObject: PlayerStats
-): Promise<TempleEmbed> => {
+  inputEmbed: OsrsEmbed,
+  playerObject: OsrsPlayer
+): OsrsEmbed => {
   const prefix: string = inputPrefix;
-  const embed: TempleEmbed = inputEmbed;
-  const player: PlayerStats = playerObject;
-  const lastChecked: { title: string; time: string } = templeDateParser(
-    player.info['Last checked']
-  );
-  embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
-  const skill: { skillExp: number; skillName: string } = skillTypeCheck(
-    prefix,
-    player
-  );
+  const embed: OsrsEmbed = inputEmbed;
+  const player: OsrsPlayer = playerObject;
+  const skill: {
+    skillName: string;
+    skillExp: OsrsSkill;
+  } = skillTypeCheck(prefix, player);
   // Intl is how I format number to have commas
-  const playerName = player.info.Username.toLowerCase();
   const formatter = new Intl.NumberFormat('en-US');
-  const formattedExp = formatter.format(skill.skillExp);
-  let level: string | undefined;
+  let formattedExp;
+  if (typeof skill.skillExp.exp === 'number')
+    formattedExp = formatter.format(skill.skillExp.exp);
+  else formattedExp = skill.skillExp.exp;
 
-  // Unfortunately if player is unranked, their level will be undefined and calculating total level from this is impossible, so I have to fetch the OSRS database. Why not fetch everything from OSRS database in the first place? Well, I started this project with using Temple OSRS API in mind so I might as well stick with it. Also some data from temple is not available on OSRS highscores
-  if (skill.skillName === Skills.TOTAL) {
-    const res: AxiosResponse = await axios.get(`${HISCORE_API}${playerName}`);
-    if (res.status === 200) level = res.data.split(',')[1];
-    else level = 'Unknown';
-  } else {
-    const calc: string | undefined = osrsLevelCalculator(skill.skillExp);
-    if (calc === undefined) level = 'Unranked';
-    else level = calc;
-  }
-  embed.addField(`${skill.skillName} lvl`, `${level}`);
-  // Temple returns unranked exp as - 1
-  if (formattedExp === '-1') embed.addField('Experience', `Unranked`);
-  else embed.addField('Experience', `${formattedExp} exp`);
+  embed.addField(`${skill.skillName} lvl`, `${skill.skillExp.level}`);
+  embed.addField('Experience', `${formattedExp} exp`);
   return embed;
 };
 
 const skillTypeCheck = (
   prefix: string,
-  playerObject: PlayerStats
-): { skillExp: number; skillName: string } => {
+  playerObject: OsrsPlayer
+): {
+  skillName: string;
+  skillExp: OsrsSkill;
+} => {
   const type: string = prefix;
   const playerStats = playerObject;
-  let skillExp: number;
+  let skillExp: OsrsSkill;
   let skillName: string;
   switch (type) {
     case 'total':
@@ -305,7 +298,11 @@ const skillTypeCheck = (
       break;
 
     default:
-      skillExp = 0;
+      skillExp = {
+        rank: 'Unranked',
+        level: 'Unranked',
+        exp: 'Unranked',
+      };
       skillName = '';
   }
   return {
@@ -337,7 +334,7 @@ export enum Skills {
   THIEV = 'Thieving',
   SLAYER = 'Slayer',
   FARM = 'Farming',
-  RC = 'Runecraft',
+  RC = 'Runecrafting',
   HUNT = 'Hunter',
   CON = 'Construction',
 }

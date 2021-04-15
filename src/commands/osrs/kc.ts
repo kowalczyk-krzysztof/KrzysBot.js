@@ -1,13 +1,21 @@
 import { Message } from 'discord.js';
-import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
-import { TempleEmbed } from '../../utils/embed';
-import { templeDateParser } from '../../utils/osrs/templeDateParser';
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argsWithPrefixToString } from '../../utils/argsToString';
+import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import {
+  fetchOsrsStats,
+  osrsStats,
+  OsrsPlayer,
+  BossOrMinigame,
+} from '../../cache/osrsCache';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
-
+import { isOnCooldown } from '../../cache/cooldown';
 export const kc = async (
   msg: Message,
+  commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
   const prefix: string | null = isPrefixValid(
@@ -17,27 +25,25 @@ export const kc = async (
     Categories.BOSS
   );
   if (prefix === null) return;
-  const usernameWithoutSpaces: string = args.slice(1).join('');
+  const cooldown: number = 30;
+  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
+  const usernameWithoutSpaces: string[] = args.slice(1);
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const usernameWithSpaces: string = argsWithPrefixToString(...args);
-  const embed: TempleEmbed = new TempleEmbed()
-    .setTitle('Bosses')
-    .addField('Username', `${usernameWithSpaces}`);
-  if (usernameWithSpaces in playerStats) {
-    const result = generateResult(
-      prefix,
-      embed,
-      playerStats[usernameWithSpaces]
-    );
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const usernameWithSpaces: string = argumentParser(args, 1, ParserTypes.OSRS);
+  const embed: OsrsEmbed = new OsrsEmbed()
+    .setTitle(OsrsEmbedTitles.KC)
+    .addField(usernameString, `${usernameWithSpaces}`);
+  if (usernameWithSpaces in osrsStats) {
+    const result = generateResult(prefix, embed, osrsStats[usernameWithSpaces]);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchTemple(msg, usernameWithSpaces);
+    const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
       const result = generateResult(
         prefix,
         embed,
-        playerStats[usernameWithSpaces]
+        osrsStats[usernameWithSpaces]
       );
       return msg.channel.send(result);
     } else return;
@@ -47,34 +53,32 @@ export const kc = async (
 // Generates embed sent to user
 const generateResult = (
   inputPrefix: string,
-  inputEmbed: TempleEmbed,
-  playerObject: PlayerStats
-): TempleEmbed => {
+  inputEmbed: OsrsEmbed,
+  playerObject: OsrsPlayer
+): OsrsEmbed => {
   const prefix: string = inputPrefix;
-  const embed: TempleEmbed = inputEmbed;
-  const player: PlayerStats = playerObject;
-  const lastChecked: { title: string; time: string } = templeDateParser(
-    player.info['Last checked']
-  );
-  embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
+  const embed: OsrsEmbed = inputEmbed;
+  const player: OsrsPlayer = playerObject;
+
   const boss: {
-    bossKc: number;
+    bossKc: BossOrMinigame;
     bossName: string;
   } = bossTypeCheck(prefix, player);
-  embed.addField(`${boss.bossName} kills`, `${boss.bossKc}`);
+  embed.addField(`${boss.bossName} kills`, `${boss.bossKc.score}`);
+
   return embed;
 };
 
 const bossTypeCheck = (
   prefix: string,
-  playerObject: PlayerStats
+  playerObject: OsrsPlayer
 ): {
-  bossKc: number;
+  bossKc: BossOrMinigame;
   bossName: string;
 } => {
   const type: string = prefix;
   const playerStats = playerObject;
-  let bossKc: number;
+  let bossKc: BossOrMinigame;
   let bossName: string;
 
   switch (type) {
@@ -318,6 +322,14 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.SKOTIZO];
       bossName = Bosses.SKOTIZO;
       break;
+    case 'tempoross':
+      bossKc = playerStats[Bosses.TEMPO];
+      bossName = Bosses.TEMPO;
+      break;
+    case 'temp':
+      bossKc = playerStats[Bosses.TEMPO];
+      bossName = Bosses.TEMPO;
+      break;
     case 'gauntlet':
       bossKc = playerStats[Bosses.GAUNTLET];
       bossName = Bosses.GAUNTLET;
@@ -415,7 +427,10 @@ const bossTypeCheck = (
       bossName = Bosses.ZULRAH;
       break;
     default:
-      bossKc = 0;
+      bossKc = {
+        rank: 'Unranked',
+        score: 'Unranked',
+      };
       bossName = '';
   }
   return {
@@ -458,6 +473,7 @@ enum Bosses {
   SARACHNIS = 'Sarachnis',
   SCORPIA = 'Scorpia',
   SKOTIZO = 'Skotizo',
+  TEMPO = 'Tempoross',
   GAUNTLET = 'The Gauntlet',
   CORR_GAUNTLET = 'The Corrupted Gauntlet',
   TOB = 'Theatre of Blood',
@@ -533,6 +549,8 @@ const bosses: string[] = [
   'sarachnis',
   'scorpia',
   'skotizo',
+  'tempoross',
+  'temp',
   'gauntlet',
   'hunllef',
   'corr_gauntlet',
