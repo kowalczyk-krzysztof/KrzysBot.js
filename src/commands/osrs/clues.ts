@@ -18,7 +18,8 @@ export const clues = async (
     Categories.CLUES
   );
   if (prefix === null) return;
-  if (isOnCooldown(msg, commandName, 30, false, args) === true) return;
+  const cooldown: number = 30;
+  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
   const usernameWithoutSpaces: string[] = args.slice(1);
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
   if (nameCheck === false) return msg.channel.send('Invalid username');

@@ -7,33 +7,24 @@ import { Message } from 'discord.js';
 
 dotenv.config({ path: 'config.env' });
 const HISCORE_API: string = process.env.OSRS_HISCORE_API as string;
-
-export let osrsStats: { [key: string]: OsrsPlayer } = {};
 const maxCacheSize = 1000;
+export let osrsStats: { [key: string]: OsrsPlayer } = {};
 
 export const fetchOsrsStats = async (msg: Message, playerName: string) => {
   const keyword = playerName;
   try {
     const res: AxiosResponse = await axios.get(`${HISCORE_API}${keyword}`);
 
-    if (res.data.error) {
-      if (res.data.error.Code === 402) {
-        const embed: Embed = new Embed();
-        embed.addField(
-          'ERROR',
-          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
-        );
-        msg.channel.send(embed);
-      } else errorHandler(res.data.error, msg);
-      return false;
-    } else {
-      const data: OsrsPlayer = osrsDataParser(res.data);
+    const data: OsrsPlayer = osrsDataParser(res.data);
 
-      setOsrsStats(keyword, data);
-      return true;
-    }
+    setOsrsStats(keyword, data);
+    return true;
   } catch (err) {
-    errorHandler(err, msg);
+    if (err.response.status === 404) {
+      const embed: Embed = new Embed();
+      embed.addField('ERROR', `Player **${keyword}** not found`);
+      msg.channel.send(embed);
+    } else errorHandler(err, msg);
     return false;
   }
 };

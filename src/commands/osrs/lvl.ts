@@ -4,6 +4,7 @@ import { Embed } from '../../utils/embed';
 import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
 import { argumentParser } from '../../utils/argumentParser';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
+import { isOnCooldown } from '../../cache/cooldown';
 
 export const lvl = async (
   msg: Message,
@@ -17,6 +18,8 @@ export const lvl = async (
     Categories.SKILL
   );
   if (prefix === null) return;
+  const cooldown: number = 30;
+  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
   const usernameWithoutSpaces: string[] = args.slice(1);
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
   if (nameCheck === false) return msg.channel.send('Invalid username');
