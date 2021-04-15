@@ -104,8 +104,8 @@
     },
     "soulwars": {
       "name": "soulwars",
-      "description": "Get player's Soul Wars Zeals",
-      "example": ".soulwars type username",
+      "description": "Get player's Soul Wars Zeals score",
+      "example": ".soulwars username",
       "category": "OSRS",
       "aliases": []
     },
