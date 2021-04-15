@@ -80,6 +80,41 @@
       "example": ".lvl skill username",
       "category": "OSRS",
       "aliases": []
+    },
+    "osrsfetch": {
+      "name": "osrsfetch",
+      "description": "Fetch latest player data",
+      "example": ".osrsfetch username",
+      "category": "OSRS",
+      "aliases": ["fetchosrs"]
+    },
+    "lms": {
+      "name": "lms",
+      "description": "Get player's LMS score",
+      "example": ".lms username",
+      "category": "OSRS",
+      "aliases": []
+    },
+    "bh": {
+      "name": "bh",
+      "description": "Get player's BH Rogue or Hunter score",
+      "example": ".bh type username",
+      "category": "OSRS",
+      "aliases": []
+    },
+    "soulwars": {
+      "name": "soulwars",
+      "description": "Get player's Soul Wars Zeals",
+      "example": ".soulwars type username",
+      "category": "OSRS",
+      "aliases": []
+    },
+    "leaguepoints": {
+      "name": "leaguepoints",
+      "description": "Get player's League Points score",
+      "example": ".leaguepoints username",
+      "category": "OSRS",
+      "aliases": ["leaguepts"]
     }
   }
 }

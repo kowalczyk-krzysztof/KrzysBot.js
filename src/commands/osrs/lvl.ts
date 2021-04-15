@@ -1,8 +1,16 @@
 import { Message } from 'discord.js';
-import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
-import { Embed } from '../../utils/embed';
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser } from '../../utils/argumentParser';
+import {
+  fetchOsrsStats,
+  osrsStats,
+  OsrsPlayer,
+  OsrsSkill,
+} from '../../cache/osrsCache';
+import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
 
@@ -22,11 +30,11 @@ export const lvl = async (
   if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
   const usernameWithoutSpaces: string[] = args.slice(1);
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const usernameWithSpaces: string = argumentParser(args, 1, 'osrs');
-  const embed: Embed = new Embed()
-    .setTitle('Lvl')
-    .addField('Username', `${usernameWithSpaces}`);
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const usernameWithSpaces: string = argumentParser(args, 1, ParserTypes.OSRS);
+  const embed: OsrsEmbed = new OsrsEmbed()
+    .setTitle(OsrsEmbedTitles.LVL)
+    .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
     const result = await generateResult(
       prefix,
@@ -50,28 +58,25 @@ export const lvl = async (
 // Generates embed sent to user
 const generateResult = (
   inputPrefix: string,
-  inputEmbed: Embed,
+  inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): Embed => {
+): OsrsEmbed => {
   const prefix: string = inputPrefix;
-  const embed: Embed = inputEmbed;
+  const embed: OsrsEmbed = inputEmbed;
   const player: OsrsPlayer = playerObject;
   const skill: {
     skillName: string;
-    skillExp: {
-      rank: number;
-      level: number;
-      exp: number;
-    };
+    skillExp: OsrsSkill;
   } = skillTypeCheck(prefix, player);
   // Intl is how I format number to have commas
   const formatter = new Intl.NumberFormat('en-US');
-  const formattedExp = formatter.format(skill.skillExp.exp);
+  let formattedExp;
+  if (typeof skill.skillExp.exp === 'number')
+    formattedExp = formatter.format(skill.skillExp.exp);
+  else formattedExp = skill.skillExp.exp;
 
   embed.addField(`${skill.skillName} lvl`, `${skill.skillExp.level}`);
-  // Temple returns unranked exp as - 1
-  if (formattedExp === '-1') embed.addField('Experience', `Unranked`);
-  else embed.addField('Experience', `${formattedExp} exp`);
+  embed.addField('Experience', `${formattedExp} exp`);
   return embed;
 };
 
@@ -80,19 +85,11 @@ const skillTypeCheck = (
   playerObject: OsrsPlayer
 ): {
   skillName: string;
-  skillExp: {
-    rank: number;
-    level: number;
-    exp: number;
-  };
+  skillExp: OsrsSkill;
 } => {
   const type: string = prefix;
   const playerStats = playerObject;
-  let skillExp: {
-    rank: number;
-    level: number;
-    exp: number;
-  };
+  let skillExp: OsrsSkill;
   let skillName: string;
   switch (type) {
     case 'total':
@@ -302,9 +299,9 @@ const skillTypeCheck = (
 
     default:
       skillExp = {
-        rank: -1,
-        level: -1,
-        exp: -1,
+        rank: 'Unranked',
+        level: 'Unranked',
+        exp: 'Unranked',
       };
       skillName = '';
   }

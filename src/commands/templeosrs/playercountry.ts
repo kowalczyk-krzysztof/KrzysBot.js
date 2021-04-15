@@ -1,8 +1,10 @@
 import { Message } from 'discord.js';
-// Utils
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser } from '../../utils/argumentParser';
-import { TempleEmbed } from '../../utils/embed';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
+import { TempleEmbed, usernameString } from '../../utils/embed';
 import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
 
 export const playercountry = async (
@@ -11,9 +13,12 @@ export const playercountry = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const nameCheck: boolean = runescapeNameValidator(args);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const keyword: string = argumentParser(args, 0, 'osrs');
-  const embed: TempleEmbed = new TempleEmbed().addField('Username', `${args}`);
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
+  const embed: TempleEmbed = new TempleEmbed().addField(
+    usernameString,
+    `${args}`
+  );
   if (keyword in playerStats) {
     const result = generateResult(embed, playerStats[keyword]);
     return msg.channel.send(result);

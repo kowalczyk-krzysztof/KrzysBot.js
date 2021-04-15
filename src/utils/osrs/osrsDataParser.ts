@@ -6,11 +6,14 @@ export const osrsDataParser = (data: string) => {
   const rankLevelExpString = stringToArray.map((el: string) => {
     return el.split(',');
   });
-  const rankLevelExp: number[][] = rankLevelExpString.map((el: string[]) => {
-    return el.map((el: string) => {
-      return parseInt(el);
-    });
-  });
+  const rankLevelExp: (number | string)[][] = rankLevelExpString.map(
+    (el: string[]) => {
+      return el.map((el: string) => {
+        if (el === '-1') return 'Unranked';
+        else return parseInt(el);
+      });
+    }
+  );
 
   const playerObject: OsrsPlayer = {
     Overall: {

@@ -17,6 +17,11 @@ import { fetchrsn } from './commands/templeosrs/fetchrsn';
 import { clues } from './commands/osrs/clues';
 import { kc } from './commands/osrs/kc';
 import { lvl } from './commands/osrs/lvl';
+import { osrsfetch } from './commands/osrs/osrsfetch';
+import { lms } from './commands/osrs/lms';
+import { bh } from './commands/osrs/bh';
+import { soulwars } from './commands/osrs/soulwars';
+import { leaguepoints } from './commands/osrs/leaguepoints';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -40,6 +45,11 @@ export const commandList: {
   clues,
   kc,
   lvl,
+  osrsfetch,
+  lms,
+  bh,
+  soulwars,
+  leaguepoints,
 };
 // Alias handler
 // Take a command name and check if it has an alias then return the original name
@@ -50,6 +60,10 @@ export const aliasHandler = (commandName: string) => {
       return 'commands';
     case 'fetchtemple':
       return 'templefetch';
+    case 'fetchosrs':
+      return 'osrsfetch';
+    case 'leaguepts':
+      return 'leaguepoints';
     default:
       return alias;
   }

@@ -1,7 +1,9 @@
 import { Message } from 'discord.js';
-// Utils
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser } from '../../utils/argumentParser';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { fetchTemple } from '../../cache/templeCache';
 import { isOnCooldown } from '../../cache/cooldown';
 import { Embed } from '../../utils/embed';
@@ -14,8 +16,8 @@ export const templefetch = async (
 ): Promise<Message | undefined> => {
   const cooldown: number = 600;
   const nameCheck: boolean = runescapeNameValidator(args);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const keyword: string = argumentParser(args, 0, 'osrs');
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (isOnCooldown(msg, commandName, cooldown, true, args) === true) return;
   else {
     const isPlayerFetched = await fetchTemple(msg, keyword);

@@ -10,6 +10,7 @@ export enum Categories {
   BOSS = 'boss',
   SKILL = 'skill',
   CLUES = 'clues',
+  BH = 'bh',
 }
 
 export const isPrefixValid = (

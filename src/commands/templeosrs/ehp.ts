@@ -1,10 +1,18 @@
 import { Message } from 'discord.js';
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser } from '../../utils/argumentParser';
-import { TempleEmbed } from '../../utils/embed';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
+import { TempleEmbed, usernameString } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
-import { gameModeCheck } from '../../utils/osrs/gameModeCheck';
+import {
+  gameModeCheck,
+  skillerOrF2P,
+  SkillerOrF2p,
+  GameModeString,
+} from '../../utils/osrs/gameModeCheck';
 
 export const ehp = async (
   msg: Message,
@@ -12,10 +20,10 @@ export const ehp = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const nameCheck: boolean = runescapeNameValidator(args);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const keyword: string = argumentParser(args, 0, 'osrs');
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   const embed: TempleEmbed = new TempleEmbed().addField(
-    'Username',
+    usernameString,
     `${args.join(' ')}`
   );
   if (keyword in playerStats) {
@@ -41,11 +49,35 @@ const generateResult = (
   const lastChecked: { title: string; time: string } = templeDateParser(
     playerObject.info['Last checked']
   );
-  const gameMode: string = gameModeCheck(username);
   embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
+  const f2pOrSkiller: string = skillerOrF2P(username);
   let data: number;
-  if (gameMode === '') data = parseInt(playerObject.Ehp.toString());
-  else data = parseInt(playerObject.Im_ehp.toString());
-  embed.addField(`EHP ${gameMode}`, `${data}`);
+  if (f2pOrSkiller === SkillerOrF2p.BOTH) {
+    embed.addField(
+      `EHP ${SkillerOrF2p.F2P}`,
+      `${parseInt(playerObject.F2p_ehp.toString())}`
+    );
+    embed.addField(
+      `EHP ${SkillerOrF2p.SKILLER}`,
+      `${parseInt(playerObject.Lvl3_ehp.toString())}`
+    );
+  } else if (f2pOrSkiller === SkillerOrF2p.SKILLER)
+    embed.addField(
+      `EHP ${SkillerOrF2p.SKILLER}`,
+      `${parseInt(playerObject.Lvl3_ehp.toString())}`
+    );
+  else if (f2pOrSkiller === SkillerOrF2p.F2P)
+    embed.addField(
+      `EHP ${SkillerOrF2p.F2P}`,
+      `${parseInt(playerObject.F2p_ehp.toString())}`
+    );
+  else {
+    const gameMode: string = gameModeCheck(username);
+
+    if (gameMode === GameModeString.NORMAL)
+      data = parseInt(playerObject.Ehp.toString());
+    else data = parseInt(playerObject.Im_ehp.toString());
+    embed.addField(`EHP ${gameMode}`, `${data}`);
+  }
   return embed;
 };

@@ -5,9 +5,13 @@ export const argumentParser = (
 ): string => {
   const firstStep: string = args.slice(slicedArgs).join(' ');
   let secondStep: string;
-  if (type === 'osrs')
+  if (type === ParserTypes.OSRS)
     secondStep = firstStep.toLowerCase().trim().replace(/_+/g, ' ');
   else secondStep = firstStep.toLowerCase().trim();
 
   return secondStep;
 };
+
+export enum ParserTypes {
+  OSRS = 'osrs',
+}

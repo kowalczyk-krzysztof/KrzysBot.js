@@ -1,8 +1,16 @@
 import { Message } from 'discord.js';
-import { Embed } from '../../utils/embed';
-import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser } from '../../utils/argumentParser';
+import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import {
+  fetchOsrsStats,
+  osrsStats,
+  OsrsPlayer,
+  BossOrMinigame,
+} from '../../cache/osrsCache';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
 export const kc = async (
@@ -21,11 +29,11 @@ export const kc = async (
   if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
   const usernameWithoutSpaces: string[] = args.slice(1);
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const usernameWithSpaces: string = argumentParser(args, 1, 'osrs');
-  const embed: Embed = new Embed()
-    .setTitle('Bosses')
-    .addField('Username', `${usernameWithSpaces}`);
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const usernameWithSpaces: string = argumentParser(args, 1, ParserTypes.OSRS);
+  const embed: OsrsEmbed = new OsrsEmbed()
+    .setTitle(OsrsEmbedTitles.KC)
+    .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
     const result = generateResult(prefix, embed, osrsStats[usernameWithSpaces]);
     return msg.channel.send(result);
@@ -45,23 +53,18 @@ export const kc = async (
 // Generates embed sent to user
 const generateResult = (
   inputPrefix: string,
-  inputEmbed: Embed,
+  inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): Embed => {
+): OsrsEmbed => {
   const prefix: string = inputPrefix;
-  const embed: Embed = inputEmbed;
+  const embed: OsrsEmbed = inputEmbed;
   const player: OsrsPlayer = playerObject;
 
   const boss: {
-    bossKc: {
-      rank: number;
-      score: number;
-    };
+    bossKc: BossOrMinigame;
     bossName: string;
   } = bossTypeCheck(prefix, player);
-  if (boss.bossKc.score === -1)
-    embed.addField(`${boss.bossName} kills`, 'Unranked');
-  else embed.addField(`${boss.bossName} kills`, `${boss.bossKc.score}`);
+  embed.addField(`${boss.bossName} kills`, `${boss.bossKc.score}`);
 
   return embed;
 };
@@ -70,18 +73,12 @@ const bossTypeCheck = (
   prefix: string,
   playerObject: OsrsPlayer
 ): {
-  bossKc: {
-    rank: number;
-    score: number;
-  };
+  bossKc: BossOrMinigame;
   bossName: string;
 } => {
   const type: string = prefix;
   const playerStats = playerObject;
-  let bossKc: {
-    rank: number;
-    score: number;
-  };
+  let bossKc: BossOrMinigame;
   let bossName: string;
 
   switch (type) {
@@ -431,8 +428,8 @@ const bossTypeCheck = (
       break;
     default:
       bossKc = {
-        rank: -1,
-        score: -1,
+        rank: 'Unranked',
+        score: 'Unranked',
       };
       bossName = '';
   }

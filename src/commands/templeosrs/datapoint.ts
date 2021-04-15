@@ -1,8 +1,11 @@
 import { Message } from 'discord.js';
 import axios, { AxiosResponse } from 'axios';
 import dotenv from 'dotenv';
-import { argumentParser } from '../../utils/argumentParser';
-import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
+import { argumentParser, ParserTypes } from '../../utils/argumentParser';
+import {
+  runescapeNameValidator,
+  invalidUsername,
+} from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
 import { errorHandler } from '../../utils/errorHandler';
 import { Embed } from '../../utils/embed';
@@ -16,8 +19,8 @@ export const datapoint = async (
 ): Promise<Message | undefined> => {
   const cooldown: number = 1800;
   const nameCheck: boolean = runescapeNameValidator(args);
-  if (nameCheck === false) return msg.channel.send('Invalid username');
-  const keyword: string = argumentParser(args, 0, 'osrs');
+  if (nameCheck === false) return msg.channel.send(invalidUsername);
+  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (isOnCooldown(msg, commandName, cooldown, true, args) == true) return;
   else {
     try {
