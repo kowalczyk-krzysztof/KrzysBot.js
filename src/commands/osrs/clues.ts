@@ -1,23 +1,14 @@
 import { Message } from 'discord.js';
-import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
-import { TempleEmbed } from '../../utils/embed';
-import { templeDateParser } from '../../utils/osrs/templeDateParser';
+import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
+import { Embed } from '../../utils/embed';
 import { runescapeNameValidator } from '../../utils/osrs/runescapeNameValidator';
-import { argsWithPrefixToString } from '../../utils/argsToString';
+import { argumentParser } from '../../utils/argumentParser';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
-
-const types: string[] = [
-  'all',
-  'beginner',
-  'easy',
-  'medium',
-  'hard',
-  'elite',
-  'master',
-];
+import { isOnCooldown } from '../../cache/cooldown';
 
 export const clues = async (
   msg: Message,
+  commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
   const prefix: string | null = isPrefixValid(
@@ -27,27 +18,24 @@ export const clues = async (
     Categories.CLUES
   );
   if (prefix === null) return;
-  const usernameWithoutSpaces: string = args.slice(1).join('');
+  if (isOnCooldown(msg, commandName, 30, false, args) === true) return;
+  const usernameWithoutSpaces: string[] = args.slice(1);
   const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
   if (nameCheck === false) return msg.channel.send('Invalid username');
-  const usernameWithSpaces: string = argsWithPrefixToString(...args);
-  const embed: TempleEmbed = new TempleEmbed()
+  const usernameWithSpaces: string = argumentParser(args, 1, 'osrs');
+  const embed: Embed = new Embed()
     .setTitle('Clues')
     .addField('Username', `${usernameWithSpaces}`);
-  if (usernameWithSpaces in playerStats) {
-    const result = generateResult(
-      prefix,
-      embed,
-      playerStats[usernameWithSpaces]
-    );
+  if (usernameWithSpaces in osrsStats) {
+    const result = generateResult(prefix, embed, osrsStats[usernameWithSpaces]);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchTemple(msg, usernameWithSpaces);
+    const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
       const result = generateResult(
         prefix,
         embed,
-        playerStats[usernameWithSpaces]
+        osrsStats[usernameWithSpaces]
       );
       return msg.channel.send(result);
     } else return;
@@ -68,24 +56,40 @@ enum Clues {
 // Generates embed sent to user
 const generateResult = (
   prefix: string,
-  inputEmbed: TempleEmbed,
-  playerObject: PlayerStats
-): TempleEmbed => {
-  const embed: TempleEmbed = inputEmbed;
-  const player: PlayerStats = playerObject;
-  const lastChecked: { title: string; time: string } = templeDateParser(
-    player.info['Last checked']
-  );
-  embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
-  const clueType: number = clueTypeCheck(prefix, player);
-  embed.addField(`Clues ${prefix}`, `${clueType}`);
+  inputEmbed: Embed,
+  playerObject: OsrsPlayer
+): Embed => {
+  const embed: Embed = inputEmbed;
+  const player: OsrsPlayer = playerObject;
+  const clueType: {
+    rank: number;
+    score: number;
+  } = clueTypeCheck(prefix, player);
+  embed.addField(`Clues ${prefix}`, `${clueType.score}`);
   return embed;
 };
+
+const types: string[] = [
+  'all',
+  'beginner',
+  'easy',
+  'medium',
+  'hard',
+  'elite',
+  'master',
+];
+
 // Checks clue type
-const clueTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
+const clueTypeCheck = (
+  prefix: string,
+  playerObject: OsrsPlayer
+): {
+  rank: number;
+  score: number;
+} => {
   const type: string = prefix;
   const playerStats = playerObject;
-  let cluesDoneNumber: number;
+  let cluesDoneNumber;
   // else return 0;
   switch (type) {
     case 'all':
@@ -110,7 +114,10 @@ const clueTypeCheck = (prefix: string, playerObject: PlayerStats): number => {
       cluesDoneNumber = playerStats[Clues.MEDIUM];
       break;
     default:
-      cluesDoneNumber = 0;
+      cluesDoneNumber = {
+        rank: 0,
+        score: 0,
+      };
   }
   return cluesDoneNumber;
 };

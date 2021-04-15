@@ -13,9 +13,10 @@ import { playercountry } from './commands/templeosrs/playercountry';
 import { templefetch } from './commands/templeosrs/templefetch';
 import { datapoint } from './commands/templeosrs/datapoint';
 import { fetchrsn } from './commands/templeosrs/fetchrsn';
-import { clues } from './commands/templeosrs/clues';
-import { kc } from './commands/templeosrs/kc';
-import { lvl } from './commands/templeosrs/lvl';
+// OSRS
+import { clues } from './commands/osrs/clues';
+import { kc } from './commands/osrs/kc';
+import { lvl } from './commands/osrs/lvl';
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -70,6 +71,6 @@ export const commandHandler = (msg: Message) => {
   else {
     // args is anything after the command
     const args: string[] = content.slice(1);
-    commandList[command](msg, ...args);
+    commandList[command](msg, command, ...args);
   }
 };

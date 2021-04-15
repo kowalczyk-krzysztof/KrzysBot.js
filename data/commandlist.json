@@ -57,26 +57,28 @@
       "example": ".datapoint username",
       "category": "Temple OSRS",
       "aliases": []
-    },
+    }
+  },
+  "osrs": {
     "clues": {
       "name": "clues",
       "description": "Get clue stats for player",
       "example": ".clues tier username",
-      "category": "Temple OSRS",
+      "category": "OSRS",
       "aliases": []
     },
     "kc": {
       "name": "kc",
       "description": "Get boss kill stats for player",
       "example": ".kc boss username",
-      "category": "Temple OSRS",
+      "category": "OSRS",
       "aliases": []
     },
     "lvl": {
       "name": "lvl",
       "description": "Get skill lvl and experience points for player",
       "example": ".lvl skill username",
-      "category": "Temple OSRS",
+      "category": "OSRS",
       "aliases": []
     }
   }

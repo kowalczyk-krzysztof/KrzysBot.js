@@ -33,6 +33,7 @@ Obor: obor
 Sarachnis: sarachnis
 Scorpia: scorpia
 Skotizo: skotizo
+Tempoross: temp, tempoross
 The Gauntlet: gauntlet, hunllef
 Corrupted Gauntlet: corr_gauntlet, corr, corr_hunllef
 Theatre of Blood: tob, theatre

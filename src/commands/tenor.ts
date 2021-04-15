@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import dotenv from 'dotenv';
 import { Message } from 'discord.js';
-import { argsToString } from '../utils/argsToString';
+import { argumentParser } from '../utils/argumentParser';
 import { errorHandler } from '../utils/errorHandler';
 
 dotenv.config({ path: 'config.env' });
@@ -14,10 +14,11 @@ const filter: string = 'off';
 
 export const tenor = async (
   msg: Message,
+  commandName: string,
   ...args: string[]
 ): Promise<Message> => {
   if (args.length === 0) return msg.channel.send('Provide a keyword');
-  const keyword: string = argsToString(...args);
+  const keyword: string = argumentParser(args);
   const url: string = `https://api.tenor.com/v1/search?q=${keyword}&key=${key}&contentfilter=${filter}`;
   try {
     const res: AxiosResponse = await axios.get(`${url}`);
