@@ -28,7 +28,9 @@ export const isPrefixValid = (
     if (category === Categories.BOSS)
       msg.channel.send(`Invalid boss name. Valid boss names: <${BOSS_LIST}>`);
     if (category === Categories.SKILL)
-      msg.channel.send(`Invalid skill name. Valid boss names: <${SKILL_LIST}>`);
+      msg.channel.send(
+        `Invalid skill name. Valid skill names: <${SKILL_LIST}>`
+      );
     else
       msg.channel.send(
         `Invalid ${category} type. Valid types: **${typesList}**`
