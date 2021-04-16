@@ -23,7 +23,7 @@ Chaos Fanatic: fanatic, chaos fanatic
 
 Commander Zilyana: sara, saradomin, zilyana, zilly
 
-Corporeal Beast: corp
+Corporeal Beast: corp, corporeal beast
 
 Crazy Archeologist: crazy arch, crazy archeologist
 
@@ -35,9 +35,9 @@ Dagannoth Supreme: supreme, dagannoth supreme
 
 Deranged Archeologist: deranged, deranged arch, deranged archeologist
 
-General Graardor: graardor, bandos
+General Graardor: graardor, bandos, general graardor
 
-Giant Mole: mole
+Giant Mole: mole, giant mole
 
 Grotesque Guardians: guardians, gg, grotesque, dusk, noon
 
