@@ -32,8 +32,8 @@ export const kc = async (
   
   */
 
-  const firstArgument: string = args[0];
-  const twoArgumentsJoined: string = [args[0], args[1]].join('');
+  const firstArgument: string = args[0].toLowerCase();
+  const twoArgumentsJoined: string = [args[0], args[1]].join('').toLowerCase();
   let boss: string;
   let user: string[];
   const firstCheck: string[] = bosses.filter((e: string) => {
@@ -43,6 +43,7 @@ export const kc = async (
     const secondCheck = bosses.filter((e: string) => {
       return e.includes(twoArgumentsJoined);
     });
+    // This is for edge cases like ".kc deranged archeologist"
     if (secondCheck.length > 0 && args.length === 2) {
       boss = firstArgument;
       user = args.slice(1);
