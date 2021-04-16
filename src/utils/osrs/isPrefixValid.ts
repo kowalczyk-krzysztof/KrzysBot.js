@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: 'config.env' });
 
-const BOSS_LIST = process.env.OSRS_BOSS_LIST;
+export const BOSS_LIST = process.env.OSRS_BOSS_LIST;
 const SKILL_LIST = process.env.OSRS_SKILL_LIST;
 
 export enum Categories {

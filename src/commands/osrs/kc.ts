@@ -11,40 +11,69 @@ import {
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
 import { argumentParser, ParserTypes } from '../../utils/argumentParser';
-import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
+import { BOSS_LIST } from '../../utils/osrs/isPrefixValid';
+
 export const kc = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(
-    msg,
-    args,
-    bosses,
-    Categories.BOSS
-  );
-  if (prefix === null) return;
+  /*First check if boss list includes first arg, if false return error. If true, check if it includes first and second argument joined as a string, if false then boss = first argument and user = args without first argument. If true then boss = argument one and two joined and user = args without both arguments. There is also a check for edge cases like ".kc corrupted gauntlet". Both checks pass but there is no third argument. In such case I assume the result user is looking for is ".kc corrupted gauntlet gauntlet", so basically gauntlet is player's name.  
+  
+  Example1: .kc zulrah player one
+  First check will pass (zulrah is valid boss) then second check (zulrayplayer) will fail and boss will be = zulrah
+  
+  Example2: .kc cox cm player one
+  First check will pass (cox is valid boss) then second check (coxcm) will pass and boss will be = coxm
+
+  Example3: .kc dagannoth supreme player one
+  First check will pass coz there are three bosses with dagannoth in their name. Then second check will pass because dagannothsupreme is a valid boss. Boss will be = dagannothsupreme
+  
+  */
+
+  const firstArgument: string = args[0];
+  const twoArgumentsJoined: string = [args[0], args[1]].join('');
+  let boss: string;
+  let user: string[];
+  const firstCheck: string[] = bosses.filter((e: string) => {
+    return e.includes(firstArgument);
+  });
+  if (firstCheck.length > 0) {
+    const secondCheck = bosses.filter((e: string) => {
+      return e.includes(twoArgumentsJoined);
+    });
+    if (secondCheck.length > 0 && args.length === 2) {
+      boss = firstArgument;
+      user = args.slice(1);
+    } else if (secondCheck.length > 0) {
+      boss = twoArgumentsJoined;
+      user = args.slice(2);
+    } else {
+      boss = firstArgument;
+      user = args.slice(1);
+    }
+  } else {
+    return msg.channel.send(
+      `Invalid boss name. Valid boss names: <${BOSS_LIST}>`
+    );
+  }
+
   const cooldown: number = 30;
   if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
-  const usernameWithoutSpaces: string[] = args.slice(1);
-  const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
+  const nameCheck: boolean = runescapeNameValidator(user);
   if (nameCheck === false) return msg.channel.send(invalidUsername);
-  const usernameWithSpaces: string = argumentParser(args, 1, ParserTypes.OSRS);
+  const usernameWithSpaces: string = argumentParser(user, 0, ParserTypes.OSRS);
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.KC)
     .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
-    const result = generateResult(prefix, embed, osrsStats[usernameWithSpaces]);
+    const result = generateResult(boss, embed, osrsStats[usernameWithSpaces]);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
-      const result = generateResult(
-        prefix,
-        embed,
-        osrsStats[usernameWithSpaces]
-      );
+      const result = generateResult(boss, embed, osrsStats[usernameWithSpaces]);
       return msg.channel.send(result);
     } else return;
   }
@@ -81,7 +110,7 @@ const bossTypeCheck = (
   let bossName: string;
 
   switch (type) {
-    case 'abyssal_sire':
+    case 'abyssalsire':
       bossKc = playerStats[Bosses.SIRE];
       bossName = Bosses.SIRE;
       break;
@@ -89,7 +118,7 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.SIRE];
       bossName = Bosses.SIRE;
       break;
-    case 'alchemical_hydra':
+    case 'alchemicalhydra':
       bossKc = playerStats[Bosses.HYDRA];
       bossName = Bosses.HYDRA;
       break;
@@ -137,15 +166,19 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.COXCM];
       bossName = Bosses.COXCM;
       break;
+    case 'challengemode':
+      bossKc = playerStats[Bosses.COXCM];
+      bossName = Bosses.COXCM;
+      break;
     case 'ele':
       bossKc = playerStats[Bosses.CHAOS_ELE];
       bossName = Bosses.CHAOS_ELE;
       break;
-    case 'chaos_ele':
+    case 'chaosele':
       bossKc = playerStats[Bosses.CHAOS_ELE];
       bossName = Bosses.CHAOS_ELE;
       break;
-    case 'chaos_elemental':
+    case 'chaoselemental':
       bossKc = playerStats[Bosses.CHAOS_ELE];
       bossName = Bosses.CHAOS_ELE;
       break;
@@ -153,7 +186,11 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.CHAOS_FANATIC];
       bossName = Bosses.CHAOS_FANATIC;
       break;
-    case 'chaos_fanatic':
+    case 'chaosfanatic':
+      bossKc = playerStats[Bosses.CHAOS_FANATIC];
+      bossName = Bosses.CHAOS_FANATIC;
+      break;
+    case 'fanatic':
       bossKc = playerStats[Bosses.CHAOS_FANATIC];
       bossName = Bosses.CHAOS_FANATIC;
       break;
@@ -177,7 +214,11 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.CORP];
       bossName = Bosses.CORP;
       break;
-    case 'crazy_arch':
+    case 'crazyarch':
+      bossKc = playerStats[Bosses.CRAZY_ARCH];
+      bossName = Bosses.CRAZY_ARCH;
+      break;
+    case 'crazyarcheologist':
       bossKc = playerStats[Bosses.CRAZY_ARCH];
       bossName = Bosses.CRAZY_ARCH;
       break;
@@ -185,7 +226,7 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.PRIME];
       bossName = Bosses.PRIME;
       break;
-    case 'dagannoth_prime':
+    case 'dagannothprime':
       bossKc = playerStats[Bosses.PRIME];
       bossName = Bosses.PRIME;
       break;
@@ -193,7 +234,7 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.REX];
       bossName = Bosses.REX;
       break;
-    case 'dagannoth_rex':
+    case 'dagannothrex':
       bossKc = playerStats[Bosses.REX];
       bossName = Bosses.REX;
       break;
@@ -201,15 +242,19 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.SUPREME];
       bossName = Bosses.SUPREME;
       break;
-    case 'dagannoth_supreme':
+    case 'dagannothsupreme':
       bossKc = playerStats[Bosses.SUPREME];
       bossName = Bosses.SUPREME;
       break;
-    case 'deranged_arch':
+    case 'derangedarch':
       bossKc = playerStats[Bosses.DER_ARCH];
       bossName = Bosses.DER_ARCH;
       break;
-    case 'deranged_archeologist':
+    case 'derangedarcheologist':
+      bossKc = playerStats[Bosses.DER_ARCH];
+      bossName = Bosses.DER_ARCH;
+      break;
+    case 'deranged':
       bossKc = playerStats[Bosses.DER_ARCH];
       bossName = Bosses.DER_ARCH;
       break;
@@ -257,6 +302,10 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.KQ];
       bossName = Bosses.KQ;
       break;
+    case 'kalphitequeen':
+      bossKc = playerStats[Bosses.KQ];
+      bossName = Bosses.KQ;
+      break;
     case 'kbd':
       bossKc = playerStats[Bosses.KBD];
       bossName = Bosses.KBD;
@@ -301,7 +350,7 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.KRIL];
       bossName = Bosses.KRIL;
       break;
-    case 'kril_tsutsaroth':
+    case 'kriltsutsaroth':
       bossKc = playerStats[Bosses.KRIL];
       bossName = Bosses.KRIL;
       break;
@@ -345,11 +394,11 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.GAUNTLET];
       bossName = Bosses.GAUNTLET;
       break;
-    case 'corr_gauntlet':
+    case 'corrgauntlet':
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
-    case 'corrupted_gauntlet':
+    case 'corruptedgauntlet':
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
@@ -361,7 +410,7 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
-    case 'corr_hunllef':
+    case 'corrhunllef':
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
@@ -393,7 +442,7 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.JAD];
       bossName = Bosses.JAD;
       break;
-    case 'fight_caves':
+    case 'fightcaves':
       bossKc = playerStats[Bosses.JAD];
       bossName = Bosses.JAD;
       break;
@@ -500,9 +549,9 @@ enum Bosses {
 }
 
 const bosses: string[] = [
-  'abyssal_sire',
+  'abyssalsire',
   'sire',
-  'alchemical_hydra',
+  'alchemicalhydra',
   'hydra',
   'barrows',
   'bryo',
@@ -515,24 +564,28 @@ const bosses: string[] = [
   'cm',
   'coxcm',
   'ele',
-  'chaos_ele',
-  'chaos_elemental',
+  'chaosele',
+  'chaoselemental',
   'fanatic',
-  'chaos_fanatic',
+  'chaosfanatic',
+  'fanatic',
   'sara',
   'saradomin',
   'zilyana',
   'zilly',
   'corp',
-  'crazy_arch',
+  'crazyarch',
+  'crazyarcheologist',
   'prime',
-  'dagannoth_prime',
+  'dagannothprime',
   'rex',
-  'dagannoth_rex',
+  'dagannothrex',
+  'challengemode',
   'supreme',
-  'dagannoth_supreme',
-  'deranged_archeologist',
-  'deranged_arch',
+  'dagannothsupreme',
+  'derangedarcheologist',
+  'derangedarch',
+  'deranged',
   'graardor',
   'bandos',
   'mole',
@@ -544,6 +597,7 @@ const bosses: string[] = [
   'hespori',
   'kq',
   'kalphite',
+  'kalphitequeen',
   'kbd',
   'kraken',
   'kree',
@@ -555,7 +609,7 @@ const bosses: string[] = [
   'kril',
   'zammy',
   'zamorak',
-  'kril_tsutsaroth',
+  'kriltsutsaroth',
   'mimic',
   'nightmare',
   'obor',
@@ -566,11 +620,11 @@ const bosses: string[] = [
   'temp',
   'gauntlet',
   'hunllef',
-  'corr_gauntlet',
-  'corrupted_gauntlet',
+  'corrgauntlet',
+  'corruptedgauntlet',
   'corr',
   'corrupted',
-  'corr_hunllef',
+  'corrhunllef',
   'tob',
   'theatre',
   'thermy',
@@ -578,7 +632,7 @@ const bosses: string[] = [
   'zuk',
   'inferno',
   'jad',
-  'fight_caves',
+  'fightcaves',
   'vene',
   'venenatis',
   'vetion',

@@ -22,6 +22,7 @@ import { lms } from './commands/osrs/lms';
 import { bh } from './commands/osrs/bh';
 import { soulwars } from './commands/osrs/soulwars';
 import { leaguepoints } from './commands/osrs/leaguepoints';
+
 // Dotenv config
 dotenv.config({ path: 'config.env' });
 // Command prefix
