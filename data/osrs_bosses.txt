@@ -9,7 +9,7 @@ Callisto: callisto
 Cerberus: cerb, cerberus
 Chambers of Xeric: cox, chambers
 Chambers of Xeric Challnge Mode: coxcm
-Chaos Elemental: ele, chaos_ele
+Chaos Elemental: ele, chaos_ele, chaos_elemental
 Chaos Fanatic: chaos_fanatic
 Commander Zilyana: sara, saradomin, zilyana, zilly
 Corporeal Beast: corp
@@ -17,7 +17,7 @@ Crazy Archeologist: crazy_arch
 Dagannoth Prime: prime, dagannoth_prime
 Dagannoth Rex: rex, dagannoth_rex
 Dagannoth Supreme: supreme, dagannoth_supreme
-Deranged Archeologist: deranged_arch
+Deranged Archeologist: deranged_arch, deranged_archeologist
 General Graardor: graardor, bandos
 Giant Mole: mole
 Grotesque Guardians: guardians, gg, grotesque, dusk, noon
@@ -35,7 +35,7 @@ Scorpia: scorpia
 Skotizo: skotizo
 Tempoross: temp, tempoross
 The Gauntlet: gauntlet, hunllef
-Corrupted Gauntlet: corr_gauntlet, corr, corr_hunllef
+Corrupted Gauntlet: corr_gauntlet, corr, corr_hunllef, corrupted_gauntlet
 Theatre of Blood: tob, theatre
 Thermonuclear Smokedevil: thermonuclear, thermy
 TzKal-Zuk: zuk, inferno

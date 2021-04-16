@@ -86,7 +86,9 @@ const setPlayerNames = (username: string, data: PlayerNames) => {
 export const fetchTemple = async (msg: Message, playerName: string) => {
   const keyword = playerName;
   try {
-    const res: AxiosResponse = await axios.get(`${TEMPLE_LINK}${keyword}`);
+    const res: AxiosResponse = await axios.get(
+      `${TEMPLE_LINK}${keyword}&bosses=1`
+    );
     if (res.data.error) {
       if (res.data.error.Code === 402) {
         const embed: Embed = new Embed();

@@ -339,7 +339,7 @@ export enum Skills {
   CON = 'Construction',
 }
 
-const skillList: string[] = [
+export const skillList: string[] = [
   'total',
   'overall',
   'attack',

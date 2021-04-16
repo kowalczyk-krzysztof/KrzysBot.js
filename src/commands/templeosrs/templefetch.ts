@@ -4,7 +4,7 @@ import {
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
 import { argumentParser, ParserTypes } from '../../utils/argumentParser';
-import { fetchTemple } from '../../cache/templeCache';
+import { fetchTemple, playerStats } from '../../cache/templeCache';
 import { isOnCooldown } from '../../cache/cooldown';
 import { Embed } from '../../utils/embed';
 import { errorHandler } from '../../utils/errorHandler';
@@ -21,11 +21,11 @@ export const templefetch = async (
   if (isOnCooldown(msg, commandName, cooldown, true, args) === true) return;
   else {
     const isPlayerFetched = await fetchTemple(msg, keyword);
-
     if (isPlayerFetched === true) {
+      const username: string = playerStats[keyword].info.Username;
       const embed: Embed = new Embed();
       embed.setDescription(
-        `Fetched latest data available for player:\`\`\`${keyword}\`\`\`To get more recent data - add a new datapoint and fetch again`
+        `Fetched latest data available for player:\`\`\`${username}\`\`\`To get more recent data - add a new datapoint and fetch again`
       );
       return msg.channel.send(embed);
     } else return errorHandler(null, msg);

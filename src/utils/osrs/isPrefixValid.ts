@@ -11,6 +11,7 @@ export enum Categories {
   SKILL = 'skill',
   CLUES = 'clues',
   BH = 'bh',
+  GAINS = 'gains',
 }
 
 export const isPrefixValid = (
@@ -22,21 +23,27 @@ export const isPrefixValid = (
   const category = inputCategory;
   const types = inputTypes;
   const typesList = types.join(', ');
+  const parsedArgument = inputArgument[0]
+    .replace(/\n/g, '')
+    .toLowerCase()
+    .trim();
+
   if (inputArgument.length === 0) {
     msg.channel.send(`Invalid ${category} type. Valid types: **${typesList}**`);
     return null;
-  } else if (!types.includes(inputArgument[0].toLowerCase().trim())) {
-    if (category === Categories.BOSS)
+  } else if (!types.includes(parsedArgument)) {
+    if (category === Categories.BOSS) {
       msg.channel.send(`Invalid boss name. Valid boss names: <${BOSS_LIST}>`);
-    if (category === Categories.SKILL)
+    } else if (category === Categories.SKILL)
       msg.channel.send(
         `Invalid skill name. Valid skill names: <${SKILL_LIST}>`
       );
-    else
+    else {
       msg.channel.send(
         `Invalid ${category} type. Valid types: **${typesList}**`
       );
+    }
 
     return null;
-  } else return inputArgument[0].toLowerCase().trim();
+  } else return parsedArgument;
 };
