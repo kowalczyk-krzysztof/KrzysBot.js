@@ -10,78 +10,100 @@ import {
   runescapeNameValidator,
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { isOnCooldown } from '../../cache/cooldown';
-import { BOSS_LIST } from '../../utils/osrs/isPrefixValid';
+import {
+  BOSS_LIST,
+  isPrefixValid,
+  Categories,
+} from '../../utils/osrs/isPrefixValid';
 
 export const kc = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  /*First check if boss list includes first arg, if false return error. If true, check if it includes first and second argument joined as a string, if false then boss = first argument and user = args without first argument. If true then boss = argument one and two joined and user = args without both arguments. There is also a check for edge cases like ".kc corrupted gauntlet". Both checks pass but there is no third argument. In such case I assume the result user is looking for is ".kc corrupted gauntlet gauntlet", so basically gauntlet is player's name.  
+  /* 
+  Boss list is an array of lowercase joined boss name e.g "abyssalsire". 
+  User input is a string array e.g ["abyssal", "sire", "zezima"]
   
-  Example1: .kc zulrah player one
-  First check will pass (zulrah is valid boss) then second check (zulrayplayer) will fail and boss will be = zulrah
-  
-  Example2: .kc cox cm player one
-  First check will pass (cox is valid boss) then second check (coxcm) will pass and boss will be = coxm
+  First check if there is any input (args.length === 0). If not return error (msg). Then check special cases (3 argument boss name eg. theatre of blood). Then filter boss list and check if args[0] (string) is included in any element (string). If true then check if [args[0], args[1]].join('') (string, exact match) is included in any boss array element. If this check passes, then boss = [args[0], args[1]].join(''), else boss = args[0]. Then do another exact match check to eliminate cases like ".kc dagannoth" which pass the checks but are not valid bosses.
 
-  Example3: .kc dagannoth supreme player one
-  First check will pass coz there are three bosses with dagannoth in their name. Then second check will pass because dagannothsupreme is a valid boss. Boss will be = dagannothsupreme
-  
+  User to search for is args.slice(<length of args that are the boss name>)
   */
-
-  const firstArgument: string = args[0].toLowerCase();
-  const twoArgumentsJoined: string = [args[0], args[1]].join('').toLowerCase();
-  let boss: string;
-  let user: string[];
-  const firstCheck: string[] = bosses.filter((e: string) => {
-    return e.includes(firstArgument);
-  });
-  if (firstCheck.length > 0) {
-    const secondCheck = bosses.filter((e: string) => {
-      return e.includes(twoArgumentsJoined);
-    });
-    // This is for edge cases like ".kc deranged archeologist"
-    if (secondCheck.length > 0 && args.length === 2) {
-      boss = firstArgument;
-      user = args.slice(1);
-    } else if (secondCheck.length > 0) {
-      boss = twoArgumentsJoined;
-      user = args.slice(2);
-    } else {
-      boss = firstArgument;
-      user = args.slice(1);
-    }
-  } else {
+  if (args.length === 0)
     return msg.channel.send(
       `Invalid boss name. Valid boss names: <${BOSS_LIST}>`
     );
+  const firstArgument: string = args[0].toLowerCase();
+  const twoArgumentsJoined: string = [args[0], args[1]].join('').toLowerCase();
+  const specialCase: string = [args[0], args[1], args[2]]
+    .join('')
+    .toLowerCase();
+
+  let boss: string;
+  let user: string[];
+
+  if (
+    specialCase === 'chambersofxeric' ||
+    specialCase === 'theatreofblood' ||
+    specialCase === 'kingblackdragon' ||
+    specialCase === 'thermonuclearsmokedevil'
+  ) {
+    boss = specialCase;
+    user = args.slice(3);
+  } else {
+    const firstCheck: string[] = bosses.filter((e: string) => {
+      return e.includes(firstArgument);
+    });
+    if (firstCheck.length > 0) {
+      const secondCheck = bosses.filter((e: string) => {
+        return e.includes(twoArgumentsJoined);
+      });
+      // This is for edge cases like ".kc deranged archeologist"
+      if (secondCheck.length > 0 && args.length === 2) {
+        boss = firstArgument;
+        user = args.slice(1);
+      } else if (secondCheck.length > 0) {
+        boss = twoArgumentsJoined;
+        user = args.slice(2);
+      } else {
+        boss = firstArgument;
+        user = args.slice(1);
+      }
+    } else {
+      return msg.channel.send(
+        `Invalid boss name. Valid boss names: <${BOSS_LIST}>`
+      );
+    }
   }
+  const bossToArray: string[] = [boss];
+  const finalCheck: string | null = isPrefixValid(
+    msg,
+    bossToArray,
+    bosses,
+    Categories.BOSS
+  );
+  if (finalCheck === null) return;
+  else boss = finalCheck;
 
   const cooldown: number = 30;
   if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
-  const nameCheck: boolean = runescapeNameValidator(user);
-  if (nameCheck === false) return msg.channel.send(invalidUsername);
-  const usernameWithSpaces: string = argumentParser(user, 0, ParserTypes.OSRS);
+  const nameCheck: string | null = runescapeNameValidator(user);
+  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const username: string = nameCheck;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.KC)
-    .addField(usernameString, `${usernameWithSpaces}`);
-  if (usernameWithSpaces in osrsStats) {
-    const result: OsrsEmbed = generateResult(
-      boss,
-      embed,
-      osrsStats[usernameWithSpaces]
-    );
+    .addField(usernameString, `${username}`);
+  if (username in osrsStats) {
+    const result: OsrsEmbed = generateResult(boss, embed, osrsStats[username]);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
+    const isFetched: boolean = await fetchOsrsStats(msg, username);
     if (isFetched === true) {
       const result: OsrsEmbed = generateResult(
         boss,
         embed,
-        osrsStats[usernameWithSpaces]
+        osrsStats[username]
       );
       return msg.channel.send(result);
     } else return;
@@ -158,6 +180,10 @@ const bossTypeCheck = (
     case 'cerb':
       bossKc = playerStats[Bosses.CERBERUS];
       bossName = Bosses.CERBERUS;
+      break;
+    case 'chambersofxeric':
+      bossKc = playerStats[Bosses.COX];
+      bossName = Bosses.COX;
       break;
     case 'cox':
       bossKc = playerStats[Bosses.COX];
@@ -319,6 +345,10 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.KBD];
       bossName = Bosses.KBD;
       break;
+    case 'kingblackdragon':
+      bossKc = playerStats[Bosses.KBD];
+      bossName = Bosses.KBD;
+      break;
     case 'kraken':
       bossKc = playerStats[Bosses.KRAKEN];
       bossName = Bosses.KRAKEN;
@@ -431,7 +461,15 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.TOB];
       bossName = Bosses.TOB;
       break;
+    case 'theatreofblood':
+      bossKc = playerStats[Bosses.TOB];
+      bossName = Bosses.TOB;
+      break;
     case 'thermy':
+      bossKc = playerStats[Bosses.THERMY];
+      bossName = Bosses.THERMY;
+      break;
+    case 'thermonuclearsmokedevil':
       bossKc = playerStats[Bosses.THERMY];
       bossName = Bosses.THERMY;
       break;
@@ -569,6 +607,7 @@ const bosses: string[] = [
   'cerberus',
   'cerb',
   'cox',
+  'chambersofxeric',
   'chambers',
   'cm',
   'coxcm',
@@ -608,6 +647,7 @@ const bosses: string[] = [
   'kalphite',
   'kalphitequeen',
   'kbd',
+  'kingblackdragon',
   'kraken',
   'kree',
   `kree'arra`,
@@ -636,8 +676,10 @@ const bosses: string[] = [
   'corrhunllef',
   'tob',
   'theatre',
+  'theatreofblood',
   'thermy',
   'thermonuclear',
+  'thermonuclearsmokedevil',
   'zuk',
   'inferno',
   'jad',

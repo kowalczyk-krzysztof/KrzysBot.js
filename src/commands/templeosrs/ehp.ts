@@ -3,7 +3,6 @@ import {
   runescapeNameValidator,
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { TempleEmbed, usernameString } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
@@ -19,16 +18,19 @@ export const ehp = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const nameCheck: boolean = runescapeNameValidator(args);
-  if (nameCheck === false) return msg.channel.send(invalidUsername);
-  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
-  if (keyword in playerStats) {
-    const result: TempleEmbed = generateResult(playerStats[keyword], keyword);
+  const nameCheck: string | null = runescapeNameValidator(args);
+  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const username: string = nameCheck;
+  if (username in playerStats) {
+    const result: TempleEmbed = generateResult(playerStats[username], username);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchTemple(msg, keyword);
+    const isFetched: boolean = await fetchTemple(msg, username);
     if (isFetched === true) {
-      const result: TempleEmbed = generateResult(playerStats[keyword], keyword);
+      const result: TempleEmbed = generateResult(
+        playerStats[username],
+        username
+      );
       return msg.channel.send(result);
     } else return;
   }

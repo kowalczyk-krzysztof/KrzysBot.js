@@ -27,7 +27,6 @@ export const isPrefixValid = (
     .replace(/\n/g, '')
     .toLowerCase()
     .trim();
-
   if (inputArgument.length === 0) {
     msg.channel.send(`Invalid ${category} type. Valid types: **${typesList}**`);
     return null;

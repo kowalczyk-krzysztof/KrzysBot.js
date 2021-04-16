@@ -13,7 +13,7 @@ Callisto: callisto
 
 Cerberus: cerb, cerberus
 
-Chambers of Xeric: cox, chambers
+Chambers of Xeric: cox, chambers, chambers of xeric
 
 Chambers of Xeric Challnge Mode: cm, cox cm, challenge mode
 
@@ -45,7 +45,7 @@ Hespori: hespori
 
 Kalphite Queen: kq, kalphite, kalphite queen
 
-King Black Dragon: kbd
+King Black Dragon: kbd, king black dragon
 
 Kraken: kraken
 
@@ -71,9 +71,9 @@ The Gauntlet: gauntlet, hunllef
 
 Corrupted Gauntlet: corr gauntlet, corr, corr hunllef, corrupted gauntlet
 
-Theatre of Blood: tob, theatre
+Theatre of Blood: tob, theatre, theatre of blood 
 
-Thermonuclear Smokedevil: thermonuclear, thermy
+Thermonuclear Smokedevil: thermonuclear, thermy, thermonuclear smoke devil
 
 TzKal-Zuk: zuk, inferno
 
