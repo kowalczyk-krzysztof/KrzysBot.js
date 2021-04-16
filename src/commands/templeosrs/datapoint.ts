@@ -1,7 +1,6 @@
 import { Message } from 'discord.js';
 import axios, { AxiosResponse } from 'axios';
 import dotenv from 'dotenv';
-import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -18,14 +17,14 @@ export const datapoint = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const cooldown: number = 1800;
-  const nameCheck: boolean = runescapeNameValidator(args);
-  if (nameCheck === false) return msg.channel.send(invalidUsername);
-  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
+  const nameCheck: string | null = runescapeNameValidator(args);
+  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, true, args) == true) return;
   else {
     try {
       const res: AxiosResponse = await axios.get(
-        `${process.env.TEMPLE_DATA_POINT}${keyword}`
+        `${process.env.TEMPLE_DATA_POINT}${username}`
       );
 
       if (res.status === 200) {
@@ -37,16 +36,18 @@ export const datapoint = async (
           '<p style="text-align: center; color: black;"> User has already been updated in the last 60 seconds. </p>';
         if (data.includes(notOnHiscores)) {
           embed.setDescription(
-            `Player **${keyword}** was not found on hiscores`
+            `Player **${username}** was not found on hiscores`
           );
           return msg.channel.send(embed);
         } else if (data.includes(recentlyUpdated)) {
           embed.setDescription(
-            `Player **${keyword}** has already been updated in the last 60 seconds`
+            `Player **${username}** has already been updated in the last 60 seconds`
           );
           return msg.channel.send(embed);
         } else {
-          embed.setDescription(`Updated datapoints for player: **${keyword}**`);
+          embed.setDescription(
+            `Updated datapoints for player: **${username}**`
+          );
           return msg.channel.send(embed);
         }
       } else return errorHandler(null, msg);

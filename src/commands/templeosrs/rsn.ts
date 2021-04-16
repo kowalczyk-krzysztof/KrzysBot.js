@@ -3,7 +3,6 @@ import {
   runescapeNameValidator,
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { Embed } from '../../utils/embed';
 import {
   playerNames,
@@ -16,19 +15,19 @@ export const rsn = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const nameCheck: boolean = runescapeNameValidator(args);
-  if (nameCheck === false) return msg.channel.send(invalidUsername);
-  const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
+  const nameCheck: string | null = runescapeNameValidator(args);
+  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const username: string = nameCheck;
   const embed: Embed = new Embed().setFooter(
     'Incorrect? Fetch latest names:\n.fetchrsn username'
   );
-  if (keyword in playerNames) {
-    const result: Embed = generateResult(embed, playerNames[keyword]);
+  if (username in playerNames) {
+    const result: Embed = generateResult(embed, playerNames[username]);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchPlayerNames(msg, keyword);
+    const isFetched: boolean = await fetchPlayerNames(msg, username);
     if (isFetched === true) {
-      const result: Embed = generateResult(embed, playerNames[keyword]);
+      const result: Embed = generateResult(embed, playerNames[username]);
       return msg.channel.send(result);
     } else return;
   }

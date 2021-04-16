@@ -5,7 +5,6 @@ import {
   runescapeNameValidator,
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
-import { argumentParser, ParserTypes } from '../../utils/argumentParser';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
 
@@ -23,27 +22,27 @@ export const bh = async (
   if (prefix === null) return;
   const cooldown: number = 30;
   if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
-  const usernameWithoutSpaces: string[] = args.slice(1);
-  const nameCheck: boolean = runescapeNameValidator(usernameWithoutSpaces);
-  if (nameCheck === false) return msg.channel.send(invalidUsername);
-  const usernameWithSpaces: string = argumentParser(args, 1, ParserTypes.OSRS);
+  const user: string[] = args.slice(1);
+  const nameCheck: string | null = runescapeNameValidator(user);
+  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const username: string = nameCheck;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.BH)
-    .addField(usernameString, `${usernameWithSpaces}`);
-  if (usernameWithSpaces in osrsStats) {
+    .addField(usernameString, `${username}`);
+  if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(
       prefix,
       embed,
-      osrsStats[usernameWithSpaces]
+      osrsStats[username]
     );
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
+    const isFetched: boolean = await fetchOsrsStats(msg, username);
     if (isFetched === true) {
       const result: OsrsEmbed = generateResult(
         prefix,
         embed,
-        osrsStats[usernameWithSpaces]
+        osrsStats[username]
       );
       return msg.channel.send(result);
     } else return;
