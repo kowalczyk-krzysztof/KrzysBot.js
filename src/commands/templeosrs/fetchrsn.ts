@@ -19,7 +19,7 @@ export const fetchrsn = async (
   const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (isOnCooldown(msg, commandName, cooldown, true, args) === true) return;
   else {
-    const areNamesFetched = await fetchPlayerNames(msg, keyword);
+    const areNamesFetched: boolean = await fetchPlayerNames(msg, keyword);
     if (areNamesFetched === true) {
       // This is the latest name
       const username: string = playerNames[keyword].history[0].name;

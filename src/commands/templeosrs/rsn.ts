@@ -23,12 +23,12 @@ export const rsn = async (
     'Incorrect? Fetch latest names:\n.fetchrsn username'
   );
   if (keyword in playerNames) {
-    const result = generateResult(embed, playerNames[keyword]);
+    const result: Embed = generateResult(embed, playerNames[keyword]);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchPlayerNames(msg, keyword);
     if (isFetched === true) {
-      const result = generateResult(embed, playerNames[keyword]);
+      const result: Embed = generateResult(embed, playerNames[keyword]);
       return msg.channel.send(result);
     } else return;
   }
@@ -41,11 +41,11 @@ const generateResult = (
 ): Embed => {
   const embed: Embed = inputEmbed;
   const aliases = playerObject.aliases;
-  const names = [];
+  const names: string[] = [];
   for (const alias in aliases) {
     names.push(alias);
   }
-  const data = names.join('\n');
+  const data: string = names.join('\n');
   embed.addField('Names', `${data}`);
   return embed;
 };

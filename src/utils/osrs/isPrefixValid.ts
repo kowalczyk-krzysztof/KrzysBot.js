@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: 'config.env' });
 
-export const BOSS_LIST = process.env.OSRS_BOSS_LIST;
-const SKILL_LIST = process.env.OSRS_SKILL_LIST;
+export const BOSS_LIST: string = process.env.OSRS_BOSS_LIST as string;
+const SKILL_LIST: string = process.env.OSRS_SKILL_LIST as string;
 
 export enum Categories {
   BOSS = 'boss',
@@ -20,10 +20,10 @@ export const isPrefixValid = (
   inputTypes: string[],
   inputCategory: Categories
 ): string | null => {
-  const category = inputCategory;
-  const types = inputTypes;
-  const typesList = types.join(', ');
-  const parsedArgument = inputArgument[0]
+  const category: Categories = inputCategory;
+  const types: string[] = inputTypes;
+  const typesList: string = types.join(', ');
+  const parsedArgument: string = inputArgument[0]
     .replace(/\n/g, '')
     .toLowerCase()
     .trim();

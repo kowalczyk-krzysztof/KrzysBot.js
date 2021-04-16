@@ -18,12 +18,12 @@ export const ehb = async (
   if (nameCheck === false) return msg.channel.send(invalidUsername);
   const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (keyword in playerStats) {
-    const result = generateResult(playerStats[keyword], keyword);
+    const result: TempleEmbed = generateResult(playerStats[keyword], keyword);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
-      const result = generateResult(playerStats[keyword], keyword);
+      const result: TempleEmbed = generateResult(playerStats[keyword], keyword);
       return msg.channel.send(result);
     } else return;
   }

@@ -36,12 +36,16 @@ export const clues = async (
     .setTitle(OsrsEmbedTitles.CLUES)
     .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
-    const result = generateResult(prefix, embed, osrsStats[usernameWithSpaces]);
+    const result: OsrsEmbed = generateResult(
+      prefix,
+      embed,
+      osrsStats[usernameWithSpaces]
+    );
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
-      const result = generateResult(
+      const result: OsrsEmbed = generateResult(
         prefix,
         embed,
         osrsStats[usernameWithSpaces]
@@ -91,9 +95,8 @@ const clueTypeCheck = (
   playerObject: OsrsPlayer
 ): BossOrMinigame => {
   const type: string = prefix;
-  const playerStats = playerObject;
-  let cluesDoneNumber;
-  // else return 0;
+  const playerStats: OsrsPlayer = playerObject;
+  let cluesDoneNumber: BossOrMinigame;
   switch (type) {
     case 'all':
       cluesDoneNumber = playerStats[Clues.ALL];

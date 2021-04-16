@@ -36,7 +36,7 @@ export const lvl = async (
     .setTitle(OsrsEmbedTitles.LVL)
     .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
-    const result = await generateResult(
+    const result: OsrsEmbed = await generateResult(
       prefix,
       embed,
       osrsStats[usernameWithSpaces]
@@ -45,7 +45,7 @@ export const lvl = async (
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
-      const result = await generateResult(
+      const result: OsrsEmbed = await generateResult(
         prefix,
         embed,
         osrsStats[usernameWithSpaces]
@@ -69,8 +69,8 @@ const generateResult = (
     skillExp: OsrsSkill;
   } = skillTypeCheck(prefix, player);
   // Intl is how I format number to have commas
-  const formatter = new Intl.NumberFormat('en-US');
-  let formattedExp;
+  const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
+  let formattedExp: Intl.NumberFormat | string;
   if (typeof skill.skillExp.exp === 'number')
     formattedExp = formatter.format(skill.skillExp.exp);
   else formattedExp = skill.skillExp.exp;
@@ -88,7 +88,7 @@ const skillTypeCheck = (
   skillExp: OsrsSkill;
 } => {
   const type: string = prefix;
-  const playerStats = playerObject;
+  const playerStats: OsrsPlayer = playerObject;
   let skillExp: OsrsSkill;
   let skillName: string;
   switch (type) {

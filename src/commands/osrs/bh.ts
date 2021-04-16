@@ -31,12 +31,16 @@ export const bh = async (
     .setTitle(OsrsEmbedTitles.BH)
     .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
-    const result = generateResult(prefix, embed, osrsStats[usernameWithSpaces]);
+    const result: OsrsEmbed = generateResult(
+      prefix,
+      embed,
+      osrsStats[usernameWithSpaces]
+    );
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
-      const result = generateResult(
+      const result: OsrsEmbed = generateResult(
         prefix,
         embed,
         osrsStats[usernameWithSpaces]

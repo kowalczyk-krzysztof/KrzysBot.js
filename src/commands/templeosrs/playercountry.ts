@@ -16,12 +16,12 @@ export const playercountry = async (
   if (nameCheck === false) return msg.channel.send(invalidUsername);
   const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (keyword in playerStats) {
-    const result = generateResult(playerStats[keyword]);
+    const result: TempleEmbed = generateResult(playerStats[keyword]);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
-      const result = generateResult(playerStats[keyword]);
+      const result: TempleEmbed = generateResult(playerStats[keyword]);
       return msg.channel.send(result);
     } else return;
   }
@@ -33,7 +33,7 @@ const generateResult = (playerObject: PlayerStats): TempleEmbed => {
     usernameString,
     `${playerObject.info.Username}`
   );
-  const data = playerObject.info.Country;
+  const data: string = playerObject.info.Country;
   if (data === '-') embed.addField('Country', 'No Info');
   else embed.addField('Country', `${data}`);
   return embed;

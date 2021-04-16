@@ -4,7 +4,7 @@ import { Message } from 'discord.js';
 import { Embed } from '../utils/embed';
 import { errorHandler } from '../utils/errorHandler';
 // Command list
-const dir = path.join(__dirname, '../../data/commandlist.json');
+const dir: string = path.join(__dirname, '../../data/commandlist.json');
 interface Command {
   name: string;
   description: string;

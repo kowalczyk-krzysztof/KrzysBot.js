@@ -20,7 +20,7 @@ export const templefetch = async (
   const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (isOnCooldown(msg, commandName, cooldown, true, args) === true) return;
   else {
-    const isPlayerFetched = await fetchTemple(msg, keyword);
+    const isPlayerFetched: boolean = await fetchTemple(msg, keyword);
     if (isPlayerFetched === true) {
       const username: string = playerStats[keyword].info.Username;
       const embed: Embed = new Embed();
