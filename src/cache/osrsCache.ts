@@ -10,8 +10,11 @@ const HISCORE_API: string = process.env.OSRS_HISCORE_API as string;
 const maxCacheSize = 1000;
 export let osrsStats: { [key: string]: OsrsPlayer } = {};
 
-export const fetchOsrsStats = async (msg: Message, playerName: string) => {
-  const keyword = playerName;
+export const fetchOsrsStats = async (
+  msg: Message,
+  playerName: string
+): Promise<boolean> => {
+  const keyword: string = playerName;
   try {
     const res: AxiosResponse = await axios.get(`${HISCORE_API}${keyword}`);
 
@@ -29,7 +32,7 @@ export const fetchOsrsStats = async (msg: Message, playerName: string) => {
   }
 };
 
-const setOsrsStats = (username: string, data: OsrsPlayer) => {
+const setOsrsStats = (username: string, data: OsrsPlayer): void => {
   if (Object.keys(osrsStats).length > maxCacheSize) osrsStats = {};
   const playerName: string = username;
   const playerData: OsrsPlayer = data;

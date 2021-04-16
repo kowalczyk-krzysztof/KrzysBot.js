@@ -69,12 +69,20 @@ export const kc = async (
     .setTitle(OsrsEmbedTitles.KC)
     .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
-    const result = generateResult(boss, embed, osrsStats[usernameWithSpaces]);
+    const result: OsrsEmbed = generateResult(
+      boss,
+      embed,
+      osrsStats[usernameWithSpaces]
+    );
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
-      const result = generateResult(boss, embed, osrsStats[usernameWithSpaces]);
+      const result: OsrsEmbed = generateResult(
+        boss,
+        embed,
+        osrsStats[usernameWithSpaces]
+      );
       return msg.channel.send(result);
     } else return;
   }
@@ -106,7 +114,7 @@ const bossTypeCheck = (
   bossName: string;
 } => {
   const type: string = prefix;
-  const playerStats = playerObject;
+  const playerStats: OsrsPlayer = playerObject;
   let bossKc: BossOrMinigame;
   let bossName: string;
 

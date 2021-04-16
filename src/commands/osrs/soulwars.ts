@@ -22,12 +22,18 @@ export const soulwars = async (
     .setTitle(OsrsEmbedTitles.SOULWARS)
     .addField(usernameString, `${usernameWithSpaces}`);
   if (usernameWithSpaces in osrsStats) {
-    const result = generateResult(embed, osrsStats[usernameWithSpaces]);
+    const result: OsrsEmbed = generateResult(
+      embed,
+      osrsStats[usernameWithSpaces]
+    );
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, usernameWithSpaces);
     if (isFetched === true) {
-      const result = generateResult(embed, osrsStats[usernameWithSpaces]);
+      const result: OsrsEmbed = generateResult(
+        embed,
+        osrsStats[usernameWithSpaces]
+      );
       return msg.channel.send(result);
     } else return;
   }

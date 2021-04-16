@@ -9,9 +9,9 @@ export let playerNames: { [key: string]: PlayerNames } = {};
 
 dotenv.config({ path: 'config.env' });
 
-const TEMPLE_LINK = process.env.TEMPLE_PLAYER_STATS;
-const TEMPLE_PLAYER_NAMES = process.env.TEMPLE_PLAYER_NAMES;
-const maxCacheSize = 1000;
+const TEMPLE_LINK: string = process.env.TEMPLE_PLAYER_STATS as string;
+const TEMPLE_PLAYER_NAMES: string = process.env.TEMPLE_PLAYER_NAMES as string;
+const maxCacheSize: number = 1000;
 
 export enum GameMode {
   MAIN = 0,
@@ -69,22 +69,25 @@ export interface PlayerNames {
   };
 }
 
-const setPlayerStats = (username: string, data: PlayerStats) => {
+const setPlayerStats = (username: string, data: PlayerStats): void => {
   if (Object.keys(playerStats).length > maxCacheSize) playerStats = {};
   const playerName: string = username;
   const playerData: PlayerStats = data;
   playerStats[playerName] = playerData;
 };
 
-const setPlayerNames = (username: string, data: PlayerNames) => {
+const setPlayerNames = (username: string, data: PlayerNames): void => {
   if (Object.keys(playerNames).length > maxCacheSize) playerNames = {};
   const playerName: string = username;
   const playerData: PlayerNames = data;
   playerNames[playerName] = playerData;
 };
 
-export const fetchTemple = async (msg: Message, playerName: string) => {
-  const keyword = playerName;
+export const fetchTemple = async (
+  msg: Message,
+  playerName: string
+): Promise<boolean> => {
+  const keyword: string = playerName;
   try {
     const res: AxiosResponse = await axios.get(
       `${TEMPLE_LINK}${keyword}&bosses=1`
@@ -109,8 +112,11 @@ export const fetchTemple = async (msg: Message, playerName: string) => {
   }
 };
 
-export const fetchPlayerNames = async (msg: Message, playerName: string) => {
-  const keyword = playerName;
+export const fetchPlayerNames = async (
+  msg: Message,
+  playerName: string
+): Promise<boolean> => {
+  const keyword: string = playerName;
   try {
     const res: AxiosResponse = await axios.get(
       `${TEMPLE_PLAYER_NAMES}${keyword}`

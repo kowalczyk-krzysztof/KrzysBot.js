@@ -20,7 +20,7 @@ export const osrsfetch = async (
   const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
   if (isOnCooldown(msg, commandName, cooldown, true, args) === true) return;
   else {
-    const isPlayerFetched = await fetchOsrsStats(msg, keyword);
+    const isPlayerFetched: boolean = await fetchOsrsStats(msg, keyword);
 
     if (isPlayerFetched === true) {
       const embed: Embed = new Embed();

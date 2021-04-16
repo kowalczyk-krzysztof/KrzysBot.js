@@ -1,9 +1,9 @@
 import { OsrsPlayer } from '../../cache/osrsCache';
 
 // Read: https://runescape.wiki/w/Application_programming_interface#Hiscores_Lite_2
-export const osrsDataParser = (data: string) => {
+export const osrsDataParser = (data: string): OsrsPlayer => {
   const stringToArray: string[] = data.split('\n');
-  const rankLevelExpString = stringToArray.map((el: string) => {
+  const rankLevelExpString: string[][] = stringToArray.map((el: string) => {
     return el.split(',');
   });
   const rankLevelExp: (number | string)[][] = rankLevelExpString.map(

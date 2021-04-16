@@ -50,7 +50,7 @@ export const isOnCooldown = (
   if (cacheItem in cache) {
     const timeWhenAddedToCache: number = cache[cacheItem];
     const now: number = Date.now();
-    const timeLeftSecondsDecimal =
+    const timeLeftSecondsDecimal: number =
       cooldownInSec - (now - timeWhenAddedToCache) / 1000;
     const timeLeftSeconds: number = parseInt(timeLeftSecondsDecimal.toString());
     const timeLeftMinDecimal: number = timeLeftSeconds / 60;
