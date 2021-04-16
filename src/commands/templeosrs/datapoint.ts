@@ -20,7 +20,8 @@ export const datapoint = async (
   const nameCheck: string | null = runescapeNameValidator(args);
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
-  if (isOnCooldown(msg, commandName, cooldown, true, args) == true) return;
+  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+    return;
   else {
     try {
       const res: AxiosResponse = await axios.get(
@@ -30,6 +31,7 @@ export const datapoint = async (
       if (res.status === 200) {
         const embed: Embed = new Embed();
         const data: string = res.data.toString();
+        // There's no API endpoint for this, I have to improvise
         const notOnHiscores: string =
           '<p style="text-align: center; color: black;"> Name not found on hiscores </p>';
         const recentlyUpdated: string =

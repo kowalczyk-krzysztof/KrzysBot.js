@@ -12,9 +12,9 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
 import {
-  BOSS_LIST,
   isPrefixValid,
   Categories,
+  invalidPrefixMsg,
 } from '../../utils/osrs/isPrefixValid';
 
 export const kc = async (
@@ -32,7 +32,7 @@ export const kc = async (
   */
   if (args.length === 0)
     return msg.channel.send(
-      `Invalid boss name. Valid boss names: <${BOSS_LIST}>`
+      invalidPrefixMsg(Categories.BOSS, bosses.join(', '))
     );
   const firstArgument: string = args[0].toLowerCase();
   const twoArgumentsJoined: string = [args[0], args[1]].join('').toLowerCase();
@@ -72,7 +72,7 @@ export const kc = async (
       }
     } else {
       return msg.channel.send(
-        `Invalid boss name. Valid boss names: <${BOSS_LIST}>`
+        invalidPrefixMsg(Categories.BOSS, bosses.join(', '))
       );
     }
   }
@@ -87,10 +87,12 @@ export const kc = async (
   else boss = finalCheck;
 
   const cooldown: number = 30;
-  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
+
   const nameCheck: string | null = runescapeNameValidator(user);
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
+  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+    return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.KC)
     .addField(usernameString, `${username}`);

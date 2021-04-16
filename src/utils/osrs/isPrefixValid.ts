@@ -1,5 +1,6 @@
 import { Message } from 'discord.js';
 import dotenv from 'dotenv';
+import { Embed } from '../embed';
 
 dotenv.config({ path: 'config.env' });
 
@@ -20,29 +21,27 @@ export const isPrefixValid = (
   inputTypes: string[],
   inputCategory: Categories
 ): string | null => {
-  const category: Categories = inputCategory;
-  const types: string[] = inputTypes;
-  const typesList: string = types.join(', ');
+  const typesList: string = inputTypes.join(', ');
   const parsedArgument: string = inputArgument[0]
     .replace(/\n/g, '')
     .toLowerCase()
     .trim();
-  if (inputArgument.length === 0) {
-    msg.channel.send(`Invalid ${category} type. Valid types: **${typesList}**`);
-    return null;
-  } else if (!types.includes(parsedArgument)) {
-    if (category === Categories.BOSS) {
-      msg.channel.send(`Invalid boss name. Valid boss names: <${BOSS_LIST}>`);
-    } else if (category === Categories.SKILL)
-      msg.channel.send(
-        `Invalid skill name. Valid skill names: <${SKILL_LIST}>`
-      );
-    else {
-      msg.channel.send(
-        `Invalid ${category} type. Valid types: **${typesList}**`
-      );
-    }
+  if (inputArgument.length === 0 || !inputTypes.includes(parsedArgument)) {
+    msg.channel.send(invalidPrefixMsg(inputCategory, typesList));
 
     return null;
   } else return parsedArgument;
+};
+
+export const invalidPrefixMsg = (
+  category: Categories,
+  types: string
+): Embed => {
+  let result;
+  if (category === Categories.BOSS) {
+    result = `Invalid boss name. Valid boss names: <${BOSS_LIST}>`;
+  } else if (category === Categories.SKILL)
+    result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>`;
+  else result = `Invalid ${category} type. Valid types: **${types}**`;
+  return new Embed().setDescription(result);
 };

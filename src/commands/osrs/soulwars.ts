@@ -13,10 +13,11 @@ export const soulwars = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const cooldown: number = 30;
-  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
   const nameCheck: string | null = runescapeNameValidator(args);
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
+  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+    return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.SOULWARS)
     .addField(usernameString, `${username}`);

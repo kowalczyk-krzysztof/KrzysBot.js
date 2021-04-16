@@ -12,6 +12,7 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
+import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 
 export const clues = async (
   msg: Message,
@@ -26,10 +27,11 @@ export const clues = async (
   );
   if (prefix === null) return;
   const cooldown: number = 30;
-  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
   const nameCheck: string | null = runescapeNameValidator(args.slice(1));
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
+  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+    return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.CLUES)
     .addField(usernameString, `${username}`);
@@ -73,7 +75,7 @@ const generateResult = (
   const embed: OsrsEmbed = inputEmbed;
   const player: OsrsPlayer = playerObject;
   const clueType: BossOrMinigame = clueTypeCheck(prefix, player);
-  embed.addField(`Clues ${prefix}`, `${clueType.score}`);
+  embed.addField(`Clues ${capitalizeFirstLetter(prefix)}`, `${clueType.score}`);
   return embed;
 };
 

@@ -26,10 +26,11 @@ export const lvl = async (
   );
   if (prefix === null) return;
   const cooldown: number = 30;
-  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
   const nameCheck: string | null = runescapeNameValidator(args.slice(1));
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
+  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+    return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.LVL)
     .addField(usernameString, `${username}`);
@@ -72,7 +73,6 @@ const generateResult = (
   if (typeof skill.skillExp.exp === 'number')
     formattedExp = formatter.format(skill.skillExp.exp);
   else formattedExp = skill.skillExp.exp;
-
   embed.addField(`${skill.skillName} lvl`, `${skill.skillExp.level}`);
   embed.addField('Experience', `${formattedExp} exp`);
   return embed;

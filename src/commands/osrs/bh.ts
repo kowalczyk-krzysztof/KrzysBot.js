@@ -21,11 +21,13 @@ export const bh = async (
   );
   if (prefix === null) return;
   const cooldown: number = 30;
-  if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
+
   const user: string[] = args.slice(1);
   const nameCheck: string | null = runescapeNameValidator(user);
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
+  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+    return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(OsrsEmbedTitles.BH)
     .addField(usernameString, `${username}`);
