@@ -1,11 +1,12 @@
 import { Message } from 'discord.js';
+import { ClueAliases, Clues } from '../../utils/osrs/enums';
 import {
   fetchOsrsStats,
   osrsStats,
   OsrsPlayer,
   BossOrMinigame,
 } from '../../cache/osrsCache';
-import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -33,7 +34,7 @@ export const clues = async (
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
-    .setTitle(OsrsEmbedTitles.CLUES)
+    .setTitle(EmbedTitles.CLUES)
     .addField(usernameString, `${username}`);
   if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(
@@ -56,15 +57,6 @@ export const clues = async (
 };
 
 // Clue key names
-enum Clues {
-  ALL = 'Clue_all',
-  BEGINNER = 'Clue_beginner',
-  EASY = 'Clue_easy',
-  MEDIUM = 'Clue_medium',
-  HARD = 'Clue_hard',
-  ELITE = 'Clue_elite',
-  MASTER = 'Clue_master',
-}
 
 // Generates embed sent to user
 const generateResult = (
@@ -79,18 +71,18 @@ const generateResult = (
   return embed;
 };
 
-const clueTypes: string[] = [
-  'all',
-  'beginner',
-  'easy',
-  'medium',
-  'hard',
-  'elite',
-  'master',
+export const clueTypes: string[] = [
+  ClueAliases.ALL,
+  ClueAliases.BEGINNER,
+  ClueAliases.EASY,
+  ClueAliases.MEDIUM,
+  ClueAliases.HARD,
+  ClueAliases.ELITE,
+  ClueAliases.MASTER,
 ];
 
 // Checks clue type
-const clueTypeCheck = (
+export const clueTypeCheck = (
   prefix: string,
   playerObject: OsrsPlayer
 ): BossOrMinigame => {
@@ -98,26 +90,26 @@ const clueTypeCheck = (
   const playerStats: OsrsPlayer = playerObject;
   let cluesDoneNumber: BossOrMinigame;
   switch (type) {
-    case 'all':
+    case ClueAliases.ALL:
       cluesDoneNumber = playerStats[Clues.ALL];
       break;
-    case 'beginner':
+    case ClueAliases.BEGINNER:
       cluesDoneNumber = playerStats[Clues.BEGINNER];
       break;
-    case 'easy':
+    case ClueAliases.EASY:
       cluesDoneNumber = playerStats[Clues.EASY];
       break;
-    case 'medium':
+    case ClueAliases.MEDIUM:
       cluesDoneNumber = playerStats[Clues.MEDIUM];
       break;
-    case 'hard':
+    case ClueAliases.HARD:
       cluesDoneNumber = playerStats[Clues.HARD];
       break;
-    case 'elite':
-      cluesDoneNumber = playerStats[Clues.MEDIUM];
+    case ClueAliases.ELITE:
+      cluesDoneNumber = playerStats[Clues.ELITE];
       break;
-    case 'master':
-      cluesDoneNumber = playerStats[Clues.MEDIUM];
+    case ClueAliases.MASTER:
+      cluesDoneNumber = playerStats[Clues.MASTER];
       break;
     default:
       cluesDoneNumber = {

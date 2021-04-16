@@ -13,6 +13,10 @@ export enum Categories {
   CLUES = 'clues',
   BH = 'bh',
   GAINS = 'gains',
+  TIME = 'time',
+  TIME_LMS = 'timelms',
+  OTHER = 'other',
+  RECORD = 'record',
 }
 
 export const isPrefixValid = (
@@ -28,7 +32,6 @@ export const isPrefixValid = (
     .trim();
   if (inputArgument.length === 0 || !inputTypes.includes(parsedArgument)) {
     msg.channel.send(invalidPrefixMsg(inputCategory, typesList));
-
     return null;
   } else return parsedArgument;
 };
@@ -42,6 +45,8 @@ export const invalidPrefixMsg = (
     result = `Invalid boss name. Valid boss names: <${BOSS_LIST}>`;
   } else if (category === Categories.SKILL)
     result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>`;
+  else if (category === Categories.TIME_LMS)
+    result = `Invalid ${category} type. Valid types: **${types}**\n\nFor LMS there is no 6h record`;
   else result = `Invalid ${category} type. Valid types: **${types}**`;
   return new Embed().setDescription(result);
 };

@@ -11,7 +11,7 @@ export class Embed extends MessageEmbed {
   }
 }
 
-// TempleOSRS embed
+// TempleOSRS embeds
 export class TempleEmbed extends Embed {
   constructor() {
     super();
@@ -21,10 +21,18 @@ export class TempleEmbed extends Embed {
     this.setFooter('Incorrect? Fetch latest data:\n.templefetch username');
   }
 }
+export class TempleEmbedNoFooter extends Embed {
+  constructor() {
+    super();
+    this.setDescription(
+      `Data provided by: [TempleOSRS](https://templeosrs.com/ 'TempleOSRS')`
+    );
+  }
+}
 
 // Everything related to how OSRS command embed should look like
 // Title field
-export enum OsrsEmbedTitles {
+export enum EmbedTitles {
   BH = 'BH',
   CLUES = 'CLUES',
   LVL = 'LEVEL',
@@ -32,6 +40,7 @@ export enum OsrsEmbedTitles {
   LEAGUEPTS = 'LEAGUE POINTS',
   SOULWARS = 'SOUL WARS',
   LMS = 'LMS',
+  RECORDS = 'RECORDS',
 }
 // OSRS embed
 export class OsrsEmbed extends Embed {

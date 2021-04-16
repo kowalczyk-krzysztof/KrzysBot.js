@@ -13,6 +13,7 @@ import { playercountry } from './commands/templeosrs/playercountry';
 import { templefetch } from './commands/templeosrs/templefetch';
 import { datapoint } from './commands/templeosrs/datapoint';
 import { fetchrsn } from './commands/templeosrs/fetchrsn';
+import { record } from './commands/templeosrs/record';
 // OSRS
 import { clues } from './commands/osrs/clues';
 import { kc } from './commands/osrs/kc';
@@ -51,6 +52,7 @@ export const commandList: {
   bh,
   soulwars,
   leaguepoints,
+  record,
 };
 // Alias handler
 // Take a command name and check if it has an alias then return the original name

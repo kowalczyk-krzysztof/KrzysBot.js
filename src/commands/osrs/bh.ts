@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
-import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -29,7 +29,7 @@ export const bh = async (
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
-    .setTitle(OsrsEmbedTitles.BH)
+    .setTitle(EmbedTitles.BH)
     .addField(usernameString, `${username}`);
   if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(

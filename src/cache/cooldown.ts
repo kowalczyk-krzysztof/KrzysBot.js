@@ -63,7 +63,7 @@ export const isOnCooldown = (
       time = timeLeftSeconds;
       secondOrMin = 's';
     } else {
-      time = timeLeftSecondsDecimal;
+      time = 1;
       secondOrMin = 's';
     }
     const authorRequiredMsg: string = `You have used this command recently. Please wait **${time}${secondOrMin}** and try again`;

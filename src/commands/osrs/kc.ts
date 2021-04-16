@@ -1,5 +1,6 @@
 import { Message } from 'discord.js';
-import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import { BossAliases, Bosses } from '../../utils/osrs/enums';
+import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
 import {
   fetchOsrsStats,
   osrsStats,
@@ -44,10 +45,10 @@ export const kc = async (
   let user: string[];
 
   if (
-    specialCase === 'chambersofxeric' ||
-    specialCase === 'theatreofblood' ||
-    specialCase === 'kingblackdragon' ||
-    specialCase === 'thermonuclearsmokedevil'
+    specialCase === BossAliases.COX_ALIAS2 ||
+    specialCase === BossAliases.TOB_ALIAS3 ||
+    specialCase === BossAliases.KBD_ALIAS2 ||
+    specialCase === BossAliases.THERMY_ALIAS3
   ) {
     boss = specialCase;
     user = args.slice(3);
@@ -94,7 +95,7 @@ export const kc = async (
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
-    .setTitle(OsrsEmbedTitles.KC)
+    .setTitle(EmbedTitles.KC)
     .addField(usernameString, `${username}`);
   if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(boss, embed, osrsStats[username]);
@@ -130,7 +131,7 @@ const generateResult = (
   return embed;
 };
 
-const bossTypeCheck = (
+export const bossTypeCheck = (
   prefix: string,
   playerObject: OsrsPlayer
 ): {
@@ -143,395 +144,403 @@ const bossTypeCheck = (
   let bossName: string;
 
   switch (type) {
-    case 'abyssalsire':
+    case BossAliases.SIRE_ALIAS1:
       bossKc = playerStats[Bosses.SIRE];
       bossName = Bosses.SIRE;
       break;
-    case 'sire':
+    case BossAliases.SIRE_ALIAS2:
       bossKc = playerStats[Bosses.SIRE];
       bossName = Bosses.SIRE;
       break;
-    case 'alchemicalhydra':
+    case BossAliases.HYDRA_ALIAS1:
       bossKc = playerStats[Bosses.HYDRA];
       bossName = Bosses.HYDRA;
       break;
-    case 'hydra':
+    case BossAliases.HYDRA_ALIAS2:
       bossKc = playerStats[Bosses.HYDRA];
       bossName = Bosses.HYDRA;
       break;
-    case 'barrows':
+    case BossAliases.BARROWS_ALIAS1:
       bossKc = playerStats[Bosses.BARROWS];
       bossName = Bosses.BARROWS;
       break;
-    case 'bryo':
+    case BossAliases.BRYOPHYTA_ALIAS1:
       bossKc = playerStats[Bosses.BRYOPHYTA];
       bossName = Bosses.BRYOPHYTA;
       break;
-    case 'bryophyta':
+    case BossAliases.BRYOPHYTA_ALIAS2:
       bossKc = playerStats[Bosses.BRYOPHYTA];
       bossName = Bosses.BRYOPHYTA;
       break;
-    case 'callisto':
+    case BossAliases.CALLISTO_ALIAS1:
       bossKc = playerStats[Bosses.CALLISTO];
       bossName = Bosses.CALLISTO;
       break;
-    case 'cerberus':
+    case BossAliases.CERBERUS_ALIAS1:
       bossKc = playerStats[Bosses.CERBERUS];
       bossName = Bosses.CERBERUS;
       break;
-    case 'cerb':
+    case BossAliases.CERBERUS_ALIAS2:
       bossKc = playerStats[Bosses.CERBERUS];
       bossName = Bosses.CERBERUS;
       break;
-    case 'chambersofxeric':
+    case BossAliases.COX_ALIAS1:
       bossKc = playerStats[Bosses.COX];
       bossName = Bosses.COX;
       break;
-    case 'cox':
+    case BossAliases.COX_ALIAS2:
       bossKc = playerStats[Bosses.COX];
       bossName = Bosses.COX;
       break;
-    case 'chambers':
+    case BossAliases.COX_ALIAS3:
       bossKc = playerStats[Bosses.COX];
       bossName = Bosses.COX;
       break;
-    case 'cm':
+    case BossAliases.COXCM_ALIAS1:
       bossKc = playerStats[Bosses.COXCM];
       bossName = Bosses.COXCM;
       break;
-    case 'coxcm':
+    case BossAliases.COXCM_ALIAS2:
       bossKc = playerStats[Bosses.COXCM];
       bossName = Bosses.COXCM;
       break;
-    case 'challengemode':
+    case BossAliases.COXCM_ALIAS3:
       bossKc = playerStats[Bosses.COXCM];
       bossName = Bosses.COXCM;
       break;
-    case 'ele':
+    case BossAliases.CHAOS_ELE_ALIAS1:
       bossKc = playerStats[Bosses.CHAOS_ELE];
       bossName = Bosses.CHAOS_ELE;
       break;
-    case 'chaosele':
+    case BossAliases.CHAOS_ELE_ALIAS2:
       bossKc = playerStats[Bosses.CHAOS_ELE];
       bossName = Bosses.CHAOS_ELE;
       break;
-    case 'chaoselemental':
+    case BossAliases.CHAOS_ELE_ALIAS3:
       bossKc = playerStats[Bosses.CHAOS_ELE];
       bossName = Bosses.CHAOS_ELE;
       break;
-    case 'fanatic':
+    case BossAliases.CHAOS_FANATIC_ALIAS1:
       bossKc = playerStats[Bosses.CHAOS_FANATIC];
       bossName = Bosses.CHAOS_FANATIC;
       break;
-    case 'chaosfanatic':
+    case BossAliases.CHAOS_FANATIC_ALIAS2:
       bossKc = playerStats[Bosses.CHAOS_FANATIC];
       bossName = Bosses.CHAOS_FANATIC;
       break;
-    case 'fanatic':
-      bossKc = playerStats[Bosses.CHAOS_FANATIC];
-      bossName = Bosses.CHAOS_FANATIC;
-      break;
-    case 'sara':
+    case BossAliases.SARADOMIN_ALIAS1:
       bossKc = playerStats[Bosses.ZILYANA];
       bossName = Bosses.ZILYANA;
       break;
-    case 'saradomin':
+    case BossAliases.SARADOMIN_ALIAS2:
       bossKc = playerStats[Bosses.ZILYANA];
       bossName = Bosses.ZILYANA;
       break;
-    case 'zilyana':
+    case BossAliases.SARADOMIN_ALIAS3:
       bossKc = playerStats[Bosses.ZILYANA];
       bossName = Bosses.ZILYANA;
       break;
-    case 'zilly':
+    case BossAliases.SARADOMIN_ALIAS4:
       bossKc = playerStats[Bosses.ZILYANA];
       bossName = Bosses.ZILYANA;
       break;
-    case 'corp':
+    case BossAliases.CORP_ALIAS1:
       bossKc = playerStats[Bosses.CORP];
       bossName = Bosses.CORP;
       break;
-    case 'crazyarch':
+    case BossAliases.CORP_ALIAS2:
+      bossKc = playerStats[Bosses.CORP];
+      bossName = Bosses.CORP;
+      break;
+    case BossAliases.CRAZY_ARCH_ALIAS1:
       bossKc = playerStats[Bosses.CRAZY_ARCH];
       bossName = Bosses.CRAZY_ARCH;
       break;
-    case 'crazyarcheologist':
+    case BossAliases.CRAZY_ARCH_ALIAS2:
       bossKc = playerStats[Bosses.CRAZY_ARCH];
       bossName = Bosses.CRAZY_ARCH;
       break;
-    case 'prime':
+    case BossAliases.PRIME_ALIAS1:
       bossKc = playerStats[Bosses.PRIME];
       bossName = Bosses.PRIME;
       break;
-    case 'dagannothprime':
+    case BossAliases.PRIME_ALIAS2:
       bossKc = playerStats[Bosses.PRIME];
       bossName = Bosses.PRIME;
       break;
-    case 'rex':
+    case BossAliases.REX_ALIAS1:
       bossKc = playerStats[Bosses.REX];
       bossName = Bosses.REX;
       break;
-    case 'dagannothrex':
+    case BossAliases.REX_ALIAS2:
       bossKc = playerStats[Bosses.REX];
       bossName = Bosses.REX;
       break;
-    case 'supreme':
+    case BossAliases.SUPREME_ALIAS1:
       bossKc = playerStats[Bosses.SUPREME];
       bossName = Bosses.SUPREME;
       break;
-    case 'dagannothsupreme':
+    case BossAliases.SUPREME_ALIAS2:
       bossKc = playerStats[Bosses.SUPREME];
       bossName = Bosses.SUPREME;
       break;
-    case 'derangedarch':
+    case BossAliases.DERANGED_ALIAS1:
       bossKc = playerStats[Bosses.DER_ARCH];
       bossName = Bosses.DER_ARCH;
       break;
-    case 'derangedarcheologist':
+    case BossAliases.DERANGED_ALIAS2:
       bossKc = playerStats[Bosses.DER_ARCH];
       bossName = Bosses.DER_ARCH;
       break;
-    case 'deranged':
+    case BossAliases.DERANGED_ALIAS3:
       bossKc = playerStats[Bosses.DER_ARCH];
       bossName = Bosses.DER_ARCH;
       break;
-    case 'graardor':
+    case BossAliases.BANDOS_ALIAS1:
       bossKc = playerStats[Bosses.GRAARDOR];
       bossName = Bosses.GRAARDOR;
       break;
-    case 'bandos':
+    case BossAliases.BANDOS_ALIAS2:
       bossKc = playerStats[Bosses.GRAARDOR];
       bossName = Bosses.GRAARDOR;
       break;
-    case 'mole':
+    case BossAliases.BANDOS_ALIAS3:
+      bossKc = playerStats[Bosses.GRAARDOR];
+      bossName = Bosses.GRAARDOR;
+      break;
+    case BossAliases.MOLE_ALIAS1:
       bossKc = playerStats[Bosses.MOLE];
       bossName = Bosses.MOLE;
       break;
-    case 'guardians':
+    case BossAliases.MOLE_ALIAS2:
+      bossKc = playerStats[Bosses.MOLE];
+      bossName = Bosses.MOLE;
+      break;
+    case BossAliases.GUARDIANS_ALIAS1:
       bossKc = playerStats[Bosses.GUARDIANS];
       bossName = Bosses.GUARDIANS;
       break;
-    case 'gg':
+    case BossAliases.GUARDIANS_ALIAS2:
       bossKc = playerStats[Bosses.GUARDIANS];
       bossName = Bosses.GUARDIANS;
       break;
-    case 'grotesque':
+    case BossAliases.GUARDIANS_ALIAS3:
       bossKc = playerStats[Bosses.GUARDIANS];
       bossName = Bosses.GUARDIANS;
       break;
-    case 'noon':
+    case BossAliases.GUARDIANS_ALIAS4:
       bossKc = playerStats[Bosses.GUARDIANS];
       bossName = Bosses.GUARDIANS;
       break;
-    case 'dusk':
+    case BossAliases.GUARDIANS_ALIAS5:
       bossKc = playerStats[Bosses.GUARDIANS];
       bossName = Bosses.GUARDIANS;
       break;
-    case 'hespori':
+    case BossAliases.HESPORI_ALIAS1:
       bossKc = playerStats[Bosses.GUARDIANS];
       bossName = Bosses.GUARDIANS;
       break;
-    case 'kq':
+    case BossAliases.KQ_ALIAS1:
       bossKc = playerStats[Bosses.KQ];
       bossName = Bosses.KQ;
       break;
-    case 'kalphite':
+    case BossAliases.KQ_ALIAS2:
       bossKc = playerStats[Bosses.KQ];
       bossName = Bosses.KQ;
       break;
-    case 'kalphitequeen':
+    case BossAliases.KQ_ALIAS3:
       bossKc = playerStats[Bosses.KQ];
       bossName = Bosses.KQ;
       break;
-    case 'kbd':
+    case BossAliases.KBD_ALIAS1:
       bossKc = playerStats[Bosses.KBD];
       bossName = Bosses.KBD;
       break;
-    case 'kingblackdragon':
+    case BossAliases.KBD_ALIAS2:
       bossKc = playerStats[Bosses.KBD];
       bossName = Bosses.KBD;
       break;
-    case 'kraken':
+    case BossAliases.KRAKEN_ALIAS1:
       bossKc = playerStats[Bosses.KRAKEN];
       bossName = Bosses.KRAKEN;
       break;
-    case 'kree':
+    case BossAliases.ARMA_ALIAS1:
       bossKc = playerStats[Bosses.KREE];
       bossName = Bosses.KREE;
       break;
-    case `kree'arra`:
+    case BossAliases.ARMA_ALIAS2:
       bossKc = playerStats[Bosses.KREE];
       bossName = Bosses.KREE;
       break;
-    case 'kreearra':
+    case BossAliases.ARMA_ALIAS3:
       bossKc = playerStats[Bosses.KREE];
       bossName = Bosses.KREE;
       break;
-    case 'arma':
+    case BossAliases.ARMA_ALIAS4:
       bossKc = playerStats[Bosses.KREE];
       bossName = Bosses.KREE;
       break;
-    case 'armadyl':
+    case BossAliases.ARMA_ALIAS5:
       bossKc = playerStats[Bosses.KREE];
       bossName = Bosses.KREE;
       break;
-    case 'kril':
+    case BossAliases.ZAMMY_ALIAS1:
       bossKc = playerStats[Bosses.KRIL];
       bossName = Bosses.KRIL;
       break;
-    case `k'ril`:
+    case BossAliases.ZAMMY_ALIAS2:
       bossKc = playerStats[Bosses.KRIL];
       bossName = Bosses.KRIL;
       break;
-    case 'zammy':
+    case BossAliases.ZAMMY_ALIAS3:
       bossKc = playerStats[Bosses.KRIL];
       bossName = Bosses.KRIL;
       break;
-    case 'zamorak':
+    case BossAliases.ZAMMY_ALIAS4:
       bossKc = playerStats[Bosses.KRIL];
       bossName = Bosses.KRIL;
       break;
-    case 'kriltsutsaroth':
+    case BossAliases.ZAMMY_ALIAS5:
       bossKc = playerStats[Bosses.KRIL];
       bossName = Bosses.KRIL;
       break;
-    case 'mimic':
+    case BossAliases.MIMIC_ALIAS1:
       bossKc = playerStats[Bosses.MIMIC];
       bossName = Bosses.MIMIC;
       break;
-    case 'nightmare':
+    case BossAliases.NIGHTMARE_ALIAS1:
       bossKc = playerStats[Bosses.NIGHTMARE];
       bossName = Bosses.NIGHTMARE;
       break;
-    case 'obor':
+    case BossAliases.OBOR_ALIAS1:
       bossKc = playerStats[Bosses.OBOR];
       bossName = Bosses.OBOR;
       break;
-    case 'sarachnis':
+    case BossAliases.SARACHNIS_ALIAS1:
       bossKc = playerStats[Bosses.SARACHNIS];
       bossName = Bosses.SARACHNIS;
       break;
-    case 'scorpia':
+    case BossAliases.SCORPIA_ALIAS1:
       bossKc = playerStats[Bosses.SCORPIA];
       bossName = Bosses.SCORPIA;
       break;
-    case 'skotizo':
+    case BossAliases.SKOTIZO_ALIAS1:
       bossKc = playerStats[Bosses.SKOTIZO];
       bossName = Bosses.SKOTIZO;
       break;
-    case 'tempoross':
+    case BossAliases.TEMPOROSS_ALIAS1:
       bossKc = playerStats[Bosses.TEMPO];
       bossName = Bosses.TEMPO;
       break;
-    case 'temp':
+    case BossAliases.TEMPOROSS_ALIAS2:
       bossKc = playerStats[Bosses.TEMPO];
       bossName = Bosses.TEMPO;
       break;
-    case 'gauntlet':
+    case BossAliases.GAUNTLET_ALIAS1:
       bossKc = playerStats[Bosses.GAUNTLET];
       bossName = Bosses.GAUNTLET;
       break;
-    case 'hunllef':
+    case BossAliases.GAUNTLET_ALIAS2:
       bossKc = playerStats[Bosses.GAUNTLET];
       bossName = Bosses.GAUNTLET;
       break;
-    case 'corrgauntlet':
+    case BossAliases.CORR_GAUNTLET_ALIAS1:
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
-    case 'corruptedgauntlet':
+    case BossAliases.CORR_GAUNTLET_ALIAS2:
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
-    case 'corr':
+    case BossAliases.CORR_GAUNTLET_ALIAS3:
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
-    case 'corrupted':
+    case BossAliases.CORR_GAUNTLET_ALIAS4:
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
-    case 'corrhunllef':
+    case BossAliases.CORR_GAUNTLET_ALIAS5:
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
-    case 'tob':
+    case BossAliases.TOB_ALIAS1:
       bossKc = playerStats[Bosses.TOB];
       bossName = Bosses.TOB;
       break;
-    case 'theatre':
+    case BossAliases.TOB_ALIAS2:
       bossKc = playerStats[Bosses.TOB];
       bossName = Bosses.TOB;
       break;
-    case 'theatreofblood':
+    case BossAliases.TOB_ALIAS3:
       bossKc = playerStats[Bosses.TOB];
       bossName = Bosses.TOB;
       break;
-    case 'thermy':
+    case BossAliases.THERMY_ALIAS1:
       bossKc = playerStats[Bosses.THERMY];
       bossName = Bosses.THERMY;
       break;
-    case 'thermonuclearsmokedevil':
+    case BossAliases.THERMY_ALIAS2:
       bossKc = playerStats[Bosses.THERMY];
       bossName = Bosses.THERMY;
       break;
-    case 'thermonuclear':
+    case BossAliases.THERMY_ALIAS3:
       bossKc = playerStats[Bosses.THERMY];
       bossName = Bosses.THERMY;
       break;
-    case 'zuk':
+    case BossAliases.ZUK_ALIAS1:
       bossKc = playerStats[Bosses.ZUK];
       bossName = Bosses.ZUK;
       break;
-    case 'inferno':
+    case BossAliases.ZUK_ALIAS2:
       bossKc = playerStats[Bosses.ZUK];
       bossName = Bosses.ZUK;
       break;
-    case 'jad':
+    case BossAliases.JAD_ALIAS1:
       bossKc = playerStats[Bosses.JAD];
       bossName = Bosses.JAD;
       break;
-    case 'fightcaves':
+    case BossAliases.JAD_ALIAS2:
       bossKc = playerStats[Bosses.JAD];
       bossName = Bosses.JAD;
       break;
-    case 'venenatis':
+    case BossAliases.VENE_ALIAS1:
       bossKc = playerStats[Bosses.VENE];
       bossName = Bosses.VENE;
       break;
-    case 'vene':
+    case BossAliases.VENE_ALIAS2:
       bossKc = playerStats[Bosses.VENE];
       bossName = Bosses.VENE;
       break;
-    case 'vetion':
+    case BossAliases.VETION_ALIAS1:
       bossKc = playerStats[Bosses.VETION];
       bossName = Bosses.VETION;
       break;
-    case 'vork':
+    case BossAliases.VORK_ALIAS1:
       bossKc = playerStats[Bosses.VORKATH];
       bossName = Bosses.VORKATH;
       break;
-    case 'vorkath':
+    case BossAliases.VORK_ALIAS2:
       bossKc = playerStats[Bosses.VORKATH];
       bossName = Bosses.VORKATH;
       break;
-    case 'wt':
+    case BossAliases.WT_ALIAS1:
       bossKc = playerStats[Bosses.WT];
       bossName = Bosses.WT;
       break;
-    case 'wintertodt':
+    case BossAliases.WT_ALIAS2:
       bossKc = playerStats[Bosses.WT];
       bossName = Bosses.WT;
       break;
-    case 'zalc':
+    case BossAliases.ZALC_ALIAS1:
       bossKc = playerStats[Bosses.ZALCANO];
       bossName = Bosses.ZALCANO;
       break;
-    case 'zalcano':
+    case BossAliases.ZALC_ALIAS2:
       bossKc = playerStats[Bosses.ZALCANO];
       bossName = Bosses.ZALCANO;
       break;
-    case 'zulrah':
+    case BossAliases.ZULRAH_ALIAS1:
       bossKc = playerStats[Bosses.ZULRAH];
       bossName = Bosses.ZULRAH;
       break;
@@ -548,152 +557,104 @@ const bossTypeCheck = (
   };
 };
 
-// Boss key names
-enum Bosses {
-  SIRE = 'Abyssal Sire',
-  HYDRA = 'Alchemical Hydra',
-  BARROWS = 'Barrows Chests',
-  BRYOPHYTA = 'Bryophyta',
-  CALLISTO = 'Callisto',
-  CERBERUS = 'Cerberus',
-  COX = 'Chambers of Xeric',
-  COXCM = 'Chambers of Xeric Challenge Mode',
-  CHAOS_ELE = 'Chaos Elemental',
-  CHAOS_FANATIC = 'Chaos Fanatic',
-  ZILYANA = 'Commander Zilyana',
-  CORP = 'Corporeal Beast',
-  CRAZY_ARCH = 'Crazy Archaeologist',
-  PRIME = 'Dagannoth Prime',
-  REX = 'Dagannoth Rex',
-  SUPREME = 'Dagannoth Supreme',
-  DER_ARCH = 'Deranged Archaeologist',
-  GRAARDOR = 'General Graardor',
-  MOLE = 'Giant Mole',
-  GUARDIANS = 'Grotesque Guardians',
-  HESPORI = 'Hespori',
-  KQ = 'Kalphite Queen',
-  KBD = 'King Black Dragon',
-  KRAKEN = 'Kraken',
-  KREE = 'KreeArra',
-  KRIL = 'Kril Tsutsaroth',
-  MIMIC = 'Mimic',
-  NIGHTMARE = 'The Nightmare',
-  OBOR = 'Obor',
-  SARACHNIS = 'Sarachnis',
-  SCORPIA = 'Scorpia',
-  SKOTIZO = 'Skotizo',
-  TEMPO = 'Tempoross',
-  GAUNTLET = 'The Gauntlet',
-  CORR_GAUNTLET = 'The Corrupted Gauntlet',
-  TOB = 'Theatre of Blood',
-  THERMY = 'Thermonuclear Smoke Devil',
-  ZUK = 'TzKal-Zuk',
-  JAD = 'TzTok-Jad',
-  VENE = 'Venenatis',
-  VETION = 'Vetion',
-  VORKATH = 'Vorkath',
-  WT = 'Wintertodt',
-  ZALCANO = 'Zalcano',
-  ZULRAH = 'Zulrah',
-}
-
-const bosses: string[] = [
-  'abyssalsire',
-  'sire',
-  'alchemicalhydra',
-  'hydra',
-  'barrows',
-  'bryo',
-  'bryophyta',
-  'callisto',
-  'cerberus',
-  'cerb',
-  'cox',
-  'chambersofxeric',
-  'chambers',
-  'cm',
-  'coxcm',
-  'ele',
-  'chaosele',
-  'chaoselemental',
-  'fanatic',
-  'chaosfanatic',
-  'fanatic',
-  'sara',
-  'saradomin',
-  'zilyana',
-  'zilly',
-  'corp',
-  'crazyarch',
-  'crazyarcheologist',
-  'prime',
-  'dagannothprime',
-  'rex',
-  'dagannothrex',
-  'challengemode',
-  'supreme',
-  'dagannothsupreme',
-  'derangedarcheologist',
-  'derangedarch',
-  'deranged',
-  'graardor',
-  'bandos',
-  'mole',
-  'guardians',
-  'gg',
-  'grotesque',
-  'noon',
-  'dusk',
-  'hespori',
-  'kq',
-  'kalphite',
-  'kalphitequeen',
-  'kbd',
-  'kingblackdragon',
-  'kraken',
-  'kree',
-  `kree'arra`,
-  'kreearra',
-  'arma',
-  'armadyl',
-  `k'ril`,
-  'kril',
-  'zammy',
-  'zamorak',
-  'kriltsutsaroth',
-  'mimic',
-  'nightmare',
-  'obor',
-  'sarachnis',
-  'scorpia',
-  'skotizo',
-  'tempoross',
-  'temp',
-  'gauntlet',
-  'hunllef',
-  'corrgauntlet',
-  'corruptedgauntlet',
-  'corr',
-  'corrupted',
-  'corrhunllef',
-  'tob',
-  'theatre',
-  'theatreofblood',
-  'thermy',
-  'thermonuclear',
-  'thermonuclearsmokedevil',
-  'zuk',
-  'inferno',
-  'jad',
-  'fightcaves',
-  'vene',
-  'venenatis',
-  'vetion',
-  'vork',
-  'vorkath',
-  'wt',
-  'wintertodt',
-  'zalc',
-  'zalcano',
-  'zulrah',
+export const bosses: string[] = [
+  BossAliases.SIRE_ALIAS1,
+  BossAliases.SIRE_ALIAS1,
+  BossAliases.SIRE_ALIAS2,
+  BossAliases.HYDRA_ALIAS1,
+  BossAliases.HYDRA_ALIAS2,
+  BossAliases.BARROWS_ALIAS1,
+  BossAliases.BRYOPHYTA_ALIAS1,
+  BossAliases.BRYOPHYTA_ALIAS2,
+  BossAliases.CALLISTO_ALIAS1,
+  BossAliases.CERBERUS_ALIAS1,
+  BossAliases.CERBERUS_ALIAS2,
+  BossAliases.COX_ALIAS1,
+  BossAliases.COX_ALIAS2,
+  BossAliases.COX_ALIAS3,
+  BossAliases.COXCM_ALIAS1,
+  BossAliases.COXCM_ALIAS2,
+  BossAliases.COXCM_ALIAS3,
+  BossAliases.CHAOS_ELE_ALIAS1,
+  BossAliases.CHAOS_ELE_ALIAS2,
+  BossAliases.CHAOS_ELE_ALIAS3,
+  BossAliases.CHAOS_FANATIC_ALIAS1,
+  BossAliases.CHAOS_FANATIC_ALIAS2,
+  BossAliases.SARADOMIN_ALIAS1,
+  BossAliases.SARADOMIN_ALIAS2,
+  BossAliases.SARADOMIN_ALIAS3,
+  BossAliases.SARADOMIN_ALIAS4,
+  BossAliases.CORP_ALIAS1,
+  BossAliases.CORP_ALIAS2,
+  BossAliases.CRAZY_ARCH_ALIAS1,
+  BossAliases.CRAZY_ARCH_ALIAS2,
+  BossAliases.PRIME_ALIAS1,
+  BossAliases.PRIME_ALIAS2,
+  BossAliases.REX_ALIAS1,
+  BossAliases.REX_ALIAS2,
+  BossAliases.SUPREME_ALIAS1,
+  BossAliases.SUPREME_ALIAS2,
+  BossAliases.DERANGED_ALIAS1,
+  BossAliases.DERANGED_ALIAS2,
+  BossAliases.DERANGED_ALIAS3,
+  BossAliases.BANDOS_ALIAS1,
+  BossAliases.BANDOS_ALIAS2,
+  BossAliases.BANDOS_ALIAS3,
+  BossAliases.MOLE_ALIAS1,
+  BossAliases.MOLE_ALIAS2,
+  BossAliases.GUARDIANS_ALIAS1,
+  BossAliases.GUARDIANS_ALIAS2,
+  BossAliases.GUARDIANS_ALIAS3,
+  BossAliases.GUARDIANS_ALIAS4,
+  BossAliases.GUARDIANS_ALIAS5,
+  BossAliases.HESPORI_ALIAS1,
+  BossAliases.KQ_ALIAS1,
+  BossAliases.KQ_ALIAS2,
+  BossAliases.KQ_ALIAS3,
+  BossAliases.KBD_ALIAS1,
+  BossAliases.KBD_ALIAS2,
+  BossAliases.KRAKEN_ALIAS1,
+  BossAliases.ARMA_ALIAS1,
+  BossAliases.ARMA_ALIAS2,
+  BossAliases.ARMA_ALIAS3,
+  BossAliases.ARMA_ALIAS4,
+  BossAliases.ARMA_ALIAS5,
+  BossAliases.ZAMMY_ALIAS1,
+  BossAliases.ZAMMY_ALIAS2,
+  BossAliases.ZAMMY_ALIAS3,
+  BossAliases.ZAMMY_ALIAS4,
+  BossAliases.ZAMMY_ALIAS5,
+  BossAliases.MIMIC_ALIAS1,
+  BossAliases.NIGHTMARE_ALIAS1,
+  BossAliases.OBOR_ALIAS1,
+  BossAliases.SARACHNIS_ALIAS1,
+  BossAliases.SCORPIA_ALIAS1,
+  BossAliases.SKOTIZO_ALIAS1,
+  BossAliases.GAUNTLET_ALIAS1,
+  BossAliases.GAUNTLET_ALIAS2,
+  BossAliases.CORR_GAUNTLET_ALIAS1,
+  BossAliases.CORR_GAUNTLET_ALIAS2,
+  BossAliases.CORR_GAUNTLET_ALIAS3,
+  BossAliases.CORR_GAUNTLET_ALIAS4,
+  BossAliases.CORR_GAUNTLET_ALIAS5,
+  BossAliases.TOB_ALIAS1,
+  BossAliases.TOB_ALIAS2,
+  BossAliases.TOB_ALIAS3,
+  BossAliases.THERMY_ALIAS1,
+  BossAliases.THERMY_ALIAS2,
+  BossAliases.THERMY_ALIAS3,
+  BossAliases.ZUK_ALIAS1,
+  BossAliases.ZUK_ALIAS2,
+  BossAliases.JAD_ALIAS1,
+  BossAliases.JAD_ALIAS2,
+  BossAliases.VENE_ALIAS1,
+  BossAliases.VENE_ALIAS2,
+  BossAliases.VETION_ALIAS1,
+  BossAliases.VORK_ALIAS1,
+  BossAliases.VORK_ALIAS2,
+  BossAliases.WT_ALIAS1,
+  BossAliases.WT_ALIAS2,
+  BossAliases.ZALC_ALIAS1,
+  BossAliases.ZALC_ALIAS2,
+  BossAliases.ZULRAH_ALIAS1,
 ];
