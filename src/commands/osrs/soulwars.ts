@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
-import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -19,7 +19,7 @@ export const soulwars = async (
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
-    .setTitle(OsrsEmbedTitles.SOULWARS)
+    .setTitle(EmbedTitles.SOULWARS)
     .addField(usernameString, `${username}`);
   if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(embed, osrsStats[username]);

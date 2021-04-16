@@ -1,11 +1,12 @@
 import { Message } from 'discord.js';
+import { SkillAliases, Skills } from '../../utils/osrs/enums';
 import {
   fetchOsrsStats,
   osrsStats,
   OsrsPlayer,
   OsrsSkill,
 } from '../../cache/osrsCache';
-import { OsrsEmbed, OsrsEmbedTitles, usernameString } from '../../utils/embed';
+import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -32,7 +33,7 @@ export const lvl = async (
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
-    .setTitle(OsrsEmbedTitles.LVL)
+    .setTitle(EmbedTitles.LVL)
     .addField(usernameString, `${username}`);
   if (username in osrsStats) {
     const result: OsrsEmbed = await generateResult(
@@ -90,211 +91,214 @@ const skillTypeCheck = (
   let skillExp: OsrsSkill;
   let skillName: string;
   switch (type) {
-    case 'total':
+    case SkillAliases.TOTAL_ALIAS1:
       skillExp = playerStats[Skills.TOTAL];
       skillName = Skills.TOTAL;
       break;
-    case 'overall':
+    case SkillAliases.TOTAL_ALIAS2:
       skillExp = playerStats[Skills.TOTAL];
       skillName = Skills.TOTAL;
       break;
-    case 'attack':
+    case SkillAliases.ATTACK_ALIAS1:
       skillExp = playerStats[Skills.ATT];
       skillName = Skills.ATT;
       break;
-    case 'att':
+    case SkillAliases.ATTACK_ALIAS2:
       skillExp = playerStats[Skills.ATT];
       skillName = Skills.ATT;
       break;
-    case 'defence':
+    case SkillAliases.DEFENCE_ALIAS1:
       skillExp = playerStats[Skills.DEF];
       skillName = Skills.DEF;
       break;
-    case 'def':
+    case SkillAliases.DEFENCE_ALIAS2:
       skillExp = playerStats[Skills.DEF];
       skillName = Skills.DEF;
       break;
-    case 'strength':
+    case SkillAliases.STRENGTH_ALIAS1:
       skillExp = playerStats[Skills.STR];
       skillName = Skills.STR;
       break;
-    case 'str':
+    case SkillAliases.STRENGTH_ALIAS2:
       skillExp = playerStats[Skills.STR];
       skillName = Skills.STR;
       break;
-    case 'hitpoints':
+    case SkillAliases.HP_ALIAS1:
       skillExp = playerStats[Skills.HP];
       skillName = Skills.HP;
       break;
-    case 'hp':
+    case SkillAliases.HP_ALIAS2:
       skillExp = playerStats[Skills.HP];
       skillName = Skills.HP;
       break;
-    case 'ranged':
+    case SkillAliases.RANGED_ALIAS1:
       skillExp = playerStats[Skills.RANGED];
       skillName = Skills.RANGED;
       break;
-    case 'range':
+    case SkillAliases.RANGED_ALIAS2:
       skillExp = playerStats[Skills.RANGED];
       skillName = Skills.RANGED;
       break;
-    case 'prayer':
+    case SkillAliases.PRAYER_ALIAS1:
       skillExp = playerStats[Skills.PRAY];
       skillName = Skills.PRAY;
       break;
-    case 'pray':
+    case SkillAliases.PRAYER_ALIAS2:
       skillExp = playerStats[Skills.PRAY];
       skillName = Skills.PRAY;
       break;
-    case 'magic':
+    case SkillAliases.MAGIC_ALIAS1:
       skillExp = playerStats[Skills.MAGIC];
       skillName = Skills.MAGIC;
       break;
-    case 'mage':
+    case SkillAliases.MAGIC_ALIAS2:
       skillExp = playerStats[Skills.MAGIC];
       skillName = Skills.MAGIC;
       break;
-    case 'cooking':
+    case SkillAliases.COOKING_ALIAS1:
       skillExp = playerStats[Skills.COOK];
       skillName = Skills.COOK;
       break;
-    case 'cook':
+    case SkillAliases.COOKING_ALIAS2:
       skillExp = playerStats[Skills.COOK];
       skillName = Skills.COOK;
       break;
-    case 'woodcutting':
+    case SkillAliases.WC_ALIAS1:
       skillExp = playerStats[Skills.WC];
       skillName = Skills.WC;
       break;
-    case 'wc':
+    case SkillAliases.WC_ALIAS2:
       skillExp = playerStats[Skills.WC];
       skillName = Skills.WC;
       break;
-    case 'fletching':
+    case SkillAliases.FLETCH_ALIAS1:
       skillExp = playerStats[Skills.FLETCH];
       skillName = Skills.FLETCH;
       break;
-    case 'fletch':
+    case SkillAliases.FLETCH_ALIAS2:
       skillExp = playerStats[Skills.FLETCH];
       skillName = Skills.FLETCH;
       break;
-    case 'fishing':
+    case SkillAliases.FISH_ALIAS1:
       skillExp = playerStats[Skills.FISH];
       skillName = Skills.FISH;
       break;
-    case 'fish':
+    case SkillAliases.FISH_ALIAS2:
       skillExp = playerStats[Skills.FISH];
       skillName = Skills.FISH;
       break;
-    case 'firemaking':
+    case SkillAliases.FM_ALIAS1:
       skillExp = playerStats[Skills.FM];
       skillName = Skills.FM;
       break;
-    case 'firemake':
+    case SkillAliases.FM_ALIAS2:
       skillExp = playerStats[Skills.FM];
       skillName = Skills.FM;
       break;
-    case 'fm':
+    case SkillAliases.FM_ALIAS3:
       skillExp = playerStats[Skills.FM];
       skillName = Skills.FM;
       break;
-    case 'crafting':
+    case SkillAliases.CRAFT_ALIAS1:
       skillExp = playerStats[Skills.CRAFT];
       skillName = Skills.CRAFT;
       break;
-    case 'craft':
+    case SkillAliases.CONSTR_ALIAS2:
       skillExp = playerStats[Skills.CRAFT];
       skillName = Skills.CRAFT;
       break;
-    case 'smithing':
+    case SkillAliases.SMITH_ALIAS1:
       skillExp = playerStats[Skills.SMITH];
       skillName = Skills.SMITH;
       break;
-    case 'smith':
+    case SkillAliases.SMITH_ALIAS2:
       skillExp = playerStats[Skills.SMITH];
       skillName = Skills.SMITH;
       break;
-    case 'mining':
+    case SkillAliases.MINING_ALIAS1:
       skillExp = playerStats[Skills.MINING];
       skillName = Skills.MINING;
       break;
-    case 'mine':
+    case SkillAliases.MINING_ALIAS2:
       skillExp = playerStats[Skills.MINING];
       skillName = Skills.MINING;
       break;
-    case 'herblore':
+    case SkillAliases.HERB_ALIAS1:
       skillExp = playerStats[Skills.HERB];
       skillName = Skills.HERB;
       break;
-    case 'herb':
+    case SkillAliases.HERB_ALIAS2:
       skillExp = playerStats[Skills.HERB];
       skillName = Skills.HERB;
       break;
-    case 'agility':
+    case SkillAliases.AGIL_ALIAS1:
       skillExp = playerStats[Skills.AGIL];
       skillName = Skills.AGIL;
       break;
-    case 'agil':
+    case SkillAliases.AGIL_ALIAS2:
       skillExp = playerStats[Skills.AGIL];
       skillName = Skills.AGIL;
       break;
-    case 'thieving':
+    case SkillAliases.THIEV_ALIAS1:
       skillExp = playerStats[Skills.THIEV];
       skillName = Skills.THIEV;
       break;
-    case 'thiev':
+    case SkillAliases.THIEV_ALIAS2:
       skillExp = playerStats[Skills.THIEV];
       skillName = Skills.THIEV;
       break;
-    case 'slayer':
+    case SkillAliases.SLAY_ALIAS1:
       skillExp = playerStats[Skills.SLAYER];
       skillName = Skills.SLAYER;
       break;
-    case 'slay':
+    case SkillAliases.SLAY_ALIAS2:
       skillExp = playerStats[Skills.SLAYER];
       skillName = Skills.SLAYER;
       break;
-    case 'farming':
+    case SkillAliases.FARM_ALIAS1:
       skillExp = playerStats[Skills.FARM];
       skillName = Skills.FARM;
       break;
-    case 'farm':
+    case SkillAliases.FARM_ALIAS2:
       skillExp = playerStats[Skills.FARM];
       skillName = Skills.FARM;
       break;
-    case 'runecrafting':
+    case SkillAliases.RC_ALIAS1:
       skillExp = playerStats[Skills.RC];
       skillName = Skills.RC;
       break;
-    case 'runecraft':
+    case SkillAliases.RC_ALIAS2:
       skillExp = playerStats[Skills.RC];
       skillName = Skills.RC;
       break;
-    case 'rc':
+    case SkillAliases.RC_ALIAS3:
       skillExp = playerStats[Skills.RC];
       skillName = Skills.RC;
       break;
-    case 'hunter':
+    case SkillAliases.HUNT_ALIAS1:
       skillExp = playerStats[Skills.HUNT];
       skillName = Skills.HUNT;
       break;
-    case 'hunt':
+    case SkillAliases.HUNT_ALIAS2:
       skillExp = playerStats[Skills.HUNT];
       skillName = Skills.HUNT;
       break;
-    case 'construction':
+    case SkillAliases.CONSTR_ALIAS1:
       skillExp = playerStats[Skills.CON];
       skillName = Skills.CON;
       break;
-    case 'con':
+    case SkillAliases.CONSTR_ALIAS2:
       skillExp = playerStats[Skills.CON];
       skillName = Skills.CON;
       break;
-    case 'const':
+    case SkillAliases.CONSTR_ALIAS3:
       skillExp = playerStats[Skills.CON];
       skillName = Skills.CON;
       break;
-
+    case SkillAliases.CONSTR_ALIAS4:
+      skillExp = playerStats[Skills.CON];
+      skillName = Skills.CON;
+      break;
     default:
       skillExp = {
         rank: 'Unranked',
@@ -309,84 +313,57 @@ const skillTypeCheck = (
   };
 };
 
-// SKill names
-export enum Skills {
-  TOTAL = 'Overall',
-  ATT = 'Attack',
-  DEF = 'Defence',
-  STR = 'Strength',
-  HP = 'Hitpoints',
-  RANGED = 'Ranged',
-  PRAY = 'Prayer',
-  MAGIC = 'Magic',
-  COOK = 'Cooking',
-  WC = 'Woodcutting',
-  FLETCH = 'Fletching',
-  FISH = 'Fishing',
-  FM = 'Firemaking',
-  CRAFT = 'Crafting',
-  SMITH = 'Smithing',
-  MINING = 'Mining',
-  HERB = 'Herblore',
-  AGIL = 'Agility',
-  THIEV = 'Thieving',
-  SLAYER = 'Slayer',
-  FARM = 'Farming',
-  RC = 'Runecrafting',
-  HUNT = 'Hunter',
-  CON = 'Construction',
-}
-
 export const skillList: string[] = [
-  'total',
-  'overall',
-  'attack',
-  'att',
-  'defence',
-  'def',
-  'strength',
-  'str',
-  'hitpoints',
-  'hp',
-  'ranged',
-  'range',
-  'prayer',
-  'pray',
-  'magic',
-  'mage',
-  'cooking',
-  'cook',
-  'woodcutting',
-  'wc',
-  'fletching',
-  'fletch',
-  'fishing',
-  'fish',
-  'firemaking',
-  'firemake',
-  'fm',
-  'crafting',
-  'craft',
-  'smithing',
-  'smith',
-  'mining',
-  'mine',
-  'herblore',
-  'herb',
-  'agility',
-  'agil',
-  'thieving',
-  'thiev',
-  'slayer',
-  'slay',
-  'farming',
-  'farm',
-  'runecrafting',
-  'runecraft',
-  'rc',
-  'hunter',
-  'hunt',
-  'construction',
-  'const',
-  'con',
+  SkillAliases.TOTAL_ALIAS1,
+  SkillAliases.TOTAL_ALIAS2,
+  SkillAliases.ATTACK_ALIAS1,
+  SkillAliases.ATTACK_ALIAS2,
+  SkillAliases.DEFENCE_ALIAS1,
+  SkillAliases.DEFENCE_ALIAS2,
+  SkillAliases.STRENGTH_ALIAS1,
+  SkillAliases.STRENGTH_ALIAS2,
+  SkillAliases.HP_ALIAS1,
+  SkillAliases.HP_ALIAS2,
+  SkillAliases.RANGED_ALIAS1,
+  SkillAliases.RANGED_ALIAS2,
+  SkillAliases.PRAYER_ALIAS1,
+  SkillAliases.PRAYER_ALIAS2,
+  SkillAliases.MAGIC_ALIAS1,
+  SkillAliases.MAGIC_ALIAS2,
+  SkillAliases.COOKING_ALIAS1,
+  SkillAliases.COOKING_ALIAS2,
+  SkillAliases.WC_ALIAS1,
+  SkillAliases.WC_ALIAS2,
+  SkillAliases.FLETCH_ALIAS1,
+  SkillAliases.FLETCH_ALIAS2,
+  SkillAliases.FISH_ALIAS1,
+  SkillAliases.FISH_ALIAS2,
+  SkillAliases.FM_ALIAS1,
+  SkillAliases.FM_ALIAS2,
+  SkillAliases.FM_ALIAS3,
+  SkillAliases.CRAFT_ALIAS1,
+  SkillAliases.CONSTR_ALIAS2,
+  SkillAliases.SMITH_ALIAS1,
+  SkillAliases.SMITH_ALIAS2,
+  SkillAliases.MINING_ALIAS1,
+  SkillAliases.MINING_ALIAS2,
+  SkillAliases.HERB_ALIAS1,
+  SkillAliases.HERB_ALIAS2,
+  SkillAliases.AGIL_ALIAS1,
+  SkillAliases.AGIL_ALIAS2,
+  SkillAliases.THIEV_ALIAS1,
+  SkillAliases.THIEV_ALIAS2,
+  SkillAliases.SLAY_ALIAS1,
+  SkillAliases.SLAY_ALIAS2,
+  SkillAliases.FARM_ALIAS1,
+  SkillAliases.FARM_ALIAS2,
+  SkillAliases.RC_ALIAS1,
+  SkillAliases.RC_ALIAS2,
+  SkillAliases.RC_ALIAS3,
+  SkillAliases.HUNT_ALIAS1,
+  SkillAliases.HUNT_ALIAS2,
+  SkillAliases.CONSTR_ALIAS1,
+  SkillAliases.CONSTR_ALIAS2,
+  SkillAliases.CONSTR_ALIAS3,
+  SkillAliases.CONSTR_ALIAS4,
 ];

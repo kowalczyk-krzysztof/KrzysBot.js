@@ -24,4 +24,4 @@ Slayer: slayer, slay
 Farming: farming, farm
 Runecrafting: runecrafting, runecraft, rc
 Hunter: hunter, hunt
-Construction: construction, const, con
+Construction: construction, const, con, constr
