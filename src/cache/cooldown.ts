@@ -9,18 +9,18 @@ export const isOnCooldown = (
   commandName: string,
   cooldownInSec: number,
   isAuthorOptional: boolean = false,
-  optionalArgs: string[] = []
+  optionalArgs: string = ''
 ): boolean => {
   // Creates cache item (string)
   const createCacheItem = (
     msg: Message,
     commandName: string,
     isAuthorOptional: boolean,
-    optionalArgs: string[]
+    optionalArgs: string
   ): string => {
     let keyword;
-    if (optionalArgs.length === 0) keyword = '';
-    else keyword = optionalArgs.join('').toLowerCase();
+    if (optionalArgs !== '') keyword = optionalArgs.toLowerCase();
+    else keyword = '';
 
     if (isAuthorOptional === false) {
       const cacheItem: string = msg.author.id + commandName + keyword;
@@ -46,7 +46,6 @@ export const isOnCooldown = (
     isAuthorOptional,
     optionalArgs
   );
-
   if (cacheItem in cache) {
     const timeWhenAddedToCache: number = cache[cacheItem];
     const now: number = Date.now();
@@ -55,42 +54,24 @@ export const isOnCooldown = (
     const timeLeftSeconds: number = parseInt(timeLeftSecondsDecimal.toString());
     const timeLeftMinDecimal: number = timeLeftSeconds / 60;
     const timeLeftMin: number = parseInt(timeLeftMinDecimal.toString());
-    const embed: Embed = new Embed();
-    if (isAuthorOptional === false) {
-      if (timeLeftSecondsDecimal > 60) {
-        embed.setDescription(
-          `You have used this command recently. Please wait **${timeLeftMin} min** and try again`
-        );
-        msg.channel.send(embed);
-      } else if (timeLeftSecondsDecimal >= 1) {
-        embed.setDescription(
-          `You have used this command recently. Please wait **${timeLeftSeconds} s** and try again`
-        );
-        msg.channel.send(embed);
-      } else {
-        embed.setDescription(
-          `You have used this command recently. Please wait **${timeLeftSecondsDecimal} s** and try again`
-        );
-        msg.channel.send(embed);
-      }
+    let time: number;
+    let secondOrMin: string;
+    if (timeLeftSecondsDecimal > 60) {
+      time = timeLeftMin;
+      secondOrMin = ' min';
+    } else if (timeLeftSecondsDecimal >= 1) {
+      time = timeLeftSeconds;
+      secondOrMin = 's';
     } else {
-      if (timeLeftSecondsDecimal > 60) {
-        embed.setDescription(
-          `This command has been used recently. Please wait **${timeLeftMin} min** and try again`
-        );
-        msg.channel.send(embed);
-      } else if (timeLeftSecondsDecimal >= 1) {
-        embed.setDescription(
-          `This command has been used recently. Please wait **${timeLeftSeconds}s** and try again`
-        );
-        msg.channel.send(embed);
-      } else {
-        embed.setDescription(
-          `This command has been used recently. Please wait **${timeLeftSecondsDecimal}s** and try again`
-        );
-        msg.channel.send(embed);
-      }
+      time = timeLeftSecondsDecimal;
+      secondOrMin = 's';
     }
+    const authorRequiredMsg: string = `You have used this command recently. Please wait **${time}${secondOrMin}** and try again`;
+    const authorOptionalMsg: string = `This command has been used recently. Please wait **${time}${secondOrMin}** and try again`;
+    let cooldownMsg: string;
+    if (isAuthorOptional === false) cooldownMsg = authorRequiredMsg;
+    else cooldownMsg = authorOptionalMsg;
+    msg.channel.send(new Embed().setDescription(cooldownMsg));
     return true;
   } else {
     addCacheItem(cacheItem, cooldownInSec);

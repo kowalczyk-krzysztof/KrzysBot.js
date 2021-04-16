@@ -16,7 +16,7 @@ export const fetchrsn = async (
   const nameCheck: string | null = runescapeNameValidator(args);
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
-  if (isOnCooldown(msg, commandName, cooldown, true, args) === true) return;
+  if (isOnCooldown(msg, commandName, cooldown, true, username) === true) return;
   else {
     const areNamesFetched: boolean = await fetchPlayerNames(msg, username);
     if (areNamesFetched === true) {
