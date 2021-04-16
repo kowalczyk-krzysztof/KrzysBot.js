@@ -15,28 +15,24 @@ export const playercountry = async (
   const nameCheck: boolean = runescapeNameValidator(args);
   if (nameCheck === false) return msg.channel.send(invalidUsername);
   const keyword: string = argumentParser(args, 0, ParserTypes.OSRS);
-  const embed: TempleEmbed = new TempleEmbed().addField(
-    usernameString,
-    `${args}`
-  );
   if (keyword in playerStats) {
-    const result = generateResult(embed, playerStats[keyword]);
+    const result = generateResult(playerStats[keyword]);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchTemple(msg, keyword);
     if (isFetched === true) {
-      const result = generateResult(embed, playerStats[keyword]);
+      const result = generateResult(playerStats[keyword]);
       return msg.channel.send(result);
     } else return;
   }
 };
 
 // Generate result
-const generateResult = (
-  inputEmbed: TempleEmbed,
-  playerObject: PlayerStats
-): TempleEmbed => {
-  const embed: TempleEmbed = inputEmbed;
+const generateResult = (playerObject: PlayerStats): TempleEmbed => {
+  const embed: TempleEmbed = new TempleEmbed().addField(
+    usernameString,
+    `${playerObject.info.Username}`
+  );
   const data = playerObject.info.Country;
   if (data === '-') embed.addField('Country', 'No Info');
   else embed.addField('Country', `${data}`);

@@ -22,7 +22,7 @@ export const clues = async (
   const prefix: string | null = isPrefixValid(
     msg,
     args,
-    types,
+    clueTypes,
     Categories.CLUES
   );
   if (prefix === null) return;
@@ -75,7 +75,7 @@ const generateResult = (
   return embed;
 };
 
-const types: string[] = [
+const clueTypes: string[] = [
   'all',
   'beginner',
   'easy',

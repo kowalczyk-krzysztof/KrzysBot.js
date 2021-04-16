@@ -59,7 +59,6 @@ const generateResult = (
   const prefix: string = inputPrefix;
   const embed: OsrsEmbed = inputEmbed;
   const player: OsrsPlayer = playerObject;
-
   const boss: {
     bossKc: BossOrMinigame;
     bossName: string;
@@ -146,6 +145,10 @@ const bossTypeCheck = (
       bossKc = playerStats[Bosses.CHAOS_ELE];
       bossName = Bosses.CHAOS_ELE;
       break;
+    case 'chaos_elemental':
+      bossKc = playerStats[Bosses.CHAOS_ELE];
+      bossName = Bosses.CHAOS_ELE;
+      break;
     case 'fanatic':
       bossKc = playerStats[Bosses.CHAOS_FANATIC];
       bossName = Bosses.CHAOS_FANATIC;
@@ -203,6 +206,10 @@ const bossTypeCheck = (
       bossName = Bosses.SUPREME;
       break;
     case 'deranged_arch':
+      bossKc = playerStats[Bosses.DER_ARCH];
+      bossName = Bosses.DER_ARCH;
+      break;
+    case 'deranged_archeologist':
       bossKc = playerStats[Bosses.DER_ARCH];
       bossName = Bosses.DER_ARCH;
       break;
@@ -339,6 +346,10 @@ const bossTypeCheck = (
       bossName = Bosses.GAUNTLET;
       break;
     case 'corr_gauntlet':
+      bossKc = playerStats[Bosses.CORR_GAUNTLET];
+      bossName = Bosses.CORR_GAUNTLET;
+      break;
+    case 'corrupted_gauntlet':
       bossKc = playerStats[Bosses.CORR_GAUNTLET];
       bossName = Bosses.CORR_GAUNTLET;
       break;
@@ -505,6 +516,7 @@ const bosses: string[] = [
   'coxcm',
   'ele',
   'chaos_ele',
+  'chaos_elemental',
   'fanatic',
   'chaos_fanatic',
   'sara',
@@ -519,6 +531,7 @@ const bosses: string[] = [
   'dagannoth_rex',
   'supreme',
   'dagannoth_supreme',
+  'deranged_archeologist',
   'deranged_arch',
   'graardor',
   'bandos',
@@ -554,6 +567,7 @@ const bosses: string[] = [
   'gauntlet',
   'hunllef',
   'corr_gauntlet',
+  'corrupted_gauntlet',
   'corr',
   'corrupted',
   'corr_hunllef',

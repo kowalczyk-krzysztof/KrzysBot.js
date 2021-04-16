@@ -14,7 +14,12 @@ export const bh = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(msg, args, types, Categories.BH);
+  const prefix: string | null = isPrefixValid(
+    msg,
+    args,
+    bhTypes,
+    Categories.BH
+  );
   if (prefix === null) return;
   const cooldown: number = 30;
   if (isOnCooldown(msg, commandName, cooldown, false, args) === true) return;
@@ -57,7 +62,7 @@ const generateResult = (
   const player: OsrsPlayer = playerObject;
   let scoreType: string | number;
   let title: string;
-  if (prefix === types[0]) {
+  if (prefix === bhTypes[0]) {
     scoreType = player.Bh_Rogue.score;
     title = BH.ROGUE;
   } else {
@@ -68,4 +73,4 @@ const generateResult = (
   return embed;
 };
 
-const types: string[] = ['rogue', 'hunter'];
+export const bhTypes: string[] = ['rogue', 'hunter'];
