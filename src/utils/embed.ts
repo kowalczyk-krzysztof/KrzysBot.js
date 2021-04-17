@@ -46,7 +46,6 @@ export enum EmbedTitles {
 export class OsrsEmbed extends Embed {
   constructor() {
     super();
-
     this.setFooter('Incorrect? Fetch latest data:\n.osrsfetch username');
   }
 }

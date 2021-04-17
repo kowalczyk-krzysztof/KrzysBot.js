@@ -9,12 +9,7 @@ import {
   Clues,
   Skills,
 } from '../../utils/osrs/enums';
-import {
-  TempleEmbedNoFooter,
-  Embed,
-  EmbedTitles,
-  usernameString,
-} from '../../utils/embed';
+import { Embed, EmbedTitles, usernameString } from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -222,8 +217,6 @@ export const record = async (
         }
         break;
       case FirstArgumentType.BOSS_THREE_WORD:
-        console.log(args[4]);
-
         if (!timeTypes.includes(args[4].toLowerCase()))
           return msg.channel.send(
             invalidPrefixMsg(Categories.TIME, timeTypes.join(', '))
@@ -255,17 +248,16 @@ export const record = async (
     ) === true
   )
     return;
-  const embed: TempleEmbedNoFooter = new TempleEmbedNoFooter()
+  const embed: Embed = new Embed()
     .setTitle(EmbedTitles.RECORDS)
     .addField(usernameString, `${username}`);
   if (username in playerRecords) {
     const field: string = fieldNameCheck(inputFieldName);
-    const result: TempleEmbedNoFooter = generateResult(
+    const result: Embed = generateResult(
       field,
       embed,
       playerRecords[username],
       time,
-      firstArgumentType,
       args
     );
     return msg.channel.send(result);
@@ -274,12 +266,11 @@ export const record = async (
     const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const field: string = fieldNameCheck(inputFieldName);
-      const result: TempleEmbedNoFooter = generateResult(
+      const result: Embed = generateResult(
         field,
         embed,
         playerRecords[username],
         time,
-        firstArgumentType,
         args
       );
       return msg.channel.send(result);
@@ -290,43 +281,52 @@ export const record = async (
 // Generates embed sent to user
 const generateResult = (
   field: string,
-  embed: TempleEmbedNoFooter,
+  embed: Embed,
   playerObject: PlayerRecords,
   time: string,
-  firstArgumentType: number,
   args: string[]
-): TempleEmbedNoFooter => {
+): Embed => {
   // Changing the time value (string) to have a first capital letter
   const capitalFirst: string = capitalizeFirstLetter(time);
   let formattedField: string;
-  if (firstArgumentType === FirstArgumentType.CLUES) {
-    switch (field) {
-      case Clues.ALL:
-        formattedField = 'All Clues';
-        break;
-      case Clues.BEGINNER:
-        formattedField = 'Beginner Clues';
-        break;
-      case Clues.EASY:
-        formattedField = 'Easy Clues';
-        break;
-      case Clues.MEDIUM:
-        formattedField = 'Medium Clues';
-        break;
-      case Clues.HARD:
-        formattedField = 'Hard Clues';
-        break;
-      case Clues.ELITE:
-        formattedField = 'Hard Clues';
-        break;
-      case Clues.MASTER:
-        formattedField = 'Master Clues';
-        break;
-      default:
-        formattedField = field;
-    }
-  } else if ((field = Skills.TEMPLE_RC)) formattedField = Skills.RC;
-  else formattedField = field;
+  embed.setFooter('Incorrect? Fetch latest data:\n.fetchrecords username');
+  switch (field) {
+    case Clues.ALL:
+      formattedField = 'All Clues';
+      break;
+    case Clues.BEGINNER:
+      formattedField = 'Beginner Clues';
+      break;
+    case Clues.EASY:
+      formattedField = 'Easy Clues';
+      break;
+    case Clues.MEDIUM:
+      formattedField = 'Medium Clues';
+      break;
+    case Clues.HARD:
+      formattedField = 'Hard Clues';
+      break;
+    case Clues.ELITE:
+      formattedField = 'Hard Clues';
+      break;
+    case Clues.MASTER:
+      formattedField = 'Master Clues';
+      break;
+    case Skills.TEMPLE_RC:
+      formattedField = Skills.RC;
+      break;
+    case TempleMinigamesOther.EHB:
+      formattedField = field.toUpperCase();
+      break;
+    case TempleMinigamesOther.EHP:
+      formattedField = field.toUpperCase();
+      break;
+
+    default:
+      formattedField = field;
+      break;
+  }
+
   // If there are no records the key value is an empty array
   if (Array.isArray(playerObject[field]) === false) {
     // If there's no record for specific period of time then the key doesn't exist
@@ -355,7 +355,10 @@ const generateResult = (
       embed.addField('Record set on:', `${formattedDate}`);
     } else {
       embed.addField(`Time Period`, `${capitalFirst}`);
-      embed.addField(`NO DATA`, `No records for this period of time`);
+      embed.addField(
+        `NO DATA`,
+        `No records for this period of time for ${formattedField}`
+      );
     }
   } else {
     embed.addField(`NO DATA`, `No records for ${formattedField}`);

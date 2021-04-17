@@ -13,18 +13,35 @@ export const templefetch = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  const embed: Embed = new Embed();
+  const dataType: CacheTypes | string = args[0].toLowerCase();
+  const types: (CacheTypes | string)[] = [
+    CacheTypes.PLAYER_NAMES,
+    CacheTypes.PLAYER_RECORDS,
+    CacheTypes.PLAYER_STATS,
+  ];
+  if (!types.includes(dataType))
+    return msg.channel.send(
+      embed.setDescription(
+        `Invalid arguments. Valid arguments:\`\`\`\n${CacheTypes.PLAYER_NAMES}\n${CacheTypes.PLAYER_STATS}\n${CacheTypes.PLAYER_RECORDS}\`\`\``
+      )
+    );
+
   const cooldown: number = 600;
-  const nameCheck: string | null = runescapeNameValidator(args);
+  const nameCheck: string | null = runescapeNameValidator(args.slice(1));
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, true, username) === true) return;
   else {
-    const dataType: CacheTypes = CacheTypes.PLAYER_STATS;
-    const isFetched: boolean = await fetchTemple(msg, username, dataType);
+    // const dataType: CacheTypes = CacheTypes.PLAYER_STATS;
+    const isFetched: boolean = await fetchTemple(
+      msg,
+      username,
+      dataType as CacheTypes
+    );
     if (isFetched === true) {
-      const embed: Embed = new Embed();
       embed.setDescription(
-        `Fetched latest data available for player:\`\`\`${username}\`\`\`To get more recent data - add a new datapoint and fetch again`
+        `Fetched latest **${dataType}** data available for player:\`\`\`${username}\`\`\`To get more recent data - add a new datapoint and fetch again`
       );
       return msg.channel.send(embed);
     } else return errorHandler(null, msg);
