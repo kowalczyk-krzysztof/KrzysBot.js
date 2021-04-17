@@ -1,9 +1,15 @@
 import { Message } from 'discord.js';
 import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
-import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
+import {
+  OsrsEmbed,
+  EmbedTitles,
+  usernameString,
+  ErrorEmbed,
+} from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
 
@@ -13,8 +19,8 @@ export const soulwars = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const cooldown: number = 30;
-  const nameCheck: string | null = runescapeNameValidator(args);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(args);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
@@ -36,9 +42,11 @@ export const soulwars = async (
 const generateResult = (
   inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): OsrsEmbed => {
-  const embed: OsrsEmbed = inputEmbed;
-  const player: OsrsPlayer = playerObject;
-  embed.addField(`Soul Wars Zeals`, `${player.Soul_Wars_Zeal.score}`);
-  return embed;
+): OsrsEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
+  inputEmbed.addField(
+    `Soul Wars Zeals`,
+    `${playerObject.Soul_Wars_Zeal.score}`
+  );
+  return inputEmbed;
 };

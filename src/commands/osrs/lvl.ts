@@ -6,12 +6,22 @@ import {
   OsrsPlayer,
   OsrsSkill,
 } from '../../cache/osrsCache';
-import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
+import {
+  OsrsEmbed,
+  EmbedTitles,
+  usernameString,
+  ErrorEmbed,
+} from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
+import {
+  isPrefixValid,
+  Categories,
+  invalidPrefix,
+} from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
 
 export const lvl = async (
@@ -19,16 +29,11 @@ export const lvl = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(
-    msg,
-    args,
-    skillList,
-    Categories.SKILL
-  );
-  if (prefix === null) return;
+  const prefix: string = isPrefixValid(msg, args, skillList, Categories.SKILL);
+  if (prefix === invalidPrefix) return;
   const cooldown: number = 30;
-  const nameCheck: string | null = runescapeNameValidator(args.slice(1));
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(args.slice(1));
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
@@ -60,23 +65,21 @@ const generateResult = (
   inputPrefix: string,
   inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): OsrsEmbed => {
-  const prefix: string = inputPrefix;
-  const embed: OsrsEmbed = inputEmbed;
-  const player: OsrsPlayer = playerObject;
+): OsrsEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
   const skill: {
     skillName: string;
     skillExp: OsrsSkill;
-  } = skillTypeCheck(prefix, player);
+  } = skillTypeCheck(inputPrefix, playerObject);
   // Intl is how I format number to have commas
   const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
   let formattedExp: Intl.NumberFormat | string;
   if (typeof skill.skillExp.exp === 'number')
     formattedExp = formatter.format(skill.skillExp.exp);
   else formattedExp = skill.skillExp.exp;
-  embed.addField(`${skill.skillName} lvl`, `${skill.skillExp.level}`);
-  embed.addField('Experience', `${formattedExp} exp`);
-  return embed;
+  inputEmbed.addField(`${skill.skillName} lvl`, `${skill.skillExp.level}`);
+  inputEmbed.addField('Experience', `${formattedExp} exp`);
+  return inputEmbed;
 };
 
 const skillTypeCheck = (
@@ -86,11 +89,10 @@ const skillTypeCheck = (
   skillName: string;
   skillExp: OsrsSkill;
 } => {
-  const type: string = prefix;
   const playerStats: OsrsPlayer = playerObject;
   let skillExp: OsrsSkill;
   let skillName: string;
-  switch (type) {
+  switch (prefix) {
     case SkillAliases.TOTAL_ALIAS1:
       skillExp = playerStats[Skills.TOTAL];
       skillName = Skills.TOTAL;

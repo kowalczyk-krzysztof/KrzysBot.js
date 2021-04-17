@@ -1,9 +1,15 @@
 import { Message } from 'discord.js';
 import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
-import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
+import {
+  OsrsEmbed,
+  EmbedTitles,
+  usernameString,
+  ErrorEmbed,
+} from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
 
@@ -14,7 +20,7 @@ export const lms = async (
 ): Promise<Message | undefined> => {
   const cooldown: number = 30;
   const nameCheck: string | null = runescapeNameValidator(args);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
@@ -36,9 +42,8 @@ export const lms = async (
 const generateResult = (
   inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): OsrsEmbed => {
-  const embed: OsrsEmbed = inputEmbed;
-  const player: OsrsPlayer = playerObject;
-  embed.addField(`LMS Score`, `${player.Lms_Rank.score}`);
-  return embed;
+): OsrsEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
+  inputEmbed.addField(`LMS Score`, `${playerObject.Lms_Rank.score}`);
+  return inputEmbed;
 };

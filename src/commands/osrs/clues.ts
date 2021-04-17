@@ -6,12 +6,22 @@ import {
   OsrsPlayer,
   BossOrMinigame,
 } from '../../cache/osrsCache';
-import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
+import {
+  OsrsEmbed,
+  EmbedTitles,
+  usernameString,
+  ErrorEmbed,
+} from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
+import {
+  isPrefixValid,
+  Categories,
+  invalidPrefix,
+} from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 
@@ -20,16 +30,11 @@ export const clues = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(
-    msg,
-    args,
-    clueTypes,
-    Categories.CLUES
-  );
-  if (prefix === null) return;
+  const prefix: string = isPrefixValid(msg, args, clueTypes, Categories.CLUES);
+  if (prefix === invalidPrefix) return;
   const cooldown: number = 30;
-  const nameCheck: string | null = runescapeNameValidator(args.slice(1));
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(args.slice(1));
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
@@ -56,19 +61,19 @@ export const clues = async (
   }
 };
 
-// Clue key names
-
 // Generates embed sent to user
 const generateResult = (
   prefix: string,
   inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): OsrsEmbed => {
-  const embed: OsrsEmbed = inputEmbed;
-  const player: OsrsPlayer = playerObject;
-  const clueType: BossOrMinigame = clueTypeCheck(prefix, player);
-  embed.addField(`Clues ${capitalizeFirstLetter(prefix)}`, `${clueType.score}`);
-  return embed;
+): OsrsEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
+  const clueType: BossOrMinigame = clueTypeCheck(prefix, playerObject);
+  inputEmbed.addField(
+    `Clues ${capitalizeFirstLetter(prefix)}`,
+    `${clueType.score}`
+  );
+  return inputEmbed;
 };
 
 export const clueTypes: string[] = [
@@ -86,10 +91,9 @@ export const clueTypeCheck = (
   prefix: string,
   playerObject: OsrsPlayer
 ): BossOrMinigame => {
-  const type: string = prefix;
   const playerStats: OsrsPlayer = playerObject;
   let cluesDoneNumber: BossOrMinigame;
-  switch (type) {
+  switch (prefix) {
     case ClueAliases.ALL:
       cluesDoneNumber = playerStats[Clues.ALL];
       break;

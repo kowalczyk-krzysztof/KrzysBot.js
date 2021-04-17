@@ -2,8 +2,9 @@ import { Message } from 'discord.js';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { Embed } from '../../utils/embed';
+import { Embed, ErrorEmbed, TempleEmbed } from '../../utils/embed';
 import {
   playerNames,
   CacheTypes,
@@ -16,12 +17,10 @@ export const rsn = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const nameCheck: string | null = runescapeNameValidator(args);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(args);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
-  const embed: Embed = new Embed().setFooter(
-    'Incorrect? Fetch latest names:\n.fetchrsn username'
-  );
+  const embed: TempleEmbed = new TempleEmbed();
   if (username in playerNames) {
     const result: Embed = generateResult(embed, playerNames[username]);
     return msg.channel.send(result);
@@ -37,16 +36,15 @@ export const rsn = async (
 
 // Generate result
 const generateResult = (
-  inputEmbed: Embed,
+  inputEmbed: TempleEmbed,
   playerObject: PlayerNames
-): Embed => {
-  const embed: Embed = inputEmbed;
-  const aliases = playerObject.aliases;
+): TempleEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
   const names: string[] = [];
-  for (const alias in aliases) {
+  for (const alias in playerObject.aliases) {
     names.push(alias);
   }
   const data: string = names.join('\n');
-  embed.addField('Names', `${data}`);
-  return embed;
+  inputEmbed.addField('Names', `${data}`);
+  return inputEmbed;
 };
