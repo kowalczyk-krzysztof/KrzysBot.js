@@ -9,7 +9,7 @@ import {
   Clues,
   Skills,
 } from '../../utils/osrs/enums';
-import { Embed, EmbedTitles, usernameString } from '../../utils/embed';
+import { TempleEmbed, EmbedTitles, usernameString } from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -71,7 +71,7 @@ export const record = async (
   let validFirstArgument: string;
   if (args.length === 0)
     return msg.channel.send(
-      new Embed().setDescription(
+      new TempleEmbed().setDescription(
         '**Please provide arguments. Valid formats**:```.record clues tier time username\n\n.record lms time username\n\n.record skill skill-name time username\n\n.record boss boss-name time username```'
       )
     );
@@ -82,7 +82,7 @@ export const record = async (
   else validFirstArgument = args[0].toLowerCase();
   if (args[1] === undefined)
     return msg.channel.send(
-      new Embed().setDescription('**Please provide a second argument.**')
+      new TempleEmbed().setDescription('**Please provide a second argument.**')
     );
   let inputFieldName: string;
   let isFirstArgumentValid: boolean;
@@ -231,7 +231,7 @@ export const record = async (
         time = 'Fail';
         rsn = ['Fail'];
     }
-  } else return msg.channel.send(new Embed().setDescription('Error'));
+  } else return msg.channel.send(new TempleEmbed().setDescription('**ERROR**'));
 
   const cooldown: number = 30;
   if (rsn === undefined) return msg.channel.send(invalidUsername);
@@ -248,12 +248,12 @@ export const record = async (
     ) === true
   )
     return;
-  const embed: Embed = new Embed()
+  const embed: TempleEmbed = new TempleEmbed()
     .setTitle(EmbedTitles.RECORDS)
     .addField(usernameString, `${username}`);
   if (username in playerRecords) {
     const field: string = fieldNameCheck(inputFieldName);
-    const result: Embed = generateResult(
+    const result: TempleEmbed = generateResult(
       field,
       embed,
       playerRecords[username],
@@ -266,7 +266,7 @@ export const record = async (
     const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const field: string = fieldNameCheck(inputFieldName);
-      const result: Embed = generateResult(
+      const result: TempleEmbed = generateResult(
         field,
         embed,
         playerRecords[username],
@@ -281,15 +281,14 @@ export const record = async (
 // Generates embed sent to user
 const generateResult = (
   field: string,
-  embed: Embed,
+  embed: TempleEmbed,
   playerObject: PlayerRecords,
   time: string,
   args: string[]
-): Embed => {
+): TempleEmbed => {
   // Changing the time value (string) to have a first capital letter
   const capitalFirst: string = capitalizeFirstLetter(time);
   let formattedField: string;
-  embed.setFooter('Incorrect? Fetch latest data:\n.fetchrecords username');
   switch (field) {
     case Clues.ALL:
       formattedField = 'All Clues';
