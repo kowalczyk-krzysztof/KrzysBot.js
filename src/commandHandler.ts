@@ -12,7 +12,6 @@ import { rsn } from './commands/templeosrs/rsn';
 import { playercountry } from './commands/templeosrs/playercountry';
 import { templefetch } from './commands/templeosrs/templefetch';
 import { datapoint } from './commands/templeosrs/datapoint';
-import { fetchrsn } from './commands/templeosrs/fetchrsn';
 import { record } from './commands/templeosrs/record';
 // OSRS
 import { clues } from './commands/osrs/clues';
@@ -43,7 +42,6 @@ export const commandList: {
   playercountry,
   templefetch,
   datapoint,
-  fetchrsn,
   clues,
   kc,
   lvl,

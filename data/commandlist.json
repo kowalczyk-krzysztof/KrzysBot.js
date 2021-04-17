@@ -18,7 +18,7 @@
     },
     "ehb": {
       "name": "ehb",
-      "description": "Get player's EHP",
+      "description": "Get player's EHB",
       "example": ".ehb username",
       "category": "Temple OSRS",
       "aliases": []
@@ -39,17 +39,10 @@
     },
     "templefetch": {
       "name": "templefetch",
-      "description": "Fetch latest player data",
-      "example": ".templefetch username",
+      "description": "Fetch latest player data (stats, names, records)",
+      "example": ".templefetch data-type username",
       "category": "Temple OSRS",
       "aliases": ["fetchtemple"]
-    },
-    "fetchrsn": {
-      "name": "fetchrsn",
-      "description": "Fetch latest list of player's usernames",
-      "example": ".fetchrsn username",
-      "category": "Temple OSRS",
-      "aliases": []
     },
     "datapoint": {
       "name": "datapoint",

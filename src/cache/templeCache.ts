@@ -77,9 +77,9 @@ export interface PlayerRecords {
 }
 
 export enum CacheTypes {
-  PLAYER_STATS = 'player stats',
-  PLAYER_NAMES = 'player names',
-  PLAYER_RECORDS = 'player records',
+  PLAYER_STATS = 'stats',
+  PLAYER_NAMES = 'names',
+  PLAYER_RECORDS = 'records',
 }
 
 const addToCache = (
