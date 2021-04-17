@@ -65,7 +65,9 @@ export const createCommandList = (msg: Message, args: string[]) => {
       } else {
         // Formatting content (string[]) so user sees "foo bar" instead of "foo,bar"
         const userInput: string = content.join(' ');
-        return msg.channel.send(`Category ${userInput} does not exist`);
+        return msg.channel.send(
+          embed.setDescription(`Category **${userInput}** does not exist`)
+        );
       }
     });
   }
