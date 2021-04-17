@@ -6,7 +6,12 @@ import {
 import { TempleEmbed, usernameString } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { gameModeCheck, GameModeString } from '../../utils/osrs/gameModeCheck';
-import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
+import {
+  playerStats,
+  PlayerStats,
+  fetchTemple,
+  CacheTypes,
+} from '../../cache/templeCache';
 
 export const ehb = async (
   msg: Message,
@@ -20,7 +25,8 @@ export const ehb = async (
     const result: TempleEmbed = generateResult(playerStats[username], username);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchTemple(msg, username);
+    const dataType: CacheTypes = CacheTypes.PLAYER_STATS;
+    const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const result: TempleEmbed = generateResult(
         playerStats[username],

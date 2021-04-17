@@ -3,7 +3,7 @@ import {
   runescapeNameValidator,
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
-import { fetchPlayerNames } from '../../cache/templeCache';
+import { CacheTypes, fetchTemple } from '../../cache/templeCache';
 import { isOnCooldown } from '../../cache/cooldown';
 import { Embed } from '../../utils/embed';
 
@@ -18,8 +18,9 @@ export const fetchrsn = async (
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, true, username) === true) return;
   else {
-    const areNamesFetched: boolean = await fetchPlayerNames(msg, username);
-    if (areNamesFetched === true) {
+    const dataType: CacheTypes = CacheTypes.PLAYER_NAMES;
+    const isFetched: boolean = await fetchTemple(msg, username, dataType);
+    if (isFetched === true) {
       const embed: Embed = new Embed();
       embed.setDescription(
         `Fetched latest names available for player:\`\`\`${username}\`\`\`To get more recent data - add a new datapoint and fetch again`

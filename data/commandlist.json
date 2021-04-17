@@ -57,6 +57,13 @@
       "example": ".datapoint username",
       "category": "Temple OSRS",
       "aliases": []
+    },
+    "record": {
+      "name": "record",
+      "description": "Get player's records",
+      "example": ".record clues tier time username\n.record lms time username\n.record skill skill-name time username\n.record boss boss-name time username",
+      "category": "Temple OSRS",
+      "aliases": []
     }
   },
   "osrs": {

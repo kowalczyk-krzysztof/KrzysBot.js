@@ -5,7 +5,12 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 import { TempleEmbed, usernameString } from '../../utils/embed';
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
-import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
+import {
+  playerStats,
+  CacheTypes,
+  fetchTemple,
+  PlayerStats,
+} from '../../cache/templeCache';
 import {
   gameModeCheck,
   skillerOrF2P,
@@ -25,7 +30,8 @@ export const ehp = async (
     const result: TempleEmbed = generateResult(playerStats[username], username);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchTemple(msg, username);
+    const dataType: CacheTypes = CacheTypes.PLAYER_STATS;
+    const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const result: TempleEmbed = generateResult(
         playerStats[username],
