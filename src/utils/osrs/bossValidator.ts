@@ -9,31 +9,34 @@ import { BossAliases } from './enums';
   User to search for is args.slice(<length of args that are the boss name>)
   */
 export const bossValidator = (
-  args: string[],
+  lowerCasedArguments: string[],
   indexes: number[]
 ): {
-  bossWordLength: number;
+  bossCase: number;
   boss: string;
 } => {
-  if (args.length === 0)
+  if (lowerCasedArguments.length === 0)
     return {
-      bossWordLength: 0,
+      bossCase: 0,
       boss: '',
     };
-  const firstArgument: string = args[indexes[0]].toLowerCase();
-  const twoArgumentsJoined: string = [args[indexes[0]], args[indexes[1]]]
+  const firstArgument: string = lowerCasedArguments[indexes[0]];
+  const twoArgumentsJoined: string = [
+    lowerCasedArguments[indexes[0]],
+    lowerCasedArguments[indexes[1]],
+  ]
     .join('')
     .toLowerCase();
   const specialCase: string = [
-    args[indexes[0]],
-    args[indexes[1]],
-    args[indexes[2]],
+    lowerCasedArguments[indexes[0]],
+    lowerCasedArguments[indexes[1]],
+    lowerCasedArguments[indexes[2]],
   ]
     .join('')
     .toLowerCase();
 
   let boss: string;
-  let bossWordLength: number;
+  let bossCase: number;
 
   if (
     specialCase === BossAliases.COX_ALIAS2 ||
@@ -41,7 +44,7 @@ export const bossValidator = (
     specialCase === BossAliases.KBD_ALIAS2 ||
     specialCase === BossAliases.THERMY_ALIAS3
   ) {
-    bossWordLength = 3;
+    bossCase = 3;
     boss = specialCase;
   } else {
     const firstCheck: string[] = bosses.filter((e: string) => {
@@ -52,23 +55,23 @@ export const bossValidator = (
         return e.includes(twoArgumentsJoined);
       });
       // This is for edge cases like ".kc deranged archeologist"
-      if (secondCheck.length > 0 && args.length === 2) {
+      if (secondCheck.length > 0 && lowerCasedArguments.length === 2) {
         boss = firstArgument;
-        bossWordLength = 1;
+        bossCase = 3;
       } else if (secondCheck.length > 0) {
-        bossWordLength = 2;
+        bossCase = 2;
         boss = twoArgumentsJoined;
       } else {
-        bossWordLength = 1;
+        bossCase = 1;
         boss = firstArgument;
       }
     } else {
-      bossWordLength = 0;
+      bossCase = 0;
       boss = '';
     }
   }
   return {
-    bossWordLength,
+    bossCase,
     boss,
   };
 };

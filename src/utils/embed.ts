@@ -21,15 +21,6 @@ export class TempleEmbed extends Embed {
     this.setFooter('Incorrect? Fetch latest data:\n.templefetch username');
   }
 }
-export class TempleEmbedNoFooter extends Embed {
-  constructor() {
-    super();
-    this.setDescription(
-      `Data provided by: [TempleOSRS](https://templeosrs.com/ 'TempleOSRS')`
-    );
-  }
-}
-
 // Everything related to how OSRS command embed should look like
 // Title field
 export enum EmbedTitles {

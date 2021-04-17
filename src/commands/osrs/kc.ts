@@ -25,27 +25,40 @@ export const kc = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const indexes: number[] = [0, 1, 2];
+  const lowerCasedArguments = args.map((e: string) => {
+    return e.toLowerCase();
+  });
   const bossValidation: {
-    bossWordLength: number;
+    bossCase: number;
     boss: string;
-  } = bossValidator(args, indexes);
+  } = bossValidator(lowerCasedArguments, indexes);
   let user: string[];
   let boss: string;
-
-  if (bossValidation.bossWordLength === 0)
+  let category: Categories;
+  if (bossValidation.bossCase === 0)
     return msg.channel.send(
       invalidPrefixMsg(Categories.BOSS, bosses.join(', '))
     );
-  else if (bossValidation.bossWordLength === 1) user = args.slice(1);
-  else if (bossValidation.bossWordLength === 2) user = args.slice(2);
-  else user = args.slice(3);
+  else if (bossValidation.bossCase === 1) {
+    category = Categories.BOSS;
+    user = lowerCasedArguments.slice(1);
+  } else if (bossValidation.bossCase === 2) {
+    category = Categories.BOSS;
+    user = lowerCasedArguments.slice(2);
+  } else if (bossValidation.bossCase === 3) {
+    category = Categories.BOSS_EDGE_CASE;
+    user = lowerCasedArguments.slice(2);
+  } else {
+    category = Categories.BOSS;
+    user = lowerCasedArguments.slice(3);
+  }
 
   const bossToArray: string[] = [bossValidation.boss];
   const finalCheck: string | null = isPrefixValid(
     msg,
     bossToArray,
     bosses,
-    Categories.BOSS
+    category
   );
   if (finalCheck === null) return;
   else boss = finalCheck;
@@ -55,7 +68,15 @@ export const kc = async (
   const nameCheck: string | null = runescapeNameValidator(user);
   if (nameCheck === null) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
-  if (isOnCooldown(msg, commandName, cooldown, false, args.join('')) === true)
+  if (
+    isOnCooldown(
+      msg,
+      commandName,
+      cooldown,
+      false,
+      lowerCasedArguments.join('')
+    ) === true
+  )
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.KC)
