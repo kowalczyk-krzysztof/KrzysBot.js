@@ -7,12 +7,15 @@ import { errorHandler } from '../utils/errorHandler';
 export let playerStats: { [key: string]: PlayerStats } = {};
 export let playerNames: { [key: string]: PlayerNames } = {};
 export let playerRecords: { [key: string]: PlayerRecords } = {};
+export let playerOverviewSkill: { [key: string]: PlayerOverviewSkill } = {};
+export let playerOverviewOther: { [key: string]: PlayerOverviewOther } = {};
 
 dotenv.config({ path: 'config.env' });
 
 const TEMPLE_LINK: string = process.env.TEMPLE_PLAYER_STATS as string;
 const TEMPLE_PLAYER_NAMES: string = process.env.TEMPLE_PLAYER_NAMES as string;
 const TEMPLE_RECORDS: string = process.env.TEMPLE_RECORDS as string;
+const TEMPLE_OVERVIEW: string = process.env.TEMPLE_OVERVIEW as string;
 const maxCacheSize: number = 1000;
 
 export enum GameMode {
@@ -20,6 +23,47 @@ export enum GameMode {
   IM = 1,
   UIM = 2,
   HCIM = 3,
+}
+
+export interface PlayerOverviewSkill {
+  info: {
+    last_check_text: string;
+    hours_played: number;
+    hours_per_day: number;
+    xp_gained: number;
+    xp_per_day: number;
+    avr_xph: number;
+    top_skill: number;
+    gp_spent: number;
+  };
+  table: {
+    [key: string]: {
+      xp: number;
+      rank: number;
+      level: number;
+      ehp: number;
+    };
+  };
+}
+
+export interface PlayerOverviewOther {
+  info: {
+    last_check_text: string;
+    hours_played: number;
+    hours_per_day: number;
+    boss_kills: number;
+    kc_per_day: number;
+    avr_kch: number;
+    top_boss: number;
+    gp_earned: number;
+  };
+  table: {
+    [key: string]: {
+      xp: number;
+      rank: number;
+      ehb: number;
+    };
+  };
 }
 
 interface PlayerInfo {
@@ -80,11 +124,23 @@ export enum CacheTypes {
   PLAYER_STATS = 'stats',
   PLAYER_NAMES = 'names',
   PLAYER_RECORDS = 'records',
+  PLAYER_OVERVIEW_SKILL = 'skillgains',
+  PLAYER_OVERVIEW_OTHER = 'othergains',
+}
+
+export enum CacheTypesAliases {
+  PLAYER_OVERVIEW_SKILL = 'skill gains',
+  PLAYER_OVERVIEW_OTHER = 'other gains',
 }
 
 const addToCache = (
   username: string,
-  data: PlayerStats | PlayerNames | PlayerRecords,
+  data:
+    | PlayerStats
+    | PlayerNames
+    | PlayerRecords
+    | PlayerOverviewSkill
+    | PlayerOverviewOther,
   type: CacheTypes
 ): void => {
   if (type === CacheTypes.PLAYER_STATS) {
@@ -96,13 +152,22 @@ const addToCache = (
   } else if (type === CacheTypes.PLAYER_RECORDS) {
     if (Object.keys(playerRecords).length > maxCacheSize) playerRecords = {};
     playerRecords[username] = data as PlayerRecords;
+  } else if (type === CacheTypes.PLAYER_OVERVIEW_SKILL) {
+    if (Object.keys(playerOverviewSkill).length > maxCacheSize)
+      playerOverviewSkill = {};
+    playerOverviewSkill[username] = data as PlayerOverviewSkill;
+  } else if (type === CacheTypes.PLAYER_OVERVIEW_OTHER) {
+    if (Object.keys(playerOverviewOther).length > maxCacheSize)
+      playerOverviewOther = {};
+    playerOverviewOther[username] = data as PlayerOverviewOther;
   }
 };
 
 export const fetchTemple = async (
   msg: Message,
   playerName: string,
-  type: CacheTypes
+  type: CacheTypes,
+  time: string = ''
 ): Promise<boolean> => {
   let url: string;
   if (type === CacheTypes.PLAYER_STATS)
@@ -111,6 +176,10 @@ export const fetchTemple = async (
     url = `${TEMPLE_PLAYER_NAMES}${playerName}`;
   else if (type === CacheTypes.PLAYER_RECORDS)
     url = `${TEMPLE_RECORDS}${playerName}&tracking=all`;
+  else if (type === CacheTypes.PLAYER_OVERVIEW_SKILL)
+    url = `${TEMPLE_OVERVIEW}${playerName}&duration=${time}`;
+  else if (type === CacheTypes.PLAYER_OVERVIEW_OTHER)
+    url = `${TEMPLE_OVERVIEW}${playerName}&duration=${time}&tracking=bosses`;
   else url = '';
   try {
     const res: AxiosResponse = await axios.get(`${url}`);
@@ -126,11 +195,18 @@ export const fetchTemple = async (
       return false;
     } else {
       let data;
-
-      if (type === CacheTypes.PLAYER_STATS) data = res.data.data;
-      else if (type === CacheTypes.PLAYER_NAMES) data = res.data.data;
+      if (
+        type === CacheTypes.PLAYER_STATS ||
+        type === CacheTypes.PLAYER_NAMES ||
+        type === CacheTypes.PLAYER_OVERVIEW_SKILL ||
+        type === CacheTypes.PLAYER_OVERVIEW_OTHER
+      )
+        data = res.data.data;
       else if (type === CacheTypes.PLAYER_RECORDS) data = res.data.records;
-      addToCache(playerName, data, type);
+      let cacheItemName: string;
+      if (time !== '') cacheItemName = playerName + time;
+      else cacheItemName = playerName;
+      addToCache(cacheItemName, data, type);
       return true;
     }
   } catch (err) {

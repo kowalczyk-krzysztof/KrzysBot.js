@@ -1,6 +1,11 @@
 import { Message } from 'discord.js';
 import { BossAliases, Bosses } from '../../utils/osrs/enums';
-import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
+import {
+  OsrsEmbed,
+  EmbedTitles,
+  usernameString,
+  ErrorEmbed,
+} from '../../utils/embed';
 import {
   fetchOsrsStats,
   osrsStats,
@@ -10,14 +15,20 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
 import {
   isPrefixValid,
   Categories,
   invalidPrefixMsg,
+  invalidPrefix,
 } from '../../utils/osrs/isPrefixValid';
-import { bossValidator } from '../../utils/osrs/bossValidator';
+import {
+  bossValidator,
+  BossCases,
+  bosses,
+} from '../../utils/osrs/bossValidator';
 
 export const kc = async (
   msg: Message,
@@ -30,43 +41,38 @@ export const kc = async (
   });
   const bossValidation: {
     bossCase: number;
-    boss: string;
+    boss: string | undefined;
   } = bossValidator(lowerCasedArguments, indexes);
   let user: string[];
   let boss: string;
   let category: Categories;
-  if (bossValidation.bossCase === 0)
+  if (bossValidation.bossCase === BossCases.INVALID)
     return msg.channel.send(
       invalidPrefixMsg(Categories.BOSS, bosses.join(', '))
     );
-  else if (bossValidation.bossCase === 1) {
+  else if (bossValidation.bossCase === BossCases.ONE_WORD) {
     category = Categories.BOSS;
     user = lowerCasedArguments.slice(1);
-  } else if (bossValidation.bossCase === 2) {
+  } else if (bossValidation.bossCase === BossCases.TWO_WORD) {
     category = Categories.BOSS;
     user = lowerCasedArguments.slice(2);
-  } else if (bossValidation.bossCase === 3) {
-    category = Categories.BOSS_EDGE_CASE;
-    user = lowerCasedArguments.slice(2);
-  } else {
+  } else if (bossValidation.bossCase === BossCases.THREE_WORDS) {
     category = Categories.BOSS;
     user = lowerCasedArguments.slice(3);
+  } else {
+    category = Categories.BOSS_EDGE_CASE;
+    user = lowerCasedArguments.slice(1);
   }
-
+  if (bossValidation.boss === undefined) return;
   const bossToArray: string[] = [bossValidation.boss];
-  const finalCheck: string | null = isPrefixValid(
-    msg,
-    bossToArray,
-    bosses,
-    category
-  );
-  if (finalCheck === null) return;
+  const finalCheck: string = isPrefixValid(msg, bossToArray, bosses, category);
+  if (finalCheck === invalidPrefix) return;
   else boss = finalCheck;
 
   const cooldown: number = 30;
 
-  const nameCheck: string | null = runescapeNameValidator(user);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(user);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (
     isOnCooldown(
@@ -102,17 +108,15 @@ const generateResult = (
   inputPrefix: string,
   inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): OsrsEmbed => {
-  const prefix: string = inputPrefix;
-  const embed: OsrsEmbed = inputEmbed;
-  const player: OsrsPlayer = playerObject;
+): OsrsEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
   const boss: {
     bossKc: BossOrMinigame;
     bossName: string;
-  } = bossTypeCheck(prefix, player);
-  embed.addField(`${boss.bossName} kills`, `${boss.bossKc.score}`);
+  } = bossTypeCheck(inputPrefix, playerObject);
+  inputEmbed.addField(`${boss.bossName} kills`, `${boss.bossKc.score}`);
 
-  return embed;
+  return inputEmbed;
 };
 
 export const bossTypeCheck = (
@@ -540,105 +544,3 @@ export const bossTypeCheck = (
     bossName,
   };
 };
-
-export const bosses: string[] = [
-  BossAliases.SIRE_ALIAS1,
-  BossAliases.SIRE_ALIAS1,
-  BossAliases.SIRE_ALIAS2,
-  BossAliases.HYDRA_ALIAS1,
-  BossAliases.HYDRA_ALIAS2,
-  BossAliases.BARROWS_ALIAS1,
-  BossAliases.BRYOPHYTA_ALIAS1,
-  BossAliases.BRYOPHYTA_ALIAS2,
-  BossAliases.CALLISTO_ALIAS1,
-  BossAliases.CERBERUS_ALIAS1,
-  BossAliases.CERBERUS_ALIAS2,
-  BossAliases.COX_ALIAS1,
-  BossAliases.COX_ALIAS2,
-  BossAliases.COX_ALIAS3,
-  BossAliases.COXCM_ALIAS1,
-  BossAliases.COXCM_ALIAS2,
-  BossAliases.COXCM_ALIAS3,
-  BossAliases.CHAOS_ELE_ALIAS1,
-  BossAliases.CHAOS_ELE_ALIAS2,
-  BossAliases.CHAOS_ELE_ALIAS3,
-  BossAliases.CHAOS_FANATIC_ALIAS1,
-  BossAliases.CHAOS_FANATIC_ALIAS2,
-  BossAliases.SARADOMIN_ALIAS1,
-  BossAliases.SARADOMIN_ALIAS2,
-  BossAliases.SARADOMIN_ALIAS3,
-  BossAliases.SARADOMIN_ALIAS4,
-  BossAliases.CORP_ALIAS1,
-  BossAliases.CORP_ALIAS2,
-  BossAliases.CRAZY_ARCH_ALIAS1,
-  BossAliases.CRAZY_ARCH_ALIAS2,
-  BossAliases.PRIME_ALIAS1,
-  BossAliases.PRIME_ALIAS2,
-  BossAliases.REX_ALIAS1,
-  BossAliases.REX_ALIAS2,
-  BossAliases.SUPREME_ALIAS1,
-  BossAliases.SUPREME_ALIAS2,
-  BossAliases.DERANGED_ALIAS1,
-  BossAliases.DERANGED_ALIAS2,
-  BossAliases.DERANGED_ALIAS3,
-  BossAliases.BANDOS_ALIAS1,
-  BossAliases.BANDOS_ALIAS2,
-  BossAliases.BANDOS_ALIAS3,
-  BossAliases.MOLE_ALIAS1,
-  BossAliases.MOLE_ALIAS2,
-  BossAliases.GUARDIANS_ALIAS1,
-  BossAliases.GUARDIANS_ALIAS2,
-  BossAliases.GUARDIANS_ALIAS3,
-  BossAliases.GUARDIANS_ALIAS4,
-  BossAliases.GUARDIANS_ALIAS5,
-  BossAliases.HESPORI_ALIAS1,
-  BossAliases.KQ_ALIAS1,
-  BossAliases.KQ_ALIAS2,
-  BossAliases.KQ_ALIAS3,
-  BossAliases.KBD_ALIAS1,
-  BossAliases.KBD_ALIAS2,
-  BossAliases.KRAKEN_ALIAS1,
-  BossAliases.ARMA_ALIAS1,
-  BossAliases.ARMA_ALIAS2,
-  BossAliases.ARMA_ALIAS3,
-  BossAliases.ARMA_ALIAS4,
-  BossAliases.ARMA_ALIAS5,
-  BossAliases.ZAMMY_ALIAS1,
-  BossAliases.ZAMMY_ALIAS2,
-  BossAliases.ZAMMY_ALIAS3,
-  BossAliases.ZAMMY_ALIAS4,
-  BossAliases.ZAMMY_ALIAS5,
-  BossAliases.MIMIC_ALIAS1,
-  BossAliases.NIGHTMARE_ALIAS1,
-  BossAliases.OBOR_ALIAS1,
-  BossAliases.SARACHNIS_ALIAS1,
-  BossAliases.SCORPIA_ALIAS1,
-  BossAliases.SKOTIZO_ALIAS1,
-  BossAliases.GAUNTLET_ALIAS1,
-  BossAliases.GAUNTLET_ALIAS2,
-  BossAliases.CORR_GAUNTLET_ALIAS1,
-  BossAliases.CORR_GAUNTLET_ALIAS2,
-  BossAliases.CORR_GAUNTLET_ALIAS3,
-  BossAliases.CORR_GAUNTLET_ALIAS4,
-  BossAliases.CORR_GAUNTLET_ALIAS5,
-  BossAliases.TOB_ALIAS1,
-  BossAliases.TOB_ALIAS2,
-  BossAliases.TOB_ALIAS3,
-  BossAliases.THERMY_ALIAS1,
-  BossAliases.THERMY_ALIAS2,
-  BossAliases.THERMY_ALIAS3,
-  BossAliases.ZUK_ALIAS1,
-  BossAliases.ZUK_ALIAS2,
-  BossAliases.JAD_ALIAS1,
-  BossAliases.JAD_ALIAS2,
-  BossAliases.VENE_ALIAS1,
-  BossAliases.VENE_ALIAS2,
-  BossAliases.VETION_ALIAS1,
-  BossAliases.VORK_ALIAS1,
-  BossAliases.VORK_ALIAS2,
-  BossAliases.WT_ALIAS1,
-  BossAliases.WT_ALIAS2,
-  BossAliases.ZALC_ALIAS1,
-  BossAliases.ZALC_ALIAS2,
-  BossAliases.ZULRAH_ALIAS1,
-];

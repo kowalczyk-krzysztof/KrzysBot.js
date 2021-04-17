@@ -2,6 +2,7 @@ import { Message } from 'discord.js';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { fetchOsrsStats } from '../../cache/osrsCache';
 import { isOnCooldown } from '../../cache/cooldown';
@@ -14,8 +15,8 @@ export const osrsfetch = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const cooldown: number = 600;
-  const nameCheck: string | null = runescapeNameValidator(args);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(args);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, true, username) === true) return;
   else {

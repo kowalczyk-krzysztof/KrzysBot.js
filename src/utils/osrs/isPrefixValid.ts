@@ -20,12 +20,14 @@ export enum Categories {
   RECORD = 'record',
 }
 
+export const invalidPrefix = 'INVALID';
+
 export const isPrefixValid = (
   msg: Message,
   inputArgument: string[],
   inputTypes: string[],
   inputCategory: Categories
-): string | null => {
+): string => {
   const typesList: string = inputTypes.join(', ');
   const parsedArgument: string = inputArgument[0]
     .replace(/\n/g, '')
@@ -33,7 +35,7 @@ export const isPrefixValid = (
     .trim();
   if (inputArgument.length === 0 || !inputTypes.includes(parsedArgument)) {
     msg.channel.send(invalidPrefixMsg(inputCategory, typesList));
-    return null;
+    return invalidPrefix;
   } else return parsedArgument;
 };
 

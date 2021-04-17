@@ -1,5 +1,12 @@
 import { Message } from 'discord.js';
-import { TempleMinigamesOther, Clues, Skills } from '../../utils/osrs/enums';
+import {
+  TempleMinigamesOther,
+  Clues,
+  Skills,
+  TempleMinigamesOtherAliases,
+  PlayerOverviewTimesAliases,
+  PlayerOverviewTimes,
+} from '../../utils/osrs/enums';
 import {
   TempleEmbed,
   EmbedTitles,
@@ -15,8 +22,10 @@ import { isOnCooldown } from '../../cache/cooldown';
 import {
   fetchTemple,
   CacheTypes,
-  playerRecords,
-  PlayerRecords,
+  playerOverviewOther,
+  PlayerOverviewSkill,
+  PlayerOverviewOther,
+  playerOverviewSkill,
 } from '../../cache/templeCache';
 
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
@@ -24,9 +33,10 @@ import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 import {
   templeGainsRecords,
   fieldNameCheck,
+  ValidCases,
 } from '../../utils/osrs/templeGainsRecords';
 
-export const record = async (
+export const gains = async (
   msg: Message,
   commandName: string,
   ...args: string[]
@@ -41,6 +51,29 @@ export const record = async (
     case: string | undefined;
   } = templeGainsRecords(msg, args, commandName);
 
+  let playerCache;
+  let dataType: CacheTypes;
+  if (
+    parsedInput.case === ValidCases.BOSS ||
+    parsedInput.case === ValidCases.CLUES
+  ) {
+    playerCache = playerOverviewOther;
+    dataType = CacheTypes.PLAYER_OVERVIEW_OTHER;
+  } else if (parsedInput.case === ValidCases.OTHER) {
+    if (
+      parsedInput.field === TempleMinigamesOtherAliases.EHB ||
+      parsedInput.field === TempleMinigamesOtherAliases.LMS
+    ) {
+      playerCache = playerOverviewOther;
+      dataType = CacheTypes.PLAYER_OVERVIEW_OTHER;
+    } else {
+      playerCache = playerOverviewSkill;
+      dataType = CacheTypes.PLAYER_OVERVIEW_SKILL;
+    }
+  } else {
+    (playerCache = playerOverviewSkill),
+      (dataType = CacheTypes.PLAYER_OVERVIEW_SKILL);
+  }
   const cooldown: number = 30;
   if (
     parsedInput.rsn !== undefined &&
@@ -51,6 +84,7 @@ export const record = async (
     const nameCheck: string = runescapeNameValidator(parsedInput.rsn);
     if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
     const username: string = nameCheck;
+
     if (
       isOnCooldown(
         msg,
@@ -64,19 +98,50 @@ export const record = async (
     const embed: TempleEmbed = new TempleEmbed()
       .setTitle(EmbedTitles.RECORDS)
       .addField(usernameString, `${username}`);
-    if (username in playerRecords) {
+    if (username + parsedInput.time in playerCache) {
+      console.log('cached');
+
       const field: string = fieldNameCheck(parsedInput.field, parsedInput.case);
       const result: TempleEmbed = generateResult(
         field,
         embed,
-        playerRecords[username],
+        playerCache[username + parsedInput.time],
         parsedInput.time,
         lowerCasedArguments
       );
       return msg.channel.send(result);
     } else {
-      const dataType: CacheTypes = CacheTypes.PLAYER_RECORDS;
-      const isFetched: boolean = await fetchTemple(msg, username, dataType);
+      // Changing time aliases
+      let timePeriod: string;
+      switch (parsedInput.time) {
+        case PlayerOverviewTimesAliases.FIVEMIN:
+          timePeriod = PlayerOverviewTimes.FIVEMIN;
+          break;
+        case PlayerOverviewTimesAliases.DAY:
+          timePeriod = PlayerOverviewTimes.DAY;
+          break;
+        case PlayerOverviewTimesAliases.WEEK:
+          timePeriod = PlayerOverviewTimes.WEEK;
+          break;
+        case PlayerOverviewTimesAliases.MONTH:
+          timePeriod = PlayerOverviewTimes.MONTH;
+          break;
+        case PlayerOverviewTimesAliases.HALFYEAR:
+          timePeriod = PlayerOverviewTimes.HALFYEAR;
+          break;
+        case PlayerOverviewTimesAliases.YEAR:
+          timePeriod = PlayerOverviewTimes.YEAR;
+          break;
+        default:
+          timePeriod = parsedInput.time;
+          break;
+      }
+      const isFetched: boolean = await fetchTemple(
+        msg,
+        username,
+        dataType,
+        timePeriod
+      );
       if (isFetched === true) {
         const field: string = fieldNameCheck(
           parsedInput.field,
@@ -85,7 +150,7 @@ export const record = async (
         const result: TempleEmbed = generateResult(
           field,
           embed,
-          playerRecords[username],
+          playerCache[username + timePeriod],
           parsedInput.time,
           lowerCasedArguments
         );
@@ -100,7 +165,7 @@ export const record = async (
 const generateResult = (
   field: string,
   embed: TempleEmbed,
-  playerObject: PlayerRecords,
+  playerObject: PlayerOverviewSkill | PlayerOverviewOther,
   time: string,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
@@ -139,47 +204,42 @@ const generateResult = (
     case TempleMinigamesOther.EHP:
       formattedField = field.toUpperCase();
       break;
+    case TempleMinigamesOther.IM_EHP:
+      formattedField = 'Ironman EHP';
+      break;
+
     default:
       formattedField = field;
       break;
   }
+  console.log(playerObject);
 
   // If there are no records the key value is an empty array
-  if (Array.isArray(playerObject[field]) === false) {
-    console.log(playerObject);
 
-    // If there's no record for specific period of time then the key doesn't exist
-    if (playerObject[field][time] !== undefined) {
-      // Formatting how numbers are displayed
-      const value: string | number = playerObject[field][time].xp;
-      let formattedValue;
+  // If there's no record for specific period of time then the key doesn't exist
+  if (playerObject.table[field] !== undefined) {
+    // Formatting how numbers are displayed
+    const value: string | number = playerObject.table[field].xp;
+    let formattedValue;
 
-      if (args[0] === 'other') formattedValue = parseInt(value as string);
-      else {
-        const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
-        formattedValue = formatter.format(value as number);
-      }
-      // Changing sufix depending on whether the type is skill or not
-      let ending: string;
-      if (args[0] === 'skill') ending = ' xp';
-      else ending = '';
-      // Formatting date
-      const stringToDate: Date = new Date(playerObject[field][time].date);
-      const formattedDate: string = new Intl.DateTimeFormat('en-GB').format(
-        stringToDate
-      );
-      embed.addField('Time Period', `${capitalFirst}`);
-      embed.addField(`${formattedField}`, `${formattedValue}${ending}`);
-      embed.addField('Record set on:', `${formattedDate}`);
-    } else {
-      embed.addField(`Time Period`, `${capitalFirst}`);
-      embed.addField(
-        `NO DATA`,
-        `No records for this period of time for \`\`\`${formattedField}\`\`\``
-      );
+    if (args[0] === 'other') formattedValue = value;
+    else {
+      const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
+      formattedValue = formatter.format(value as number);
     }
+    // Changing sufix depending on whether the type is skill or not
+    let ending: string;
+    if (args[0] === 'skill') ending = ' xp';
+    else ending = '';
+
+    embed.addField('Time Period', `${capitalFirst}`);
+    embed.addField(`${formattedField}`, `${formattedValue}${ending}`);
   } else {
-    embed.addField(`NO DATA`, `No records for \`\`\`${formattedField}\`\`\``);
+    embed.addField(`Time Period`, `${capitalFirst}`);
+    embed.addField(
+      `NO DATA`,
+      `No gains for this period of time for \`\`\`${formattedField}\`\`\``
+    );
   }
   return embed;
 };

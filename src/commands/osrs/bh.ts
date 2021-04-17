@@ -1,11 +1,21 @@
 import { Message } from 'discord.js';
 import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
-import { OsrsEmbed, EmbedTitles, usernameString } from '../../utils/embed';
+import {
+  OsrsEmbed,
+  EmbedTitles,
+  usernameString,
+  ErrorEmbed,
+} from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { isPrefixValid, Categories } from '../../utils/osrs/isPrefixValid';
+import {
+  isPrefixValid,
+  Categories,
+  invalidPrefix,
+} from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
 
 export const bh = async (
@@ -13,18 +23,13 @@ export const bh = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string | null = isPrefixValid(
-    msg,
-    args,
-    bhTypes,
-    Categories.BH
-  );
-  if (prefix === null) return;
+  const prefix: string = isPrefixValid(msg, args, bhTypes, Categories.BH);
+  if (prefix === invalidPrefix) return;
   const cooldown: number = 30;
 
   const user: string[] = args.slice(1);
-  const nameCheck: string | null = runescapeNameValidator(user);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(user);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
@@ -62,20 +67,19 @@ const generateResult = (
   prefix: string,
   inputEmbed: OsrsEmbed,
   playerObject: OsrsPlayer
-): OsrsEmbed => {
-  const embed: OsrsEmbed = inputEmbed;
-  const player: OsrsPlayer = playerObject;
+): OsrsEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
   let scoreType: string | number;
   let title: string;
   if (prefix === bhTypes[0]) {
-    scoreType = player.Bh_Rogue.score;
+    scoreType = playerObject.Bh_Rogue.score;
     title = BH.ROGUE;
   } else {
-    scoreType = player.Bh_Hunter.score;
+    scoreType = playerObject.Bh_Hunter.score;
     title = BH.HUNTER;
   }
-  embed.addField(`${title} score`, `${scoreType}`);
-  return embed;
+  inputEmbed.addField(`${title} score`, `${scoreType}`);
+  return inputEmbed;
 };
 
 export const bhTypes: string[] = ['rogue', 'hunter'];

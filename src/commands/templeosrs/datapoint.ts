@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
 import { errorHandler } from '../../utils/errorHandler';
@@ -17,8 +18,8 @@ export const datapoint = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const cooldown: number = 1800;
-  const nameCheck: string | null = runescapeNameValidator(args);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(args);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;

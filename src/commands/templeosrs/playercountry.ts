@@ -2,8 +2,9 @@ import { Message } from 'discord.js';
 import {
   runescapeNameValidator,
   invalidUsername,
+  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { TempleEmbed, usernameString } from '../../utils/embed';
+import { ErrorEmbed, TempleEmbed, usernameString } from '../../utils/embed';
 import {
   playerStats,
   CacheTypes,
@@ -16,8 +17,8 @@ export const playercountry = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const nameCheck: string | null = runescapeNameValidator(args);
-  if (nameCheck === null) return msg.channel.send(invalidUsername);
+  const nameCheck: string = runescapeNameValidator(args);
+  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (username in playerStats) {
     const result: TempleEmbed = generateResult(playerStats[username]);
@@ -33,7 +34,10 @@ export const playercountry = async (
 };
 
 // Generate result
-const generateResult = (playerObject: PlayerStats): TempleEmbed => {
+const generateResult = (
+  playerObject: PlayerStats
+): TempleEmbed | ErrorEmbed => {
+  if (playerObject === undefined) return new ErrorEmbed();
   const embed: TempleEmbed = new TempleEmbed().addField(
     usernameString,
     `${playerObject.info.Username}`
