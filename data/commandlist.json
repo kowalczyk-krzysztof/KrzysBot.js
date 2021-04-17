@@ -39,7 +39,7 @@
     },
     "templefetch": {
       "name": "templefetch",
-      "description": "Fetch latest player data (stats, names, records)",
+      "description": "Fetch latest player data (stats, names, records, skill gains, other gains)",
       "example": ".templefetch data-type username",
       "category": "Temple OSRS",
       "aliases": ["fetchtemple"]
@@ -54,7 +54,14 @@
     "record": {
       "name": "record",
       "description": "Get player's records",
-      "example": ".record clues tier time username\n.record lms time username\n.record skill skill-name time username\n.record boss boss-name time username",
+      "example": ".record clues easy week username\n.record other lms 6h username\n.record skill herb year username\n.record boss abyssal sire month username",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "gains": {
+      "name": "gains",
+      "description": "Get player's gains",
+      "example": ".gains clues easy week username\n.gains other imehp 5min username\n.gains skill slay 6hmonths username\n.gains boss theatre of blood year username",
       "category": "Temple OSRS",
       "aliases": []
     }
