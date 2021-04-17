@@ -6,7 +6,8 @@ import {
 import { Embed } from '../../utils/embed';
 import {
   playerNames,
-  fetchPlayerNames,
+  CacheTypes,
+  fetchTemple,
   PlayerNames,
 } from '../../cache/templeCache';
 
@@ -25,7 +26,8 @@ export const rsn = async (
     const result: Embed = generateResult(embed, playerNames[username]);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchPlayerNames(msg, username);
+    const dataType: CacheTypes = CacheTypes.PLAYER_NAMES;
+    const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const result: Embed = generateResult(embed, playerNames[username]);
       return msg.channel.send(result);

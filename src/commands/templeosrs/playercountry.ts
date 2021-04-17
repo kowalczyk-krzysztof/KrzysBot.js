@@ -4,7 +4,12 @@ import {
   invalidUsername,
 } from '../../utils/osrs/runescapeNameValidator';
 import { TempleEmbed, usernameString } from '../../utils/embed';
-import { playerStats, fetchTemple, PlayerStats } from '../../cache/templeCache';
+import {
+  playerStats,
+  CacheTypes,
+  PlayerStats,
+  fetchTemple,
+} from '../../cache/templeCache';
 
 export const playercountry = async (
   msg: Message,
@@ -18,7 +23,8 @@ export const playercountry = async (
     const result: TempleEmbed = generateResult(playerStats[username]);
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchTemple(msg, username);
+    const dataType: CacheTypes = CacheTypes.PLAYER_STATS;
+    const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const result: TempleEmbed = generateResult(playerStats[username]);
       return msg.channel.send(result);

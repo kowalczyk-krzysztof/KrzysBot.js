@@ -26,7 +26,8 @@ import {
   invalidPrefixMsg,
 } from '../../utils/osrs/isPrefixValid';
 import {
-  fetchPlayerRecords,
+  fetchTemple,
+  CacheTypes,
   playerRecords,
   PlayerRecords,
 } from '../../cache/templeCache';
@@ -34,6 +35,7 @@ import { clueTypes } from '../osrs/clues';
 import { skillList } from '../osrs/lvl';
 import { bosses } from '../osrs/kc';
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
+import { bossValidator } from '../../utils/osrs/bossValidator';
 
 // Valid first arguments
 enum ValidRecords {
@@ -49,7 +51,7 @@ const recordTypes: (ValidRecords | string)[] = [
   ValidRecords.OTHER,
 ];
 const timeTypes = ['day', 'week', 'month', 'year'];
-const timeTypesAll = [...timeTypes, '6h'];
+const timeTypesAll = ['6h', ...timeTypes];
 const otherTypes = ['lms', 'ehb', 'ehp'];
 // TODO: When Temporos gets added I can remove this check
 const bossTypes = bosses.filter((e: string) => {
@@ -125,50 +127,26 @@ export const record = async (
       }
       break;
     case ValidRecords.BOSS:
-      const firstBossArgument: string = args[1].toLowerCase();
-      const twoBossArgumentsJoined: string = [args[1], args[2]]
-        .join('')
-        .toLowerCase();
-      const specialCase: string = [args[1], args[2], args[3]]
-        .join('')
-        .toLowerCase();
-      if (
-        specialCase === BossAliases.COX_ALIAS2 ||
-        specialCase === BossAliases.TOB_ALIAS3 ||
-        specialCase === BossAliases.KBD_ALIAS2 ||
-        specialCase === BossAliases.THERMY_ALIAS3
-      ) {
-        inputFieldName = specialCase;
+      const indexes: number[] = [1, 2, 3];
+      const bossValidation: {
+        bossWordLength: number;
+        boss: string;
+      } = bossValidator(args, indexes);
+      if (bossValidation.bossWordLength === 0)
+        return msg.channel.send(
+          invalidPrefixMsg(Categories.BOSS, bossTypes.join(', '))
+        );
+      else if (bossValidation.bossWordLength === 1) {
+        isFirstArgumentValid = true;
+        firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
+      } else if (bossValidation.bossWordLength === 2) {
+        isFirstArgumentValid = true;
+        firstArgumentType = FirstArgumentType.BOSS_TWO_WORD;
+      } else {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_THREE_WORD;
-      } else {
-        const firstCheck: string[] = bossTypes.filter((e: string) => {
-          return e.includes(firstBossArgument);
-        });
-        if (firstCheck.length > 0) {
-          const secondCheck = bossTypes.filter((e: string) => {
-            return e.includes(twoBossArgumentsJoined);
-          });
-          // This is for edge cases like ".kc deranged archeologist"
-          if (secondCheck.length > 0 && args.length === 2) {
-            isFirstArgumentValid = true;
-            firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
-            inputFieldName = firstBossArgument;
-          } else if (secondCheck.length > 0) {
-            isFirstArgumentValid = true;
-            firstArgumentType = FirstArgumentType.BOSS_TWO_WORD;
-            inputFieldName = twoBossArgumentsJoined;
-          } else {
-            isFirstArgumentValid = true;
-            firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
-            inputFieldName = firstBossArgument;
-          }
-        } else {
-          return msg.channel.send(
-            invalidPrefixMsg(Categories.BOSS, bosses.join(', '))
-          );
-        }
       }
+      inputFieldName = bossValidation.boss;
       const bossToArray: string[] = [inputFieldName];
       const finalCheck: string | null = isPrefixValid(
         msg,
@@ -292,7 +270,8 @@ export const record = async (
     );
     return msg.channel.send(result);
   } else {
-    const isFetched: boolean = await fetchPlayerRecords(msg, username);
+    const dataType: CacheTypes = CacheTypes.PLAYER_RECORDS;
+    const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const field: string = fieldNameCheck(inputFieldName);
       const result: TempleEmbedNoFooter = generateResult(
@@ -346,14 +325,22 @@ const generateResult = (
       default:
         formattedField = field;
     }
-  } else formattedField = field;
+  } else if ((field = Skills.TEMPLE_RC)) formattedField = Skills.RC;
+  else formattedField = field;
   // If there are no records the key value is an empty array
   if (Array.isArray(playerObject[field]) === false) {
     // If there's no record for specific period of time then the key doesn't exist
     if (playerObject[field][time] !== undefined) {
       // Formatting how numbers are displayed
-      const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
-      const formattedValue = formatter.format(playerObject[field][time].xp);
+      const value: string | number = playerObject[field][time].xp;
+      let formattedValue;
+
+      if (args[0].toLowerCase() === 'other')
+        formattedValue = parseInt(value as string);
+      else {
+        const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
+        formattedValue = formatter.format(value as number);
+      }
       // Changing sufix depending on whether the type is skill or not
       let ending: string;
       if (args[0].toLowerCase() === 'skill') ending = ' xp';

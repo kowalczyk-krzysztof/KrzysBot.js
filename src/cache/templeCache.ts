@@ -72,112 +72,65 @@ export interface PlayerNames {
 }
 export interface PlayerRecords {
   [key: string]: {
-    [key: string]: { xp: number; date: string };
+    [key: string]: { xp: string | number; date: string };
   };
 }
 
-const setPlayerStats = (username: string, data: PlayerStats): void => {
-  if (Object.keys(playerStats).length > maxCacheSize) playerStats = {};
-  const playerName: string = username;
-  const playerData: PlayerStats = data;
-  playerStats[playerName] = playerData;
-};
+export enum CacheTypes {
+  PLAYER_STATS = 'player stats',
+  PLAYER_NAMES = 'player names',
+  PLAYER_RECORDS = 'player records',
+}
 
-const setPlayerNames = (username: string, data: PlayerNames): void => {
-  if (Object.keys(playerNames).length > maxCacheSize) playerNames = {};
-  const playerName: string = username;
-  const playerData: PlayerNames = data;
-  playerNames[playerName] = playerData;
-};
-
-const setPlayerRecords = (username: string, data: PlayerRecords): void => {
-  if (Object.keys(playerRecords).length > maxCacheSize) playerRecords = {};
-  const playerName: string = username;
-  const playerData: PlayerRecords = data;
-  playerRecords[playerName] = playerData;
+const addToCache = (
+  username: string,
+  data: PlayerStats | PlayerNames | PlayerRecords,
+  type: CacheTypes
+): void => {
+  if (type === CacheTypes.PLAYER_STATS) {
+    if (Object.keys(playerStats).length > maxCacheSize) playerStats = {};
+    playerStats[username] = data as PlayerStats;
+  } else if (type === CacheTypes.PLAYER_NAMES) {
+    if (Object.keys(playerNames).length > maxCacheSize) playerNames = {};
+    playerNames[username] = data as PlayerNames;
+  } else if (type === CacheTypes.PLAYER_RECORDS) {
+    if (Object.keys(playerRecords).length > maxCacheSize) playerRecords = {};
+    playerRecords[username] = data as PlayerRecords;
+  }
 };
 
 export const fetchTemple = async (
   msg: Message,
-  playerName: string
+  playerName: string,
+  type: CacheTypes
 ): Promise<boolean> => {
-  const keyword: string = playerName;
+  let url: string;
+  if (type === CacheTypes.PLAYER_STATS)
+    url = `${TEMPLE_LINK}${playerName}&bosses=1`;
+  else if (type === CacheTypes.PLAYER_NAMES)
+    url = `${TEMPLE_PLAYER_NAMES}${playerName}`;
+  else if (type === CacheTypes.PLAYER_RECORDS)
+    url = `${TEMPLE_RECORDS}${playerName}&tracking=all`;
+  else url = '';
   try {
-    const res: AxiosResponse = await axios.get(
-      `${TEMPLE_LINK}${keyword}&bosses=1`
-    );
+    const res: AxiosResponse = await axios.get(`${url}`);
     if (res.data.error) {
       if (res.data.error.Code === 402) {
         const embed: Embed = new Embed();
         embed.addField(
           'ERROR',
-          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
+          `Player **${playerName}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
         );
         msg.channel.send(embed);
       } else errorHandler(res.data.error, msg);
       return false;
     } else {
-      setPlayerStats(keyword, res.data.data);
-      return true;
-    }
-  } catch (err) {
-    errorHandler(err, msg);
-    return false;
-  }
-};
+      let data;
 
-export const fetchPlayerNames = async (
-  msg: Message,
-  playerName: string
-): Promise<boolean> => {
-  const keyword: string = playerName;
-  try {
-    const res: AxiosResponse = await axios.get(
-      `${TEMPLE_PLAYER_NAMES}${keyword}`
-    );
-
-    if (res.data.error) {
-      if (res.data.error.Code === 402) {
-        const embed: Embed = new Embed();
-        embed.addField(
-          'ERROR',
-          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
-        );
-        msg.channel.send(embed);
-      } else errorHandler(res.data.error, msg);
-      return false;
-    } else {
-      setPlayerNames(keyword, res.data.data);
-      return true;
-    }
-  } catch (err) {
-    errorHandler(err, msg);
-    return false;
-  }
-};
-
-export const fetchPlayerRecords = async (
-  msg: Message,
-  playerName: string
-): Promise<boolean> => {
-  const keyword: string = playerName;
-  try {
-    const res: AxiosResponse = await axios.get(
-      `${TEMPLE_RECORDS}${keyword}&tracking=all`
-    );
-
-    if (res.data.error) {
-      if (res.data.error.Code === 402) {
-        const embed: Embed = new Embed();
-        embed.addField(
-          'ERROR',
-          `Player **${keyword}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
-        );
-        msg.channel.send(embed);
-      } else errorHandler(res.data.error, msg);
-      return false;
-    } else {
-      setPlayerRecords(keyword, res.data.records);
+      if (type === CacheTypes.PLAYER_STATS) data = res.data.data;
+      else if (type === CacheTypes.PLAYER_NAMES) data = res.data.data;
+      else if (type === CacheTypes.PLAYER_RECORDS) data = res.data.records;
+      addToCache(playerName, data, type);
       return true;
     }
   } catch (err) {

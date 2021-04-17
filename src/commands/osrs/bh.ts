@@ -51,7 +51,7 @@ export const bh = async (
   }
 };
 
-// Clue key names
+// Key names
 enum BH {
   ROGUE = 'BH Rogue',
   HUNTER = 'BH Hunter',
