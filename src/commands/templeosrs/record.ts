@@ -9,7 +9,12 @@ import {
   Clues,
   Skills,
 } from '../../utils/osrs/enums';
-import { TempleEmbed, EmbedTitles, usernameString } from '../../utils/embed';
+import {
+  TempleEmbed,
+  Embed,
+  EmbedTitles,
+  usernameString,
+} from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
@@ -69,72 +74,94 @@ export const record = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   let validFirstArgument: string;
+  const lowerCasedArguments = args.map((e: string) => {
+    return e.toLowerCase();
+  });
   if (args.length === 0)
     return msg.channel.send(
       new TempleEmbed().setDescription(
         '**Please provide arguments. Valid formats**:```.record clues tier time username\n\n.record lms time username\n\n.record skill skill-name time username\n\n.record boss boss-name time username```'
       )
     );
-  if (!recordTypes.includes(args[0].toLowerCase()))
+  if (!recordTypes.includes(lowerCasedArguments[0]))
     return msg.channel.send(
       invalidPrefixMsg(Categories.RECORD, recordTypes.join(', '))
     );
-  else validFirstArgument = args[0].toLowerCase();
-  if (args[1] === undefined)
+  else {
+    validFirstArgument = lowerCasedArguments[0];
+  }
+  if (lowerCasedArguments[1] === undefined)
     return msg.channel.send(
-      new TempleEmbed().setDescription('**Please provide a second argument.**')
+      new Embed().addFields(
+        {
+          name: '**For bosses:**',
+          value: '```https://pastebin.com/hx5JkHSJ```',
+        },
+        {
+          name: '**For skills:**',
+          value: '```https://pastebin.com/b4CUVJEN```',
+        },
+        {
+          name: '**For clues:**',
+          value: `\`\`\`${clueTypes.join(', ')}\`\`\``,
+        },
+        {
+          name: '**For other:**',
+          value: `\`\`\`${otherTypes.join(', ')}\`\`\``,
+        }
+      )
     );
   let inputFieldName: string;
   let isFirstArgumentValid: boolean;
   let firstArgumentType: number;
   switch (validFirstArgument) {
     case ValidRecords.CLUES:
-      if (!clueTypes.includes(args[1].toLowerCase()))
+      if (!clueTypes.includes(lowerCasedArguments[1]))
         return msg.channel.send(
           invalidPrefixMsg(Categories.CLUES, clueTypes.join(', '))
         );
       else {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.CLUES;
-        inputFieldName = args[1].toLowerCase();
+        inputFieldName = lowerCasedArguments[1];
       }
       break;
     case ValidRecords.OTHER:
-      if (!otherTypes.includes(args[1].toLowerCase()))
+      if (!otherTypes.includes(lowerCasedArguments[1]))
         return msg.channel.send(
           invalidPrefixMsg(Categories.OTHER, otherTypes.join(', '))
         );
       else {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.OTHER;
-        inputFieldName = args[1].toLowerCase();
+        inputFieldName = lowerCasedArguments[1];
       }
       break;
     case ValidRecords.SKILL:
-      if (!skillList.includes(args[1].toLowerCase()))
+      if (!skillList.includes(lowerCasedArguments[1]))
         return msg.channel.send(
           invalidPrefixMsg(Categories.SKILL, skillList.join(', '))
         );
       else {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.SKILL;
-        inputFieldName = args[1].toLowerCase();
+        inputFieldName = lowerCasedArguments[1];
       }
       break;
     case ValidRecords.BOSS:
       const indexes: number[] = [1, 2, 3];
       const bossValidation: {
-        bossWordLength: number;
+        bossCase: number;
         boss: string;
-      } = bossValidator(args, indexes);
-      if (bossValidation.bossWordLength === 0)
+      } = bossValidator(lowerCasedArguments, indexes);
+      if (bossValidation.bossCase === 0)
         return msg.channel.send(
           invalidPrefixMsg(Categories.BOSS, bossTypes.join(', '))
         );
-      else if (bossValidation.bossWordLength === 1) {
+      else if (bossValidation.bossCase === 1) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
-      } else if (bossValidation.bossWordLength === 2) {
+      } else if (bossValidation.bossCase === 2) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_TWO_WORD;
       } else {
@@ -160,78 +187,80 @@ export const record = async (
       isFirstArgumentValid = false;
       firstArgumentType = FirstArgumentType.FAILED;
       inputFieldName = '';
+      break;
     }
   }
   let time: string;
   let rsn: string[];
-  if (isFirstArgumentValid === true) {
+  if (isFirstArgumentValid === true && lowerCasedArguments.length >= 3) {
     switch (firstArgumentType) {
       case FirstArgumentType.OTHER:
-        if (!timeTypesAll.includes(args[2].toLowerCase()))
+        if (!timeTypesAll.includes(lowerCasedArguments[2]))
           return msg.channel.send(
             invalidPrefixMsg(Categories.TIME_LMS, timeTypesAll.join(', '))
           );
         else {
-          rsn = args.slice(3);
-          time = args[2].toLowerCase();
+          rsn = lowerCasedArguments.slice(3);
+          time = lowerCasedArguments[2];
         }
         break;
       case FirstArgumentType.CLUES:
-        if (!timeTypes.includes(args[2].toLowerCase()))
+        if (!timeTypes.includes(lowerCasedArguments[2]))
           return msg.channel.send(
             invalidPrefixMsg(Categories.TIME, timeTypes.join(', '))
           );
         else {
-          rsn = args.slice(3);
-          time = args[2].toLowerCase();
+          rsn = lowerCasedArguments.slice(3);
+          time = lowerCasedArguments[2];
         }
         break;
       case FirstArgumentType.SKILL:
-        if (!timeTypesAll.includes(args[2].toLowerCase()))
+        if (!timeTypesAll.includes(lowerCasedArguments[2]))
           return msg.channel.send(
             invalidPrefixMsg(Categories.TIME, timeTypesAll.join(', '))
           );
         else {
-          rsn = args.slice(3);
-          time = args[2].toLowerCase();
+          rsn = lowerCasedArguments.slice(3);
+          time = lowerCasedArguments[2];
         }
         break;
       case FirstArgumentType.BOSS_ONE_WORD:
-        if (!timeTypes.includes(args[2].toLowerCase()))
+        if (!timeTypes.includes(lowerCasedArguments[2]))
           return msg.channel.send(
             invalidPrefixMsg(Categories.TIME, timeTypes.join(', '))
           );
         else {
-          rsn = args.slice(3);
-          time = args[2].toLowerCase();
+          rsn = lowerCasedArguments.slice(3);
+          time = lowerCasedArguments[2];
         }
         break;
       case FirstArgumentType.BOSS_TWO_WORD:
-        if (!timeTypes.includes(args[3].toLowerCase()))
+        if (!timeTypes.includes(lowerCasedArguments[3]))
           return msg.channel.send(
             invalidPrefixMsg(Categories.TIME, timeTypes.join(', '))
           );
         else {
-          rsn = args.slice(4);
-          time = args[3].toLowerCase();
+          rsn = lowerCasedArguments.slice(4);
+          time = lowerCasedArguments[3];
         }
         break;
       case FirstArgumentType.BOSS_THREE_WORD:
-        if (!timeTypes.includes(args[4].toLowerCase()))
+        if (!timeTypes.includes(lowerCasedArguments[4]))
           return msg.channel.send(
             invalidPrefixMsg(Categories.TIME, timeTypes.join(', '))
           );
         else {
-          rsn = args.slice(5);
-          time = args[4].toLowerCase();
+          rsn = lowerCasedArguments.slice(5);
+          time = lowerCasedArguments[4];
         }
         break;
 
       default:
         time = 'Fail';
         rsn = ['Fail'];
+        break;
     }
-  } else return msg.channel.send(new TempleEmbed().setDescription('**ERROR**'));
+  } else return msg.channel.send(new Embed().setDescription('**ERROR**'));
 
   const cooldown: number = 30;
   if (rsn === undefined) return msg.channel.send(invalidUsername);
@@ -244,7 +273,7 @@ export const record = async (
       commandName,
       cooldown,
       false,
-      args.join('').toLowerCase()
+      lowerCasedArguments.join('')
     ) === true
   )
     return;
@@ -258,7 +287,7 @@ export const record = async (
       embed,
       playerRecords[username],
       time,
-      args
+      lowerCasedArguments
     );
     return msg.channel.send(result);
   } else {
@@ -271,8 +300,9 @@ export const record = async (
         embed,
         playerRecords[username],
         time,
-        args
+        lowerCasedArguments
       );
+
       return msg.channel.send(result);
     } else return;
   }
@@ -320,7 +350,6 @@ const generateResult = (
     case TempleMinigamesOther.EHP:
       formattedField = field.toUpperCase();
       break;
-
     default:
       formattedField = field;
       break;
@@ -334,15 +363,14 @@ const generateResult = (
       const value: string | number = playerObject[field][time].xp;
       let formattedValue;
 
-      if (args[0].toLowerCase() === 'other')
-        formattedValue = parseInt(value as string);
+      if (args[0] === 'other') formattedValue = parseInt(value as string);
       else {
         const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
         formattedValue = formatter.format(value as number);
       }
       // Changing sufix depending on whether the type is skill or not
       let ending: string;
-      if (args[0].toLowerCase() === 'skill') ending = ' xp';
+      if (args[0] === 'skill') ending = ' xp';
       else ending = '';
       // Formatting date
       const stringToDate: Date = new Date(playerObject[field][time].date);
@@ -851,6 +879,7 @@ export const fieldNameCheck = (fieldName: string): string => {
       break;
     default:
       fieldToCheck = '[]';
+      break;
   }
   return fieldToCheck;
 };

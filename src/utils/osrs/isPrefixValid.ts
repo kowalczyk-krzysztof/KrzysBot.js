@@ -9,6 +9,7 @@ const SKILL_LIST: string = process.env.OSRS_SKILL_LIST as string;
 
 export enum Categories {
   BOSS = 'boss',
+  BOSS_EDGE_CASE = 'bossedge',
   SKILL = 'skill',
   CLUES = 'clues',
   BH = 'bh',
@@ -43,7 +44,9 @@ export const invalidPrefixMsg = (
   let result;
   if (category === Categories.BOSS) {
     result = `Invalid boss name. Valid boss names: <${BOSS_LIST}>`;
-  } else if (category === Categories.SKILL)
+  } else if (category === Categories.BOSS_EDGE_CASE)
+    result = `Invalid boss name or username. Valid boss names: <${BOSS_LIST}>`;
+  else if (category === Categories.SKILL)
     result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>`;
   else if (category === Categories.TIME_LMS)
     result = `Invalid ${category} type. Valid types: **${types}**\n\nFor LMS there is no 6h record`;
