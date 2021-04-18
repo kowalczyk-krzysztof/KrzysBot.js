@@ -1,12 +1,18 @@
+// Discord
 import { Message } from 'discord.js';
+// OSRS cache
+import { fetchOsrsStats } from '../../cache/osrsCache';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Embeds
+import { Embed } from '../../utils/embed';
+// UTILS: Runescape name validator
 import {
   runescapeNameValidator,
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { fetchOsrsStats } from '../../cache/osrsCache';
-import { isOnCooldown } from '../../cache/cooldown';
-import { Embed } from '../../utils/embed';
+// UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 
 export const osrsfetch = async (
@@ -28,6 +34,6 @@ export const osrsfetch = async (
         `Fetched latest data available for player:\`\`\`${username}\`\`\``
       );
       return msg.channel.send(embed);
-    } else return errorHandler(null, msg);
+    } else return errorHandler(msg);
   }
 };

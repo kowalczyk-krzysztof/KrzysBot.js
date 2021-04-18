@@ -1,17 +1,19 @@
+// Discord
 import { Message } from 'discord.js';
+// TempleOSRS Cache
+import { playerNames, fetchTemple } from '../../cache/templeCache';
+// UTILS: Embeds
+import { Embed, ErrorEmbed, TempleEmbed } from '../../utils/embed';
+// UTILS: Interfaces
+import { TemplePlayerNames } from '../../utils/osrs/interfaces';
+// UTILS: Enums
+import { TempleOther, TempleCacheType } from '../../utils/osrs/enums';
+// UTILS: Runescape name validator
 import {
   runescapeNameValidator,
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { Embed, ErrorEmbed, TempleEmbed } from '../../utils/embed';
-import {
-  playerNames,
-  CacheTypes,
-  fetchTemple,
-  PlayerNames,
-} from '../../cache/templeCache';
-import { TempleOther } from '../../utils/osrs/enums';
 
 export const rsn = async (
   msg: Message,
@@ -26,7 +28,7 @@ export const rsn = async (
     const result: Embed = generateResult(embed, playerNames[username]);
     return msg.channel.send(result);
   } else {
-    const dataType: CacheTypes = CacheTypes.PLAYER_NAMES;
+    const dataType: TempleCacheType = TempleCacheType.PLAYER_NAMES;
     const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const result: Embed = generateResult(embed, playerNames[username]);
@@ -34,18 +36,19 @@ export const rsn = async (
     } else return;
   }
 };
-
-// Generate result
+// Generates embed sent to user
 const generateResult = (
-  inputEmbed: TempleEmbed,
-  playerObject: PlayerNames
+  embed: TempleEmbed,
+  playerObject: TemplePlayerNames
 ): TempleEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  const names: string[] = [];
-  for (const alias in playerObject[TempleOther.ALIASES]) {
-    names.push(alias);
+  else {
+    const names: string[] = [];
+    for (const alias in playerObject[TempleOther.ALIASES]) {
+      names.push(alias);
+    }
+    const data: string = names.join('\n');
+    embed.addField('Names', `${data}`);
+    return embed;
   }
-  const data: string = names.join('\n');
-  inputEmbed.addField('Names', `${data}`);
-  return inputEmbed;
 };

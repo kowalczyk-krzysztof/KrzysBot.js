@@ -1,27 +1,36 @@
+// Discord
 import { Message } from 'discord.js';
-import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
+// OSRS cache
+import { fetchOsrsStats, osrsStats } from '../../cache/osrsCache';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Embeds
 import {
   OsrsEmbed,
   EmbedTitles,
   usernameString,
   ErrorEmbed,
 } from '../../utils/embed';
-import {
-  runescapeNameValidator,
-  invalidUsername,
-  invalidRSN,
-} from '../../utils/osrs/runescapeNameValidator';
-import {
-  isPrefixValid,
-  Categories,
-  invalidPrefix,
-} from '../../utils/osrs/isPrefixValid';
-import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Interfaces
+import { OsrsPlayer } from '../../utils/osrs/interfaces';
+// UTILS: Enums
 import {
   OsrsOther,
   OsrsOtherAliases,
   TempleOther,
 } from '../../utils/osrs/enums';
+// UTILS: Runescape name validator
+import {
+  runescapeNameValidator,
+  invalidUsername,
+  invalidRSN,
+} from '../../utils/osrs/runescapeNameValidator';
+// UTILS: Prefix validator
+import {
+  isPrefixValid,
+  Categories,
+  invalidPrefix,
+} from '../../utils/osrs/isPrefixValid';
 
 export const bh = async (
   msg: Message,
@@ -60,34 +69,29 @@ export const bh = async (
     } else return;
   }
 };
-
-// Key names
-enum BH {
-  ROGUE = 'BH Rogue',
-  HUNTER = 'BH Hunter',
-}
-
 // Generates embed sent to user
 const generateResult = (
   prefix: string,
-  inputEmbed: OsrsEmbed,
+  embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  let scoreType: string | number;
-  let title: string;
-  if (prefix === OsrsOtherAliases.BH_ROGUE) {
-    scoreType = playerObject[OsrsOther.BH_ROGUE][TempleOther.SCORE];
-    title = BH.ROGUE;
-  } else {
-    scoreType = playerObject[OsrsOther.BH_HUNTER][TempleOther.SCORE];
-    title = BH.HUNTER;
+  else {
+    let scoreType: string | number;
+    let title: string;
+    if (prefix === OsrsOtherAliases.BH_ROGUE) {
+      scoreType = playerObject[OsrsOther.BH_ROGUE][TempleOther.SCORE];
+      title = OsrsOther.BH_ROGUE;
+    } else {
+      scoreType = playerObject[OsrsOther.BH_HUNTER][TempleOther.SCORE];
+      title = OsrsOther.BH_HUNTER;
+    }
+    embed.addField(`${title} ${TempleOther.SCORE}`, `${scoreType}`);
+    return embed;
   }
-  inputEmbed.addField(`${title} score`, `${scoreType}`);
-  return inputEmbed;
 };
 
-export const bhTypes: string[] = [
+const bhTypes: string[] = [
   OsrsOtherAliases.BH_ROGUE,
   OsrsOtherAliases.BH_HUNTER,
 ];

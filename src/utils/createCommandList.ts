@@ -1,9 +1,14 @@
-import fs from 'fs';
-import path from 'path';
+// Discord
 import { Message } from 'discord.js';
+// FS
+import fs from 'fs';
+// PATH
+import path from 'path';
+// UTILS: Embeds
 import { Embed } from '../utils/embed';
+// UTILS: Error handler
 import { errorHandler } from '../utils/errorHandler';
-// Command list
+// Command list directory
 const dir: string = path.join(__dirname, '../../data/commandlist.json');
 interface Command {
   name: string;
@@ -17,7 +22,6 @@ interface CommandList {
     [key: string]: Command;
   };
 }
-
 // Creating command list
 export const createCommandList = (msg: Message, args: string[]) => {
   const embed: Embed = new Embed();
@@ -25,7 +29,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
   // If command was used without arguments (".commands") then check if it's on cooldown, if not the send send user list of cateogires
   if (content.length === 0) {
     fs.readFile(dir, (err, data: Buffer) => {
-      if (err) return errorHandler(err, msg);
+      if (err) return errorHandler(msg, err);
       const json: CommandList = JSON.parse(data.toString());
       const categories: string[] = [];
       // Here I'm mapping each category and getting the first object in it, then getting its category property. I'm doing it like this so I can have easily indexable lowercase category names as keys and still be able to return category names nicely formatted to user.
@@ -43,7 +47,7 @@ export const createCommandList = (msg: Message, args: string[]) => {
   } else {
     // If user provided arguments e.g ".commands foo bar" then join them into lowercase string and check if category with such name exists (keyword in json). If not return a msg to user. If category exists then check if it's on cooldown, if not return list of commands in that category. If a category has aliases, include them, if not then don't include aliases
     fs.readFile(dir, (err, data: Buffer) => {
-      if (err) return errorHandler(err, msg);
+      if (err) return errorHandler(msg, err);
       const keyword: string = content.join('').toLowerCase();
       const json: CommandList = JSON.parse(data.toString());
       if (keyword in json === true) {

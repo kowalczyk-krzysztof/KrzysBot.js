@@ -1,3 +1,4 @@
+// Discord
 import { MessageEmbed } from 'discord.js';
 
 // Username field
@@ -10,8 +11,14 @@ export class Embed extends MessageEmbed {
     this.setColor('#E67E22');
   }
 }
-
-// TempleOSRS embeds
+// OSRS embed
+export class OsrsEmbed extends Embed {
+  constructor() {
+    super();
+    this.setFooter('Incorrect? Fetch latest data:\n.osrsfetch username');
+  }
+}
+// TempleOSRS embed
 export class TempleEmbed extends Embed {
   constructor() {
     super();
@@ -23,15 +30,14 @@ export class TempleEmbed extends Embed {
     );
   }
 }
-
+// Error embed
 export class ErrorEmbed extends Embed {
   constructor() {
     super();
     this.setDescription(`**Something went wrong...**`);
   }
 }
-// Everything related to how OSRS command embed should look like
-// Title field
+// Embed titles
 export enum EmbedTitles {
   BH = 'BH',
   CLUES = 'CLUES',
@@ -41,11 +47,4 @@ export enum EmbedTitles {
   SOULWARS = 'SOUL WARS',
   LMS = 'LMS',
   RECORDS = 'RECORDS',
-}
-// OSRS embed
-export class OsrsEmbed extends Embed {
-  constructor() {
-    super();
-    this.setFooter('Incorrect? Fetch latest data:\n.osrsfetch username');
-  }
 }

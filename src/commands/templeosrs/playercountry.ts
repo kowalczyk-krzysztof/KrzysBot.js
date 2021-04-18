@@ -1,17 +1,19 @@
+// Discord
 import { Message } from 'discord.js';
+// TempleOSRS Cache
+import { playerStats, fetchTemple } from '../../cache/templeCache';
+// UTILS: Embeds
+import { ErrorEmbed, TempleEmbed, usernameString } from '../../utils/embed';
+// UTILS: Interfaces
+import { TemplePlayerStats } from '../../utils/osrs/interfaces';
+// UTILS: Enums
+import { TempleOther, TempleCacheType } from '../../utils/osrs/enums';
+// UTILS: Runescape name validator
 import {
   runescapeNameValidator,
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { ErrorEmbed, TempleEmbed, usernameString } from '../../utils/embed';
-import {
-  playerStats,
-  CacheTypes,
-  PlayerStats,
-  fetchTemple,
-} from '../../cache/templeCache';
-import { TempleOther } from '../../utils/osrs/enums';
 
 export const playercountry = async (
   msg: Message,
@@ -25,7 +27,7 @@ export const playercountry = async (
     const result: TempleEmbed = generateResult(playerStats[username]);
     return msg.channel.send(result);
   } else {
-    const dataType: CacheTypes = CacheTypes.PLAYER_STATS;
+    const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
     const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const result: TempleEmbed = generateResult(playerStats[username]);
@@ -33,20 +35,19 @@ export const playercountry = async (
     } else return;
   }
 };
-
-const countryString: string = 'Country';
-
-// Generate result
+// Generates embed sent to user
 const generateResult = (
-  playerObject: PlayerStats
+  playerObject: TemplePlayerStats
 ): TempleEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  const embed: TempleEmbed = new TempleEmbed().addField(
-    usernameString,
-    `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
-  );
-  const data: string = playerObject[TempleOther.INFO][TempleOther.COUNTRY];
-  if (data === '-') embed.addField(`${countryString}`, 'No Info');
-  else embed.addField(`${countryString}`, `${data}`);
-  return embed;
+  else {
+    const embed: TempleEmbed = new TempleEmbed().addField(
+      usernameString,
+      `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
+    );
+    const data: string = playerObject[TempleOther.INFO][TempleOther.COUNTRY];
+    if (data === '-') embed.addField(`${TempleOther.COUNTRY}`, 'No Info');
+    else embed.addField(`${TempleOther.COUNTRY}`, `${data}`);
+    return embed;
+  }
 };

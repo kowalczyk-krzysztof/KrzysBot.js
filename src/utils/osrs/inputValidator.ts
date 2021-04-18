@@ -1,8 +1,8 @@
+// Discord
 import { Message } from 'discord.js';
-import { clueTypes } from '../../commands/osrs/clues';
-import { skillList } from '../../commands/osrs/lvl';
+// UTILS: Embeds
 import { Embed } from '../embed';
-import { BossCases, bossValidator, bossList } from './bossValidator';
+// UTILS: Enums
 import {
   BossAliases,
   Bosses,
@@ -13,9 +13,12 @@ import {
   TempleOther,
   PlayerOverviewTimesAliases,
 } from './enums';
+// UTILS: Prefix validator
 import { Categories, invalidPrefixMsg } from './isPrefixValid';
+// UTILS: Boss validator
+import { BossCases, bossValidator } from './bossValidator';
 
-// Valid first arguments
+// Valid first arguments TODO: Cleanup
 export enum ValidCases {
   CLUES = 'clues',
   BOSS = 'boss',
@@ -31,10 +34,6 @@ const validCases: string[] = [
 const timeTypes = ['day', 'week', 'month', 'year'];
 const timeTypesAll = ['6h', ...timeTypes];
 const otherTypes = ['lms', 'ehb', 'ehp'];
-// TODO: When Temporos gets added I can remove this check
-export const bossTypes = bossList.filter((e: string) => {
-  return e !== 'tempoross' || 'temp';
-});
 const playerOverviewTimes: string[] = [
   PlayerOverviewTimesAliases.FIVEMIN,
   PlayerOverviewTimesAliases.DAY,
@@ -104,9 +103,9 @@ export const templeGainsRecords = (
 
   switch (validFirstArgument) {
     case ValidCases.CLUES:
-      if (!clueTypes.includes(lowerCasedArguments[1])) {
+      if (!clueList.includes(lowerCasedArguments[1])) {
         msg.channel.send(
-          invalidPrefixMsg(Categories.CLUES, clueTypes.join(', '))
+          invalidPrefixMsg(Categories.CLUES, clueList.join(', '))
         );
         return;
       } else {
@@ -146,13 +145,9 @@ export const templeGainsRecords = (
             bossCase: number;
             boss: string;
           }
-        | undefined = bossValidator(lowerCasedArguments, indexes);
-      if (bossValidation === undefined) {
-        msg.channel.send(
-          invalidPrefixMsg(Categories.BOSS, bossTypes.join(', '))
-        );
-        return;
-      } else if (bossValidation.bossCase === BossCases.ONE_WORD) {
+        | undefined = bossValidator(msg, lowerCasedArguments, indexes);
+      if (bossValidation === undefined) return;
+      else if (bossValidation.bossCase === BossCases.ONE_WORD) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
       } else if (bossValidation.bossCase === BossCases.TWO_WORD) {
@@ -282,7 +277,7 @@ export const fieldNameCheck = (
   return fieldToCheck;
 };
 
-const otherFields = (fieldName: string): string | undefined => {
+export const otherFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
     case TempleOther.EHB_LOWERCASE:
@@ -303,7 +298,7 @@ const otherFields = (fieldName: string): string | undefined => {
   return fieldToCheck;
 };
 
-const clueFields = (fieldName: string): string | undefined => {
+export const clueFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
     case ClueAliases.ALL:
@@ -333,7 +328,7 @@ const clueFields = (fieldName: string): string | undefined => {
   return fieldToCheck;
 };
 
-const skillFields = (fieldName: string): string | undefined => {
+export const skillFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
     case SkillAliases.TOTAL_ALIAS1:
@@ -498,7 +493,7 @@ const skillFields = (fieldName: string): string | undefined => {
   return fieldToCheck;
 };
 
-const bossFields = (fieldName: string): string | undefined => {
+export const bossFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
     case BossAliases.SIRE_ALIAS1:
@@ -800,3 +795,176 @@ const bossFields = (fieldName: string): string | undefined => {
   }
   return fieldToCheck;
 };
+
+export const clueList: string[] = [
+  ClueAliases.ALL,
+  ClueAliases.BEGINNER,
+  ClueAliases.EASY,
+  ClueAliases.MEDIUM,
+  ClueAliases.HARD,
+  ClueAliases.ELITE,
+  ClueAliases.MASTER,
+];
+
+export const skillList: string[] = [
+  SkillAliases.TOTAL_ALIAS1,
+  SkillAliases.TOTAL_ALIAS2,
+  SkillAliases.ATTACK_ALIAS1,
+  SkillAliases.ATTACK_ALIAS2,
+  SkillAliases.DEFENCE_ALIAS1,
+  SkillAliases.DEFENCE_ALIAS2,
+  SkillAliases.STRENGTH_ALIAS1,
+  SkillAliases.STRENGTH_ALIAS2,
+  SkillAliases.HP_ALIAS1,
+  SkillAliases.HP_ALIAS2,
+  SkillAliases.RANGED_ALIAS1,
+  SkillAliases.RANGED_ALIAS2,
+  SkillAliases.PRAYER_ALIAS1,
+  SkillAliases.PRAYER_ALIAS2,
+  SkillAliases.MAGIC_ALIAS1,
+  SkillAliases.MAGIC_ALIAS2,
+  SkillAliases.COOKING_ALIAS1,
+  SkillAliases.COOKING_ALIAS2,
+  SkillAliases.WC_ALIAS1,
+  SkillAliases.WC_ALIAS2,
+  SkillAliases.FLETCH_ALIAS1,
+  SkillAliases.FLETCH_ALIAS2,
+  SkillAliases.FISH_ALIAS1,
+  SkillAliases.FISH_ALIAS2,
+  SkillAliases.FM_ALIAS1,
+  SkillAliases.FM_ALIAS2,
+  SkillAliases.FM_ALIAS3,
+  SkillAliases.CRAFT_ALIAS1,
+  SkillAliases.CONSTR_ALIAS2,
+  SkillAliases.SMITH_ALIAS1,
+  SkillAliases.SMITH_ALIAS2,
+  SkillAliases.MINING_ALIAS1,
+  SkillAliases.MINING_ALIAS2,
+  SkillAliases.HERB_ALIAS1,
+  SkillAliases.HERB_ALIAS2,
+  SkillAliases.AGIL_ALIAS1,
+  SkillAliases.AGIL_ALIAS2,
+  SkillAliases.THIEV_ALIAS1,
+  SkillAliases.THIEV_ALIAS2,
+  SkillAliases.SLAY_ALIAS1,
+  SkillAliases.SLAY_ALIAS2,
+  SkillAliases.FARM_ALIAS1,
+  SkillAliases.FARM_ALIAS2,
+  SkillAliases.RC_ALIAS1,
+  SkillAliases.RC_ALIAS2,
+  SkillAliases.RC_ALIAS3,
+  SkillAliases.HUNT_ALIAS1,
+  SkillAliases.HUNT_ALIAS2,
+  SkillAliases.CONSTR_ALIAS1,
+  SkillAliases.CONSTR_ALIAS2,
+  SkillAliases.CONSTR_ALIAS3,
+  SkillAliases.CONSTR_ALIAS4,
+];
+
+export const bossList: string[] = [
+  BossAliases.SIRE_ALIAS1,
+  BossAliases.SIRE_ALIAS1,
+  BossAliases.SIRE_ALIAS2,
+  BossAliases.HYDRA_ALIAS1,
+  BossAliases.HYDRA_ALIAS2,
+  BossAliases.BARROWS_ALIAS1,
+  BossAliases.BRYOPHYTA_ALIAS1,
+  BossAliases.BRYOPHYTA_ALIAS2,
+  BossAliases.CALLISTO_ALIAS1,
+  BossAliases.CERBERUS_ALIAS1,
+  BossAliases.CERBERUS_ALIAS2,
+  BossAliases.COX_ALIAS1,
+  BossAliases.COX_ALIAS2,
+  BossAliases.COX_ALIAS3,
+  BossAliases.COXCM_ALIAS1,
+  BossAliases.COXCM_ALIAS2,
+  BossAliases.COXCM_ALIAS3,
+  BossAliases.CHAOS_ELE_ALIAS1,
+  BossAliases.CHAOS_ELE_ALIAS2,
+  BossAliases.CHAOS_ELE_ALIAS3,
+  BossAliases.CHAOS_FANATIC_ALIAS1,
+  BossAliases.CHAOS_FANATIC_ALIAS2,
+  BossAliases.SARADOMIN_ALIAS1,
+  BossAliases.SARADOMIN_ALIAS2,
+  BossAliases.SARADOMIN_ALIAS3,
+  BossAliases.SARADOMIN_ALIAS4,
+  BossAliases.CORP_ALIAS1,
+  BossAliases.CORP_ALIAS2,
+  BossAliases.CRAZY_ARCH_ALIAS1,
+  BossAliases.CRAZY_ARCH_ALIAS2,
+  BossAliases.PRIME_ALIAS1,
+  BossAliases.PRIME_ALIAS2,
+  BossAliases.REX_ALIAS1,
+  BossAliases.REX_ALIAS2,
+  BossAliases.SUPREME_ALIAS1,
+  BossAliases.SUPREME_ALIAS2,
+  BossAliases.DERANGED_ALIAS1,
+  BossAliases.DERANGED_ALIAS2,
+  BossAliases.DERANGED_ALIAS3,
+  BossAliases.BANDOS_ALIAS1,
+  BossAliases.BANDOS_ALIAS2,
+  BossAliases.BANDOS_ALIAS3,
+  BossAliases.MOLE_ALIAS1,
+  BossAliases.MOLE_ALIAS2,
+  BossAliases.GUARDIANS_ALIAS1,
+  BossAliases.GUARDIANS_ALIAS2,
+  BossAliases.GUARDIANS_ALIAS3,
+  BossAliases.GUARDIANS_ALIAS4,
+  BossAliases.GUARDIANS_ALIAS5,
+  BossAliases.HESPORI_ALIAS1,
+  BossAliases.KQ_ALIAS1,
+  BossAliases.KQ_ALIAS2,
+  BossAliases.KQ_ALIAS3,
+  BossAliases.KBD_ALIAS1,
+  BossAliases.KBD_ALIAS2,
+  BossAliases.KRAKEN_ALIAS1,
+  BossAliases.ARMA_ALIAS1,
+  BossAliases.ARMA_ALIAS2,
+  BossAliases.ARMA_ALIAS3,
+  BossAliases.ARMA_ALIAS4,
+  BossAliases.ARMA_ALIAS5,
+  BossAliases.ZAMMY_ALIAS1,
+  BossAliases.ZAMMY_ALIAS2,
+  BossAliases.ZAMMY_ALIAS3,
+  BossAliases.ZAMMY_ALIAS4,
+  BossAliases.ZAMMY_ALIAS5,
+  BossAliases.MIMIC_ALIAS1,
+  BossAliases.NIGHTMARE_ALIAS1,
+  BossAliases.OBOR_ALIAS1,
+  BossAliases.SARACHNIS_ALIAS1,
+  BossAliases.SCORPIA_ALIAS1,
+  BossAliases.SKOTIZO_ALIAS1,
+  BossAliases.TEMPOROSS_ALIAS1,
+  BossAliases.TEMPOROSS_ALIAS2,
+  BossAliases.GAUNTLET_ALIAS1,
+  BossAliases.GAUNTLET_ALIAS2,
+  BossAliases.CORR_GAUNTLET_ALIAS1,
+  BossAliases.CORR_GAUNTLET_ALIAS2,
+  BossAliases.CORR_GAUNTLET_ALIAS3,
+  BossAliases.CORR_GAUNTLET_ALIAS4,
+  BossAliases.CORR_GAUNTLET_ALIAS5,
+  BossAliases.TOB_ALIAS1,
+  BossAliases.TOB_ALIAS2,
+  BossAliases.TOB_ALIAS3,
+  BossAliases.THERMY_ALIAS1,
+  BossAliases.THERMY_ALIAS2,
+  BossAliases.THERMY_ALIAS3,
+  BossAliases.ZUK_ALIAS1,
+  BossAliases.ZUK_ALIAS2,
+  BossAliases.JAD_ALIAS1,
+  BossAliases.JAD_ALIAS2,
+  BossAliases.VENE_ALIAS1,
+  BossAliases.VENE_ALIAS2,
+  BossAliases.VETION_ALIAS1,
+  BossAliases.VORK_ALIAS1,
+  BossAliases.VORK_ALIAS2,
+  BossAliases.WT_ALIAS1,
+  BossAliases.WT_ALIAS2,
+  BossAliases.ZALC_ALIAS1,
+  BossAliases.ZALC_ALIAS2,
+  BossAliases.ZULRAH_ALIAS1,
+];
+// TODO: remove this check when Tempoross gets added to temple
+export const bossTypes = bossList.filter((e: string) => {
+  return e !== 'tempoross' || 'temp';
+});

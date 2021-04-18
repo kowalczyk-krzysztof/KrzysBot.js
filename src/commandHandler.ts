@@ -1,7 +1,7 @@
-// Dotenv
-import dotenv from 'dotenv';
 // Discord
 import { Message } from 'discord.js';
+// Dotenv
+import dotenv from 'dotenv';
 // Commands: Random
 import { commands } from './commands/commands';
 import { tenor } from './commands/tenor';
@@ -23,7 +23,7 @@ import { lms } from './commands/osrs/lms';
 import { bh } from './commands/osrs/bh';
 import { soulwars } from './commands/osrs/soulwars';
 import { leaguepoints } from './commands/osrs/leaguepoints';
-// Dotenv config
+
 dotenv.config({ path: 'config.env' });
 // Command prefix
 const prefix: string = process.env.PREFIX as string;
@@ -53,8 +53,7 @@ export const commandList: {
   record,
   gains,
 };
-// Alias handler
-// Take a command name and check if it has an alias then return the original name
+// Alias handler - take a command name and check if it has an alias then return the original name
 export const aliasHandler = (commandName: string) => {
   const alias: string = commandName.toLowerCase();
   switch (alias) {

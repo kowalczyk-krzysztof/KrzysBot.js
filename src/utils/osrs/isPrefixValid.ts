@@ -1,12 +1,17 @@
+// Discord
 import { Message } from 'discord.js';
+// Dotenv
 import dotenv from 'dotenv';
+// UTILS: Embeds
 import { Embed } from '../embed';
 
 dotenv.config({ path: 'config.env' });
 
-export const BOSS_LIST: string = process.env.OSRS_BOSS_LIST as string;
+// Pastebins with valid boss and skill names
+const BOSS_LIST: string = process.env.OSRS_BOSS_LIST as string;
 const SKILL_LIST: string = process.env.OSRS_SKILL_LIST as string;
 
+// TODO improve this
 export enum Categories {
   BOSS = 'boss',
   BOSS_EDGE_CASE = 'bossedge',
@@ -24,21 +29,21 @@ export const invalidPrefix = 'INVALID';
 
 export const isPrefixValid = (
   msg: Message,
-  inputArgument: string[],
-  inputTypes: string[],
-  inputCategory: Categories
+  args: string[],
+  types: string[],
+  category: Categories
 ): string => {
-  const typesList: string = inputTypes.join(', ');
-  const parsedArgument: string = inputArgument[0]
+  const typesList: string = types.join(', ');
+  const parsedArgument: string = args[0]
     .replace(/\n/g, '')
     .toLowerCase()
     .trim();
-  if (inputArgument.length === 0 || !inputTypes.includes(parsedArgument)) {
-    msg.channel.send(invalidPrefixMsg(inputCategory, typesList));
+  if (args.length === 0 || !types.includes(parsedArgument)) {
+    msg.channel.send(invalidPrefixMsg(category, typesList));
     return invalidPrefix;
   } else return parsedArgument;
 };
-
+// Generate msg
 export const invalidPrefixMsg = (
   category: Categories,
   types: string
