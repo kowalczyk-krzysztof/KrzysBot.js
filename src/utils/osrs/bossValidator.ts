@@ -3,7 +3,7 @@ import { BossAliases } from './enums';
   Boss list is an array of lowercase joined boss name e.g "abyssalsire". 
   User input is a string array e.g ["abyssal", "sire", "zezima"]
   
-  First check if there is any input (args.length === 0). If not return error (msg). Then check special cases (3 argument boss name eg. theatre of blood). Then filter boss list and check if args[0] (string) is included in any element (string). If true then check if [args[0], args[1]].join('') (string, exact match) is included in any boss array element. If this check passes, then boss = [args[0], args[1]].join(''), else boss = args[0]. Then do another exact match check to eliminate cases like ".kc dagannoth" which pass the checks but are not valid bosses.
+  First check if there is any input (args.length === 0). If not return error (msg). Then check special cases (3 argument boss name eg. theatre of blood). Then filter boss list and check if args[0] (string) is included in any element (string). If true then check if [args[0], args[1]].join('') (string, exact match) is included boss array. If this check passes, then boss = [args[0], args[1]].join(''), else boss = args[0]. 
 
   User to search for is args.slice(<length of args that are the boss name>)
   */
@@ -25,15 +25,13 @@ enum Indexes {
 export const bossValidator = (
   lowerCasedArguments: string[],
   indexes: number[]
-): {
-  bossCase: number;
-  boss: string | undefined;
-} => {
-  if (lowerCasedArguments.length === 0)
-    return {
-      bossCase: BossCases.INVALID,
-      boss: undefined,
-    };
+):
+  | {
+      bossCase: number;
+      boss: string;
+    }
+  | undefined => {
+  if (lowerCasedArguments.length === 0) return;
   const firstArgument: string =
     lowerCasedArguments[indexes[Indexes.FIRST_WORD]];
   const twoArgumentsJoined: string = [
@@ -50,7 +48,7 @@ export const bossValidator = (
     .join('')
     .toLowerCase();
 
-  let boss: string | undefined;
+  let boss: string;
   let bossCase: number;
 
   if (
@@ -62,11 +60,11 @@ export const bossValidator = (
     bossCase = BossCases.THREE_WORDS;
     boss = specialCase;
   } else {
-    const firstCheck: string[] = bosses.filter((e: string) => {
+    const firstCheck: string[] = bossList.filter((e: string) => {
       return e.includes(firstArgument);
     });
     if (firstCheck.length > 0 && lowerCasedArguments.length > 1) {
-      const secondCheck: boolean = bosses.includes(twoArgumentsJoined);
+      const secondCheck: boolean = bossList.includes(twoArgumentsJoined);
 
       // This is for edge cases like ".kc deranged archeologist"
       if (secondCheck === true && lowerCasedArguments.length === 2) {
@@ -83,8 +81,7 @@ export const bossValidator = (
       bossCase = BossCases.EDGE_CASE;
       boss = firstArgument;
     } else {
-      bossCase = BossCases.INVALID;
-      boss = undefined;
+      return;
     }
   }
 
@@ -94,7 +91,7 @@ export const bossValidator = (
   };
 };
 
-export const bosses: string[] = [
+export const bossList: string[] = [
   BossAliases.SIRE_ALIAS1,
   BossAliases.SIRE_ALIAS1,
   BossAliases.SIRE_ALIAS2,
@@ -167,6 +164,8 @@ export const bosses: string[] = [
   BossAliases.SARACHNIS_ALIAS1,
   BossAliases.SCORPIA_ALIAS1,
   BossAliases.SKOTIZO_ALIAS1,
+  BossAliases.TEMPOROSS_ALIAS1,
+  BossAliases.TEMPOROSS_ALIAS2,
   BossAliases.GAUNTLET_ALIAS1,
   BossAliases.GAUNTLET_ALIAS2,
   BossAliases.CORR_GAUNTLET_ALIAS1,

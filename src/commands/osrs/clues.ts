@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { ClueAliases, Clues } from '../../utils/osrs/enums';
+import { ClueAliases, Clues, TempleOther } from '../../utils/osrs/enums';
 import {
   fetchOsrsStats,
   osrsStats,
@@ -71,7 +71,7 @@ const generateResult = (
   const clueType: BossOrMinigame = clueTypeCheck(prefix, playerObject);
   inputEmbed.addField(
     `Clues ${capitalizeFirstLetter(prefix)}`,
-    `${clueType.score}`
+    `${clueType[TempleOther.SCORE]}`
   );
   return inputEmbed;
 };

@@ -100,19 +100,78 @@ export enum SKillIndex {
   NIGHTMARE = 82,
 }
 
+// Osrs other key names
+export enum OsrsOther {
+  BH_ROGUE = 'Bh_Rogue',
+  BH_HUNTER = 'Bh_Hunter',
+  LEAGUE = 'League_Points',
+  LMS = 'Lms_Rank',
+  SOULWARS = 'Soul_Wars_Zeal',
+}
+
+// OSRS other aliases
+export enum OsrsOtherAliases {
+  BH_ROGUE = 'rogue',
+  BH_HUNTER = 'hunter',
+}
+
 // Temple OSRS other key names
-export enum TempleMinigamesOther {
+export enum TempleOther {
+  INFO = 'info',
+  TABLE = 'table',
+  DATE = 'Date',
+  DATE_LOWERCASE = 'date',
   EHB = 'Ehb',
   EHP = 'Ehp',
+  EHP_LOWERCASE = 'ehp',
+  EHB_LOWERCASE = 'ehb',
   LMS = 'LMS',
+  LMS_LOWERCASE = 'lms',
   IM_EHP = 'im_ehp',
-}
-// Temple OSRS other alaises
-export enum TempleMinigamesOtherAliases {
-  EHB = 'ehb',
-  EHP = 'ehp',
-  LMS = 'lms',
-  IM_EHP = 'imehp',
+  IM_EHP_JOINED = 'imehp',
+  IM_EHP_CAPITAL = 'Im_ehp',
+  IM_EHB = 'Im_ehb',
+  F2P_EHP = 'F2p_ehp',
+  LVL3_EHP = 'Lvl3_ehp',
+  LAST_CHECKED = 'Last checked',
+  LAST_CHANGED = 'Last changed',
+  USERNAME = 'Username',
+  COUNTRY = 'Country',
+  GAME_MODE = 'Game mode',
+  CB3 = 'Cb-3',
+  F2P = 'F2p',
+  CLAN_PREF = 'Clan preference',
+  BANNED = 'Banned',
+  DISQUALIFIED = 'Disqualified',
+  LAST_CHECK_TEXT = 'last_check_text',
+  HOURS_PLAYED = 'hours_played',
+  HOURS_PER_DAY = 'hours_per_day',
+  XP_GAINED = 'xp_gained',
+  XP_PER_DAY = 'xp_per_day',
+  AVR_XPH = 'avr_xph',
+  TOP_SKILL = 'top_skill',
+  GP_SPENT = 'gp_spent',
+  BOSS_KILLS = 'boss_kills',
+  KC_PER_DAY = 'kc_per_day',
+  AVR_KCH = 'avr_kch',
+  TOP_BOSS = 'top_boss',
+  GP_EARNED = 'gp_earned',
+  XP = 'xp',
+  RANK = 'rank',
+  LEVEL = 'level',
+  NAME = 'name',
+  LATS_DATE = 'last_date',
+  FIRST_DATE = 'first_date',
+  SECONDS = 'seconds',
+  LAST_USED = 'last_used',
+  LAST_USED_SECONDS = 'last_used_seconds',
+  EHP_GAINED = 'ehp_gained',
+  TIME_USED = 'time_used',
+  HISTORY = 'history',
+  HISTORY_SECONDS = 'total_history_seconds',
+  ALIASES = 'aliases',
+  SCORE = 'score',
+  EXP = 'exp',
 }
 // Clue names
 export enum Clues {
@@ -310,8 +369,7 @@ export enum Skills {
   THIEV = 'Thieving',
   SLAYER = 'Slayer',
   FARM = 'Farming',
-  RC = 'Runecrafting',
-  TEMPLE_RC = 'Runecraft',
+  RC = 'Runecraft',
   HUNT = 'Hunter',
   CON = 'Construction',
 }

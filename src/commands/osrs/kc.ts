@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { BossAliases, Bosses } from '../../utils/osrs/enums';
+import { BossAliases, Bosses, TempleOther } from '../../utils/osrs/enums';
 import {
   OsrsEmbed,
   EmbedTitles,
@@ -27,7 +27,7 @@ import {
 import {
   bossValidator,
   BossCases,
-  bosses,
+  bossList,
 } from '../../utils/osrs/bossValidator';
 
 export const kc = async (
@@ -39,16 +39,19 @@ export const kc = async (
   const lowerCasedArguments = args.map((e: string) => {
     return e.toLowerCase();
   });
-  const bossValidation: {
-    bossCase: number;
-    boss: string | undefined;
-  } = bossValidator(lowerCasedArguments, indexes);
+  const bossValidation:
+    | {
+        bossCase: number;
+        boss: string | undefined;
+      }
+    | undefined = bossValidator(lowerCasedArguments, indexes);
   let user: string[];
   let boss: string;
   let category: Categories;
-  if (bossValidation.bossCase === BossCases.INVALID)
+
+  if (bossValidation === undefined || bossValidation.boss === undefined)
     return msg.channel.send(
-      invalidPrefixMsg(Categories.BOSS, bosses.join(', '))
+      invalidPrefixMsg(Categories.BOSS, bossList.join(', '))
     );
   else if (bossValidation.bossCase === BossCases.ONE_WORD) {
     category = Categories.BOSS;
@@ -63,9 +66,14 @@ export const kc = async (
     category = Categories.BOSS_EDGE_CASE;
     user = lowerCasedArguments.slice(1);
   }
-  if (bossValidation.boss === undefined) return;
+
   const bossToArray: string[] = [bossValidation.boss];
-  const finalCheck: string = isPrefixValid(msg, bossToArray, bosses, category);
+  const finalCheck: string = isPrefixValid(
+    msg,
+    bossToArray,
+    bossList,
+    category
+  );
   if (finalCheck === invalidPrefix) return;
   else boss = finalCheck;
 
@@ -114,7 +122,10 @@ const generateResult = (
     bossKc: BossOrMinigame;
     bossName: string;
   } = bossTypeCheck(inputPrefix, playerObject);
-  inputEmbed.addField(`${boss.bossName} kills`, `${boss.bossKc.score}`);
+  inputEmbed.addField(
+    `${boss.bossName} kills`,
+    `${boss.bossKc[TempleOther.SCORE]}`
+  );
 
   return inputEmbed;
 };

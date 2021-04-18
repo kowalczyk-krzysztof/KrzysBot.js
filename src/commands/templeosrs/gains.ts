@@ -1,9 +1,8 @@
 import { Message } from 'discord.js';
 import {
-  TempleMinigamesOther,
+  TempleOther,
   Clues,
   Skills,
-  TempleMinigamesOtherAliases,
   PlayerOverviewTimesAliases,
   PlayerOverviewTimes,
 } from '../../utils/osrs/enums';
@@ -44,15 +43,18 @@ export const gains = async (
   const lowerCasedArguments = args.map((e: string) => {
     return e.toLowerCase();
   });
-  const parsedInput: {
-    rsn: string[] | undefined;
-    time: string | undefined;
-    field: string | undefined;
-    case: string | undefined;
-  } = templeGainsRecords(msg, args, commandName);
+  const parsedInput:
+    | {
+        rsn: string[] | undefined;
+        time: string | undefined;
+        field: string | undefined;
+        case: string | undefined;
+      }
+    | undefined = templeGainsRecords(msg, args, commandName);
 
   let playerCache;
   let dataType: CacheTypes;
+  if (parsedInput === undefined) return;
   if (
     parsedInput.case === ValidCases.BOSS ||
     parsedInput.case === ValidCases.CLUES
@@ -61,8 +63,8 @@ export const gains = async (
     dataType = CacheTypes.PLAYER_OVERVIEW_OTHER;
   } else if (parsedInput.case === ValidCases.OTHER) {
     if (
-      parsedInput.field === TempleMinigamesOtherAliases.EHB ||
-      parsedInput.field === TempleMinigamesOtherAliases.LMS
+      parsedInput.field === TempleOther.EHB_LOWERCASE ||
+      parsedInput.field === TempleOther.LMS_LOWERCASE
     ) {
       playerCache = playerOverviewOther;
       dataType = CacheTypes.PLAYER_OVERVIEW_OTHER;
@@ -99,9 +101,11 @@ export const gains = async (
       .setTitle(EmbedTitles.RECORDS)
       .addField(usernameString, `${username}`);
     if (username + parsedInput.time in playerCache) {
-      console.log('cached');
-
-      const field: string = fieldNameCheck(parsedInput.field, parsedInput.case);
+      const field: string | undefined = fieldNameCheck(
+        parsedInput.field,
+        parsedInput.case
+      );
+      if (field === undefined) return;
       const result: TempleEmbed = generateResult(
         field,
         embed,
@@ -143,10 +147,11 @@ export const gains = async (
         timePeriod
       );
       if (isFetched === true) {
-        const field: string = fieldNameCheck(
+        const field: string | undefined = fieldNameCheck(
           parsedInput.field,
           parsedInput.case
         );
+        if (field === undefined) return;
         const result: TempleEmbed = generateResult(
           field,
           embed,
@@ -195,16 +200,16 @@ const generateResult = (
     case Clues.MASTER:
       formattedField = 'Master Clues';
       break;
-    case Skills.TEMPLE_RC:
-      formattedField = Skills.RC;
+    case Skills.RC:
+      formattedField = 'Runecrating';
       break;
-    case TempleMinigamesOther.EHB:
+    case TempleOther.EHB:
       formattedField = field.toUpperCase();
       break;
-    case TempleMinigamesOther.EHP:
+    case TempleOther.EHP:
       formattedField = field.toUpperCase();
       break;
-    case TempleMinigamesOther.IM_EHP:
+    case TempleOther.IM_EHP:
       formattedField = 'Ironman EHP';
       break;
 
@@ -217,9 +222,10 @@ const generateResult = (
   // If there are no records the key value is an empty array
 
   // If there's no record for specific period of time then the key doesn't exist
-  if (playerObject.table[field] !== undefined) {
+  if (playerObject[TempleOther.TABLE][field] !== undefined) {
     // Formatting how numbers are displayed
-    const value: string | number = playerObject.table[field].xp;
+    const value: string | number =
+      playerObject[TempleOther.TABLE][field][TempleOther.XP];
     let formattedValue;
 
     if (args[0] === 'other') formattedValue = value;

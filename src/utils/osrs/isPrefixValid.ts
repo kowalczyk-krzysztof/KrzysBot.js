@@ -17,7 +17,7 @@ export enum Categories {
   TIME = 'time',
   TIME_LMS = 'timelms',
   OTHER = 'other',
-  RECORD = 'record',
+  EMPTY = '',
 }
 
 export const invalidPrefix = 'INVALID';

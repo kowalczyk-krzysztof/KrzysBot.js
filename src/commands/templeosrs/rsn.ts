@@ -11,6 +11,7 @@ import {
   fetchTemple,
   PlayerNames,
 } from '../../cache/templeCache';
+import { TempleOther } from '../../utils/osrs/enums';
 
 export const rsn = async (
   msg: Message,
@@ -41,7 +42,7 @@ const generateResult = (
 ): TempleEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
   const names: string[] = [];
-  for (const alias in playerObject.aliases) {
+  for (const alias in playerObject[TempleOther.ALIASES]) {
     names.push(alias);
   }
   const data: string = names.join('\n');

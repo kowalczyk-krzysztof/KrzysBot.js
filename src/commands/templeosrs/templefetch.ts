@@ -34,8 +34,7 @@ export const templefetch = async (
       user = args.slice(1);
     }
   } else {
-    dataType = args[0];
-    user = [''];
+    return;
   }
   const types: (CacheTypes | string)[] = [
     CacheTypes.PLAYER_NAMES,

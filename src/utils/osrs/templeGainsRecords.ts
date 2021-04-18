@@ -1,8 +1,8 @@
 import { Message } from 'discord.js';
 import { clueTypes } from '../../commands/osrs/clues';
 import { skillList } from '../../commands/osrs/lvl';
-import { Embed, ErrorEmbed } from '../embed';
-import { BossCases, bossValidator, bosses } from './bossValidator';
+import { Embed } from '../embed';
+import { BossCases, bossValidator, bossList } from './bossValidator';
 import {
   BossAliases,
   Bosses,
@@ -10,8 +10,7 @@ import {
   Clues,
   SkillAliases,
   Skills,
-  TempleMinigamesOther,
-  TempleMinigamesOtherAliases,
+  TempleOther,
   PlayerOverviewTimesAliases,
 } from './enums';
 import { Categories, invalidPrefixMsg } from './isPrefixValid';
@@ -33,7 +32,7 @@ const timeTypes = ['day', 'week', 'month', 'year'];
 const timeTypesAll = ['6h', ...timeTypes];
 const otherTypes = ['lms', 'ehb', 'ehp'];
 // TODO: When Temporos gets added I can remove this check
-const bossTypes = bosses.filter((e: string) => {
+export const bossTypes = bossList.filter((e: string) => {
   return e !== 'tempoross' || 'temp';
 });
 const playerOverviewTimes: string[] = [
@@ -54,17 +53,30 @@ enum FirstArgumentType {
   BOSS_TWO_WORD = 5,
   BOSS_THREE_WORD = 6,
 }
+/*
+First check which command was used (commandName) and change arrays accordingly
 
-export const templeGainsRecords = (
-  msg: Message,
-  args: string[],
-  commandName: string
-): {
+Check if args is empty. Then check first argument if it's "clues", "other", "bosses", "skills". Then do checks based on what the previous argument was. For bosses do additional checks depending on length of boss words. Then check next argument (time) - if it's valid then whatever is left is the username. Return an object
+
+{
   rsn: string[] | undefined;
   time: string | undefined;
   field: string | undefined;
   case: string | undefined;
-} => {
+} 
+*/
+export const templeGainsRecords = (
+  msg: Message,
+  args: string[],
+  commandName: string
+):
+  | {
+      rsn: string[] | undefined;
+      time: string | undefined;
+      field: string | undefined;
+      case: string | undefined;
+    }
+  | undefined => {
   let validFirstArgument: string | undefined;
   const lowerCasedArguments = args.map((e: string) => {
     return e.toLowerCase();
@@ -72,45 +84,20 @@ export const templeGainsRecords = (
   let conditionalTypeOther: string[];
   if (commandName === 'gains') conditionalTypeOther = [...otherTypes, 'imehp'];
   else conditionalTypeOther = otherTypes;
-  if (args.length === 0)
+  if (args.length === 0) {
     msg.channel.send(
       new Embed().setDescription(
         '**Please provide arguments. Valid formats**:```.record clues tier time username\n\n.record lms time username\n\n.record skill skill-name time username\n\n.record boss boss-name time username```'
       )
     );
+    return;
+  }
   if (!validCases.includes(lowerCasedArguments[0])) {
-    validFirstArgument = undefined;
-    msg.channel.send(
-      invalidPrefixMsg(Categories.RECORD, validCases.join(', '))
-    );
+    msg.channel.send(invalidPrefixMsg(Categories.EMPTY, validCases.join(', ')));
+    return;
   } else {
     validFirstArgument = lowerCasedArguments[0];
   }
-  if (lowerCasedArguments[1] === undefined)
-    msg.channel.send(
-      new Embed().addFields(
-        {
-          name: '**INVALID ARGUMENT**',
-          value: 'List of valid arguments:\n',
-        },
-        {
-          name: '**For bosses:**',
-          value: '```https://pastebin.com/hx5JkHSJ```',
-        },
-        {
-          name: '**For skills:**',
-          value: '```https://pastebin.com/b4CUVJEN```',
-        },
-        {
-          name: '**For clues:**',
-          value: `\`\`\`${clueTypes.join(', ')}\`\`\``,
-        },
-        {
-          name: '**For other:**',
-          value: `\`\`\`${otherTypes.join(', ')}\`\`\``,
-        }
-      )
-    );
   let inputFieldName: string | undefined;
   let isFirstArgumentValid: boolean;
   let firstArgumentType: number;
@@ -121,9 +108,7 @@ export const templeGainsRecords = (
         msg.channel.send(
           invalidPrefixMsg(Categories.CLUES, clueTypes.join(', '))
         );
-        isFirstArgumentValid = false;
-        firstArgumentType = FirstArgumentType.FAILED;
-        inputFieldName = undefined;
+        return;
       } else {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.CLUES;
@@ -132,12 +117,10 @@ export const templeGainsRecords = (
       break;
     case ValidCases.OTHER:
       if (!conditionalTypeOther.includes(lowerCasedArguments[1])) {
-        isFirstArgumentValid = false;
-        firstArgumentType = FirstArgumentType.FAILED;
-        inputFieldName = undefined;
         msg.channel.send(
           invalidPrefixMsg(Categories.OTHER, conditionalTypeOther.join(', '))
         );
+        return;
       } else {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.OTHER;
@@ -146,12 +129,10 @@ export const templeGainsRecords = (
       break;
     case ValidCases.SKILL:
       if (!skillList.includes(lowerCasedArguments[1])) {
-        isFirstArgumentValid = false;
-        firstArgumentType = FirstArgumentType.FAILED;
-        inputFieldName = undefined;
         msg.channel.send(
           invalidPrefixMsg(Categories.SKILL, skillList.join(', '))
         );
+        return;
       } else {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.SKILL;
@@ -160,33 +141,24 @@ export const templeGainsRecords = (
       break;
     case ValidCases.BOSS:
       const indexes: number[] = [1, 2, 3];
-      const bossValidation: {
-        bossCase: number;
-        boss: string | undefined;
-      } = bossValidator(lowerCasedArguments, indexes);
-      if (bossValidation.bossCase === BossCases.INVALID) {
-        isFirstArgumentValid = false;
-        firstArgumentType = FirstArgumentType.FAILED;
-        inputFieldName = undefined;
+      const bossValidation:
+        | {
+            bossCase: number;
+            boss: string;
+          }
+        | undefined = bossValidator(lowerCasedArguments, indexes);
+      if (bossValidation === undefined) {
         msg.channel.send(
           invalidPrefixMsg(Categories.BOSS, bossTypes.join(', '))
         );
-      } else if (
-        bossValidation.bossCase === BossCases.ONE_WORD &&
-        bossValidation.boss !== undefined
-      ) {
+        return;
+      } else if (bossValidation.bossCase === BossCases.ONE_WORD) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
-      } else if (
-        bossValidation.bossCase === BossCases.TWO_WORD &&
-        bossValidation.boss !== undefined
-      ) {
+      } else if (bossValidation.bossCase === BossCases.TWO_WORD) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_TWO_WORD;
-      } else if (
-        bossValidation.bossCase === BossCases.THREE_WORDS &&
-        bossValidation.boss !== undefined
-      ) {
+      } else if (bossValidation.bossCase === BossCases.THREE_WORDS) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_THREE_WORD;
       } else {
@@ -196,10 +168,7 @@ export const templeGainsRecords = (
       inputFieldName = bossValidation.boss;
       break;
     default: {
-      isFirstArgumentValid = false;
-      firstArgumentType = FirstArgumentType.FAILED;
-      inputFieldName = undefined;
-      break;
+      return;
     }
   }
 
@@ -215,15 +184,14 @@ export const templeGainsRecords = (
     notFullArray = timeTypes;
   }
 
-  if (isFirstArgumentValid === true && lowerCasedArguments.length >= 3) {
+  if (isFirstArgumentValid === true) {
     switch (firstArgumentType) {
       case FirstArgumentType.OTHER:
         if (!fullArray.includes(lowerCasedArguments[2])) {
-          time = undefined;
-          rsn = undefined;
           msg.channel.send(
             invalidPrefixMsg(Categories.TIME_LMS, fullArray.join(', '))
           );
+          return;
         } else {
           rsn = lowerCasedArguments.slice(3);
           time = lowerCasedArguments[2];
@@ -232,11 +200,10 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.CLUES:
         if (!notFullArray.includes(lowerCasedArguments[2])) {
-          time = undefined;
-          rsn = undefined;
           msg.channel.send(
             invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
           );
+          return;
         } else {
           rsn = lowerCasedArguments.slice(3);
           time = lowerCasedArguments[2];
@@ -244,11 +211,10 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.SKILL:
         if (!fullArray.includes(lowerCasedArguments[2])) {
-          time = undefined;
-          rsn = undefined;
           msg.channel.send(
             invalidPrefixMsg(Categories.TIME, fullArray.join(', '))
           );
+          return;
         } else {
           rsn = lowerCasedArguments.slice(3);
           time = lowerCasedArguments[2];
@@ -256,11 +222,10 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.BOSS_ONE_WORD:
         if (!notFullArray.includes(lowerCasedArguments[2])) {
-          time = undefined;
-          rsn = undefined;
           msg.channel.send(
             invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
           );
+          return;
         } else {
           rsn = lowerCasedArguments.slice(3);
           time = lowerCasedArguments[2];
@@ -268,11 +233,10 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.BOSS_TWO_WORD:
         if (!notFullArray.includes(lowerCasedArguments[3])) {
-          time = undefined;
-          rsn = undefined;
           msg.channel.send(
             invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
           );
+          return;
         } else {
           rsn = lowerCasedArguments.slice(4);
           time = lowerCasedArguments[3];
@@ -280,11 +244,10 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.BOSS_THREE_WORD:
         if (!notFullArray.includes(lowerCasedArguments[4])) {
-          time = undefined;
-          rsn = undefined;
           msg.channel.send(
             invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
           );
+          return;
         } else {
           rsn = lowerCasedArguments.slice(5);
           time = lowerCasedArguments[4];
@@ -292,16 +255,8 @@ export const templeGainsRecords = (
         break;
 
       default:
-        time = undefined;
-        rsn = undefined;
-        inputFieldName = undefined;
-        break;
+        return;
     }
-  } else {
-    msg.channel.send(new ErrorEmbed());
-    rsn = undefined;
-    time = undefined;
-    inputFieldName = undefined;
   }
 
   return {
@@ -311,46 +266,44 @@ export const templeGainsRecords = (
     case: validFirstArgument,
   };
 };
-
+// Take in a lowecase joined field e.g "theatreofblood". Check what case is fieldName and then perform relevant switch statement and return the field name eg. "Theatre Of Blood"
 // TODO: Add Tempoross when Temple updates
 export const fieldNameCheck = (
   fieldName: string,
   checkCase: string
-): string => {
-  let fieldToCheck;
+): string | undefined => {
+  let fieldToCheck: string | undefined;
   if (checkCase === ValidCases.BOSS) fieldToCheck = bossFields(fieldName);
   else if (checkCase === ValidCases.SKILL)
     fieldToCheck = skillFields(fieldName);
   else if (checkCase === ValidCases.CLUES) fieldToCheck = clueFields(fieldName);
   else if (checkCase === ValidCases.OTHER)
     fieldToCheck = otherFields(fieldName);
-  else fieldToCheck = '';
   return fieldToCheck;
 };
 
-const otherFields = (fieldName: string): string => {
+const otherFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
-    case TempleMinigamesOtherAliases.EHB:
-      fieldToCheck = TempleMinigamesOther.EHB;
+    case TempleOther.EHB_LOWERCASE:
+      fieldToCheck = TempleOther.EHB;
       break;
-    case TempleMinigamesOtherAliases.EHP:
-      fieldToCheck = TempleMinigamesOther.EHP;
+    case TempleOther.EHP_LOWERCASE:
+      fieldToCheck = TempleOther.EHP;
       break;
-    case TempleMinigamesOtherAliases.LMS:
-      fieldToCheck = TempleMinigamesOther.LMS;
+    case TempleOther.LMS_LOWERCASE:
+      fieldToCheck = TempleOther.LMS;
       break;
-    case TempleMinigamesOtherAliases.IM_EHP:
-      fieldToCheck = TempleMinigamesOther.IM_EHP;
+    case TempleOther.IM_EHP_JOINED:
+      fieldToCheck = TempleOther.IM_EHP;
       break;
     default:
-      fieldToCheck = '';
-      break;
+      return;
   }
   return fieldToCheck;
 };
 
-const clueFields = (fieldName: string): string => {
+const clueFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
     case ClueAliases.ALL:
@@ -375,13 +328,12 @@ const clueFields = (fieldName: string): string => {
       fieldToCheck = Clues.MASTER;
       break;
     default:
-      fieldToCheck = '';
-      break;
+      return;
   }
   return fieldToCheck;
 };
 
-const skillFields = (fieldName: string): string => {
+const skillFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
     case SkillAliases.TOTAL_ALIAS1:
@@ -514,13 +466,13 @@ const skillFields = (fieldName: string): string => {
       fieldToCheck = Skills.FARM;
       break;
     case SkillAliases.RC_ALIAS1:
-      fieldToCheck = Skills.TEMPLE_RC;
+      fieldToCheck = Skills.RC;
       break;
     case SkillAliases.RC_ALIAS2:
-      fieldToCheck = Skills.TEMPLE_RC;
+      fieldToCheck = Skills.RC;
       break;
     case SkillAliases.RC_ALIAS3:
-      fieldToCheck = Skills.TEMPLE_RC;
+      fieldToCheck = Skills.RC;
       break;
     case SkillAliases.HUNT_ALIAS1:
       fieldToCheck = Skills.HUNT;
@@ -541,13 +493,12 @@ const skillFields = (fieldName: string): string => {
       fieldToCheck = Skills.CON;
       break;
     default:
-      fieldToCheck = '';
-      break;
+      return;
   }
   return fieldToCheck;
 };
 
-const bossFields = (fieldName: string): string => {
+const bossFields = (fieldName: string): string | undefined => {
   let fieldToCheck: string;
   switch (fieldName) {
     case BossAliases.SIRE_ALIAS1:
@@ -845,8 +796,7 @@ const bossFields = (fieldName: string): string => {
       fieldToCheck = Bosses.ZULRAH;
       break;
     default:
-      fieldToCheck = '';
-      break;
+      return;
   }
   return fieldToCheck;
 };

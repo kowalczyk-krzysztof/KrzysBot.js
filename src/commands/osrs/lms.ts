@@ -12,6 +12,7 @@ import {
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
+import { OsrsOther, TempleOther } from '../../utils/osrs/enums';
 
 export const lms = async (
   msg: Message,
@@ -44,6 +45,9 @@ const generateResult = (
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  inputEmbed.addField(`LMS Score`, `${playerObject.Lms_Rank.score}`);
+  inputEmbed.addField(
+    `LMS Score`,
+    `${playerObject[OsrsOther.LMS][TempleOther.SCORE]}`
+  );
   return inputEmbed;
 };

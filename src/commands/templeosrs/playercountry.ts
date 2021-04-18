@@ -11,6 +11,7 @@ import {
   PlayerStats,
   fetchTemple,
 } from '../../cache/templeCache';
+import { TempleOther } from '../../utils/osrs/enums';
 
 export const playercountry = async (
   msg: Message,
@@ -33,6 +34,8 @@ export const playercountry = async (
   }
 };
 
+const countryString: string = 'Country';
+
 // Generate result
 const generateResult = (
   playerObject: PlayerStats
@@ -40,10 +43,10 @@ const generateResult = (
   if (playerObject === undefined) return new ErrorEmbed();
   const embed: TempleEmbed = new TempleEmbed().addField(
     usernameString,
-    `${playerObject.info.Username}`
+    `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
   );
-  const data: string = playerObject.info.Country;
-  if (data === '-') embed.addField('Country', 'No Info');
-  else embed.addField('Country', `${data}`);
+  const data: string = playerObject[TempleOther.INFO][TempleOther.COUNTRY];
+  if (data === '-') embed.addField(`${countryString}`, 'No Info');
+  else embed.addField(`${countryString}`, `${data}`);
   return embed;
 };
