@@ -1,18 +1,28 @@
+// Discord
 import { Message } from 'discord.js';
-import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
+// OSRS cache
+import { fetchOsrsStats, osrsStats } from '../../cache/osrsCache';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Embeds
 import {
   OsrsEmbed,
   EmbedTitles,
   usernameString,
   ErrorEmbed,
 } from '../../utils/embed';
+// UTILS: Interfaces
+import { OsrsPlayer } from '../../utils/osrs/interfaces';
+// UTILS: Enums
+import { TempleOther } from '../../utils/osrs/enums';
+// UTILS: Runescape name validator
 import {
   runescapeNameValidator,
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { isOnCooldown } from '../../cache/cooldown';
-import { OsrsOther, TempleOther } from '../../utils/osrs/enums';
+// UTILS: Capitalize first letter
+import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 
 export const lms = async (
   msg: Message,
@@ -41,13 +51,15 @@ export const lms = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  inputEmbed: OsrsEmbed,
+  embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  inputEmbed.addField(
-    `LMS Score`,
-    `${playerObject[OsrsOther.LMS][TempleOther.SCORE]}`
-  );
-  return inputEmbed;
+  else {
+    embed.addField(
+      `${TempleOther.LMS} ${capitalizeFirstLetter(TempleOther.SCORE)}`,
+      `${playerObject[TempleOther.LMS][TempleOther.SCORE]}`
+    );
+    return embed;
+  }
 };

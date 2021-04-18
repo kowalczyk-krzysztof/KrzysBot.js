@@ -7,6 +7,21 @@ export enum PlayerOverviewTimes {
   HALFYEAR = '186days',
   YEAR = '365days',
 }
+// TODO: Cleanup
+
+export enum TempleCacheType {
+  PLAYER_STATS = 'stats',
+  PLAYER_NAMES = 'names',
+  PLAYER_RECORDS = 'records',
+  PLAYER_OVERVIEW_SKILL = 'skillgains',
+  PLAYER_OVERVIEW_OTHER = 'othergains',
+}
+
+export enum TempleCacheTypeAliases {
+  PLAYER_OVERVIEW_SKILL = 'skill gains',
+  PLAYER_OVERVIEW_OTHER = 'other gains',
+}
+
 // Temple OSRS Player Overview time aliases
 export enum PlayerOverviewTimesAliases {
   FIVEMIN = '5min',
@@ -15,6 +30,18 @@ export enum PlayerOverviewTimesAliases {
   MONTH = 'month',
   HALFYEAR = '6months',
   YEAR = 'year',
+}
+
+export enum GameMode {
+  MAIN = 0,
+  IM = 1,
+  UIM = 2,
+  HCIM = 3,
+}
+
+export enum TrueOrFalse {
+  TRUE = 1,
+  FALSE = 0,
 }
 
 // Temple OSRS indexes:
@@ -102,11 +129,10 @@ export enum SKillIndex {
 
 // Osrs other key names
 export enum OsrsOther {
-  BH_ROGUE = 'Bh_Rogue',
-  BH_HUNTER = 'Bh_Hunter',
-  LEAGUE = 'League_Points',
-  LMS = 'Lms_Rank',
-  SOULWARS = 'Soul_Wars_Zeal',
+  BH_ROGUE = 'BH Rogue',
+  BH_HUNTER = 'BH Hunter',
+  LEAGUE = 'League Points',
+  SOULWARS = 'Soul Wars Zeals',
 }
 
 // OSRS other aliases
@@ -172,6 +198,11 @@ export enum TempleOther {
   ALIASES = 'aliases',
   SCORE = 'score',
   EXP = 'exp',
+  SIX_HOURS = '6h',
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+  YEAR = 'year',
 }
 // Clue names
 export enum Clues {
@@ -427,4 +458,21 @@ export enum SkillAliases {
   CONSTR_ALIAS2 = 'const',
   CONSTR_ALIAS3 = 'con',
   CONSTR_ALIAS4 = 'constr',
+}
+
+export enum ClueNamesFormatted {
+  ALL = 'All Clues',
+  BEGINNER = 'Beginner Clues',
+  EASY = 'Easy Clues',
+  MEDIUM = 'Medium Clues',
+  HARD = 'Hard Clues',
+  ELITE = 'Elite Clues',
+  MASTER = 'Master Clues',
+}
+
+export enum OsrsRandom {
+  RUNECRAFTING = 'Runecrafting',
+  EXP_LONG = 'Experience',
+  DATE_FORMAT = 'en-US',
+  LVL_SHORT = 'lvl',
 }

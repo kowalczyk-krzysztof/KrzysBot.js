@@ -1,4 +1,6 @@
+// Discord
 import { Message } from 'discord.js';
+// UTILS: Embeds
 import { Embed } from '../utils/embed';
 
 // Object which contains keys with names in format user.id + command name. The value for each key is date when it was created

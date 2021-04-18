@@ -1,14 +1,21 @@
+// Discord
 import { Message } from 'discord.js';
-import axios, { AxiosResponse } from 'axios';
+// Dotenv
 import dotenv from 'dotenv';
+// Axios
+import axios, { AxiosResponse } from 'axios';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Embeds
+import { Embed } from '../../utils/embed';
+// UTILS: Runescape name validator
 import {
   runescapeNameValidator,
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
-import { Embed } from '../../utils/embed';
 
 dotenv.config({ path: 'config.env' });
 
@@ -28,7 +35,6 @@ export const datapoint = async (
       const res: AxiosResponse = await axios.get(
         `${process.env.TEMPLE_DATA_POINT}${username}`
       );
-
       if (res.status === 200) {
         const embed: Embed = new Embed();
         const data: string = res.data.toString();
@@ -53,9 +59,9 @@ export const datapoint = async (
           );
           return msg.channel.send(embed);
         }
-      } else return errorHandler(null, msg);
+      } else return errorHandler(msg);
     } catch (err) {
-      return errorHandler(err, msg);
+      return errorHandler(msg, err);
     }
   }
 };

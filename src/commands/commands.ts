@@ -1,5 +1,8 @@
+// Discord
 import { Message } from 'discord.js';
+// Cooldown cache
 import { isOnCooldown } from '../cache/cooldown';
+// UTILS: Create commands list
 import { createCommandList } from '../utils/createCommandList';
 
 export const commands = async (

@@ -1,18 +1,26 @@
+// Discord
 import { Message } from 'discord.js';
-import { fetchOsrsStats, osrsStats, OsrsPlayer } from '../../cache/osrsCache';
+// OSRS cache
+import { fetchOsrsStats, osrsStats } from '../../cache/osrsCache';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Embeds
 import {
   OsrsEmbed,
   EmbedTitles,
   usernameString,
   ErrorEmbed,
 } from '../../utils/embed';
+// UTILS: Interfaces
+import { OsrsPlayer } from '../../utils/osrs/interfaces';
+// UTILS: Enums
+import { OsrsOther, TempleOther } from '../../utils/osrs/enums';
+// UTILS: Runescape name validator
 import {
   runescapeNameValidator,
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { isOnCooldown } from '../../cache/cooldown';
-import { OsrsOther, TempleOther } from '../../utils/osrs/enums';
 
 export const soulwars = async (
   msg: Message,
@@ -41,13 +49,15 @@ export const soulwars = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  inputEmbed: OsrsEmbed,
+  embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  inputEmbed.addField(
-    `Soul Wars Zeals`,
-    `${playerObject[OsrsOther.SOULWARS][TempleOther.SCORE]}`
-  );
-  return inputEmbed;
+  else {
+    embed.addField(
+      `${OsrsOther.SOULWARS}`,
+      `${playerObject[OsrsOther.SOULWARS][TempleOther.SCORE]}`
+    );
+    return embed;
+  }
 };

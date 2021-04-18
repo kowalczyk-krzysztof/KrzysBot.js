@@ -1,10 +1,16 @@
-import axios, { AxiosResponse } from 'axios';
-import dotenv from 'dotenv';
+// Discord
 import { Message } from 'discord.js';
+// Dotenv
+import dotenv from 'dotenv';
+// Axios
+import axios, { AxiosResponse } from 'axios';
+// UTILS: Argument parser
 import { argumentParser } from '../utils/argumentParser';
+// UTILS: Error handler
 import { errorHandler } from '../utils/errorHandler';
 
 dotenv.config({ path: 'config.env' });
+
 // Tenor auth key
 const key: string = process.env.TENOR_KEY as string;
 /* (values: off | low | medium | high) specify the content safety filter level
@@ -27,6 +33,6 @@ export const tenor = async (
     const index: number = Math.floor(Math.random() * res.data.results.length);
     return msg.channel.send(res.data.results[index].url);
   } catch (err) {
-    return errorHandler(err, msg);
+    return errorHandler(msg, err);
   }
 };

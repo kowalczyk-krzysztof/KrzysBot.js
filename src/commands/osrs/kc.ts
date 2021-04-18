@@ -1,34 +1,30 @@
+// Discord
 import { Message } from 'discord.js';
-import { BossAliases, Bosses, TempleOther } from '../../utils/osrs/enums';
+// OSRS cache
+import { fetchOsrsStats, osrsStats } from '../../cache/osrsCache';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
+// UTILS: Embeds
 import {
   OsrsEmbed,
   EmbedTitles,
   usernameString,
   ErrorEmbed,
 } from '../../utils/embed';
-import {
-  fetchOsrsStats,
-  osrsStats,
-  OsrsPlayer,
-  BossOrMinigame,
-} from '../../cache/osrsCache';
+// UTILS: Interfaces
+import { OsrsPlayer, BossOrMinigame } from '../../utils/osrs/interfaces';
+// UTILS: Enums
+import { TempleOther } from '../../utils/osrs/enums';
+// UTILS: Runescape name validator
 import {
   runescapeNameValidator,
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
-import { isOnCooldown } from '../../cache/cooldown';
-import {
-  isPrefixValid,
-  Categories,
-  invalidPrefixMsg,
-  invalidPrefix,
-} from '../../utils/osrs/isPrefixValid';
-import {
-  bossValidator,
-  BossCases,
-  bossList,
-} from '../../utils/osrs/bossValidator';
+// UTILS: Input validator
+import { bossFields } from '../../utils/osrs/inputValidator';
+// UTILS: Boss validator
+import { bossValidator, BossCases } from '../../utils/osrs/bossValidator';
 
 export const kc = async (
   msg: Message,
@@ -44,38 +40,21 @@ export const kc = async (
         bossCase: number;
         boss: string | undefined;
       }
-    | undefined = bossValidator(lowerCasedArguments, indexes);
-  let user: string[];
-  let boss: string;
-  let category: Categories;
+    | undefined = bossValidator(msg, lowerCasedArguments, indexes);
 
-  if (bossValidation === undefined || bossValidation.boss === undefined)
-    return msg.channel.send(
-      invalidPrefixMsg(Categories.BOSS, bossList.join(', '))
-    );
+  let user: string[];
+
+  if (bossValidation === undefined) return;
   else if (bossValidation.bossCase === BossCases.ONE_WORD) {
-    category = Categories.BOSS;
     user = lowerCasedArguments.slice(1);
   } else if (bossValidation.bossCase === BossCases.TWO_WORD) {
-    category = Categories.BOSS;
     user = lowerCasedArguments.slice(2);
   } else if (bossValidation.bossCase === BossCases.THREE_WORDS) {
-    category = Categories.BOSS;
     user = lowerCasedArguments.slice(3);
   } else {
-    category = Categories.BOSS_EDGE_CASE;
     user = lowerCasedArguments.slice(1);
   }
-
-  const bossToArray: string[] = [bossValidation.boss];
-  const finalCheck: string = isPrefixValid(
-    msg,
-    bossToArray,
-    bossList,
-    category
-  );
-  if (finalCheck === invalidPrefix) return;
-  else boss = finalCheck;
+  const boss: keyof OsrsPlayer = bossValidation.boss as keyof OsrsPlayer;
 
   const cooldown: number = 30;
 
@@ -96,462 +75,46 @@ export const kc = async (
     .setTitle(EmbedTitles.KC)
     .addField(usernameString, `${username}`);
   if (username in osrsStats) {
-    const result: OsrsEmbed = generateResult(boss, embed, osrsStats[username]);
-    return msg.channel.send(result);
-  } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched === true) {
+    const field: keyof OsrsPlayer | undefined = bossFields(
+      boss
+    ) as keyof OsrsPlayer;
+    if (field === undefined) return;
+    else {
       const result: OsrsEmbed = generateResult(
-        boss,
+        field,
         embed,
         osrsStats[username]
       );
       return msg.channel.send(result);
+    }
+  } else {
+    const isFetched: boolean = await fetchOsrsStats(msg, username);
+    if (isFetched === true) {
+      const field: keyof OsrsPlayer | undefined = bossFields(
+        boss
+      ) as keyof OsrsPlayer;
+      if (field === undefined) return;
+      else {
+        const result: OsrsEmbed = generateResult(
+          field,
+          embed,
+          osrsStats[username]
+        );
+        return msg.channel.send(result);
+      }
     } else return;
   }
 };
-
 // Generates embed sent to user
 const generateResult = (
-  inputPrefix: string,
-  inputEmbed: OsrsEmbed,
+  field: keyof OsrsPlayer,
+  embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  const boss: {
-    bossKc: BossOrMinigame;
-    bossName: string;
-  } = bossTypeCheck(inputPrefix, playerObject);
-  inputEmbed.addField(
-    `${boss.bossName} kills`,
-    `${boss.bossKc[TempleOther.SCORE]}`
-  );
-
-  return inputEmbed;
-};
-
-export const bossTypeCheck = (
-  prefix: string,
-  playerObject: OsrsPlayer
-): {
-  bossKc: BossOrMinigame;
-  bossName: string;
-} => {
-  const type: string = prefix;
-  const playerStats: OsrsPlayer = playerObject;
-  let bossKc: BossOrMinigame;
-  let bossName: string;
-
-  switch (type) {
-    case BossAliases.SIRE_ALIAS1:
-      bossKc = playerStats[Bosses.SIRE];
-      bossName = Bosses.SIRE;
-      break;
-    case BossAliases.SIRE_ALIAS2:
-      bossKc = playerStats[Bosses.SIRE];
-      bossName = Bosses.SIRE;
-      break;
-    case BossAliases.HYDRA_ALIAS1:
-      bossKc = playerStats[Bosses.HYDRA];
-      bossName = Bosses.HYDRA;
-      break;
-    case BossAliases.HYDRA_ALIAS2:
-      bossKc = playerStats[Bosses.HYDRA];
-      bossName = Bosses.HYDRA;
-      break;
-    case BossAliases.BARROWS_ALIAS1:
-      bossKc = playerStats[Bosses.BARROWS];
-      bossName = Bosses.BARROWS;
-      break;
-    case BossAliases.BRYOPHYTA_ALIAS1:
-      bossKc = playerStats[Bosses.BRYOPHYTA];
-      bossName = Bosses.BRYOPHYTA;
-      break;
-    case BossAliases.BRYOPHYTA_ALIAS2:
-      bossKc = playerStats[Bosses.BRYOPHYTA];
-      bossName = Bosses.BRYOPHYTA;
-      break;
-    case BossAliases.CALLISTO_ALIAS1:
-      bossKc = playerStats[Bosses.CALLISTO];
-      bossName = Bosses.CALLISTO;
-      break;
-    case BossAliases.CERBERUS_ALIAS1:
-      bossKc = playerStats[Bosses.CERBERUS];
-      bossName = Bosses.CERBERUS;
-      break;
-    case BossAliases.CERBERUS_ALIAS2:
-      bossKc = playerStats[Bosses.CERBERUS];
-      bossName = Bosses.CERBERUS;
-      break;
-    case BossAliases.COX_ALIAS1:
-      bossKc = playerStats[Bosses.COX];
-      bossName = Bosses.COX;
-      break;
-    case BossAliases.COX_ALIAS2:
-      bossKc = playerStats[Bosses.COX];
-      bossName = Bosses.COX;
-      break;
-    case BossAliases.COX_ALIAS3:
-      bossKc = playerStats[Bosses.COX];
-      bossName = Bosses.COX;
-      break;
-    case BossAliases.COXCM_ALIAS1:
-      bossKc = playerStats[Bosses.COXCM];
-      bossName = Bosses.COXCM;
-      break;
-    case BossAliases.COXCM_ALIAS2:
-      bossKc = playerStats[Bosses.COXCM];
-      bossName = Bosses.COXCM;
-      break;
-    case BossAliases.COXCM_ALIAS3:
-      bossKc = playerStats[Bosses.COXCM];
-      bossName = Bosses.COXCM;
-      break;
-    case BossAliases.CHAOS_ELE_ALIAS1:
-      bossKc = playerStats[Bosses.CHAOS_ELE];
-      bossName = Bosses.CHAOS_ELE;
-      break;
-    case BossAliases.CHAOS_ELE_ALIAS2:
-      bossKc = playerStats[Bosses.CHAOS_ELE];
-      bossName = Bosses.CHAOS_ELE;
-      break;
-    case BossAliases.CHAOS_ELE_ALIAS3:
-      bossKc = playerStats[Bosses.CHAOS_ELE];
-      bossName = Bosses.CHAOS_ELE;
-      break;
-    case BossAliases.CHAOS_FANATIC_ALIAS1:
-      bossKc = playerStats[Bosses.CHAOS_FANATIC];
-      bossName = Bosses.CHAOS_FANATIC;
-      break;
-    case BossAliases.CHAOS_FANATIC_ALIAS2:
-      bossKc = playerStats[Bosses.CHAOS_FANATIC];
-      bossName = Bosses.CHAOS_FANATIC;
-      break;
-    case BossAliases.SARADOMIN_ALIAS1:
-      bossKc = playerStats[Bosses.ZILYANA];
-      bossName = Bosses.ZILYANA;
-      break;
-    case BossAliases.SARADOMIN_ALIAS2:
-      bossKc = playerStats[Bosses.ZILYANA];
-      bossName = Bosses.ZILYANA;
-      break;
-    case BossAliases.SARADOMIN_ALIAS3:
-      bossKc = playerStats[Bosses.ZILYANA];
-      bossName = Bosses.ZILYANA;
-      break;
-    case BossAliases.SARADOMIN_ALIAS4:
-      bossKc = playerStats[Bosses.ZILYANA];
-      bossName = Bosses.ZILYANA;
-      break;
-    case BossAliases.CORP_ALIAS1:
-      bossKc = playerStats[Bosses.CORP];
-      bossName = Bosses.CORP;
-      break;
-    case BossAliases.CORP_ALIAS2:
-      bossKc = playerStats[Bosses.CORP];
-      bossName = Bosses.CORP;
-      break;
-    case BossAliases.CRAZY_ARCH_ALIAS1:
-      bossKc = playerStats[Bosses.CRAZY_ARCH];
-      bossName = Bosses.CRAZY_ARCH;
-      break;
-    case BossAliases.CRAZY_ARCH_ALIAS2:
-      bossKc = playerStats[Bosses.CRAZY_ARCH];
-      bossName = Bosses.CRAZY_ARCH;
-      break;
-    case BossAliases.PRIME_ALIAS1:
-      bossKc = playerStats[Bosses.PRIME];
-      bossName = Bosses.PRIME;
-      break;
-    case BossAliases.PRIME_ALIAS2:
-      bossKc = playerStats[Bosses.PRIME];
-      bossName = Bosses.PRIME;
-      break;
-    case BossAliases.REX_ALIAS1:
-      bossKc = playerStats[Bosses.REX];
-      bossName = Bosses.REX;
-      break;
-    case BossAliases.REX_ALIAS2:
-      bossKc = playerStats[Bosses.REX];
-      bossName = Bosses.REX;
-      break;
-    case BossAliases.SUPREME_ALIAS1:
-      bossKc = playerStats[Bosses.SUPREME];
-      bossName = Bosses.SUPREME;
-      break;
-    case BossAliases.SUPREME_ALIAS2:
-      bossKc = playerStats[Bosses.SUPREME];
-      bossName = Bosses.SUPREME;
-      break;
-    case BossAliases.DERANGED_ALIAS1:
-      bossKc = playerStats[Bosses.DER_ARCH];
-      bossName = Bosses.DER_ARCH;
-      break;
-    case BossAliases.DERANGED_ALIAS2:
-      bossKc = playerStats[Bosses.DER_ARCH];
-      bossName = Bosses.DER_ARCH;
-      break;
-    case BossAliases.DERANGED_ALIAS3:
-      bossKc = playerStats[Bosses.DER_ARCH];
-      bossName = Bosses.DER_ARCH;
-      break;
-    case BossAliases.BANDOS_ALIAS1:
-      bossKc = playerStats[Bosses.GRAARDOR];
-      bossName = Bosses.GRAARDOR;
-      break;
-    case BossAliases.BANDOS_ALIAS2:
-      bossKc = playerStats[Bosses.GRAARDOR];
-      bossName = Bosses.GRAARDOR;
-      break;
-    case BossAliases.BANDOS_ALIAS3:
-      bossKc = playerStats[Bosses.GRAARDOR];
-      bossName = Bosses.GRAARDOR;
-      break;
-    case BossAliases.MOLE_ALIAS1:
-      bossKc = playerStats[Bosses.MOLE];
-      bossName = Bosses.MOLE;
-      break;
-    case BossAliases.MOLE_ALIAS2:
-      bossKc = playerStats[Bosses.MOLE];
-      bossName = Bosses.MOLE;
-      break;
-    case BossAliases.GUARDIANS_ALIAS1:
-      bossKc = playerStats[Bosses.GUARDIANS];
-      bossName = Bosses.GUARDIANS;
-      break;
-    case BossAliases.GUARDIANS_ALIAS2:
-      bossKc = playerStats[Bosses.GUARDIANS];
-      bossName = Bosses.GUARDIANS;
-      break;
-    case BossAliases.GUARDIANS_ALIAS3:
-      bossKc = playerStats[Bosses.GUARDIANS];
-      bossName = Bosses.GUARDIANS;
-      break;
-    case BossAliases.GUARDIANS_ALIAS4:
-      bossKc = playerStats[Bosses.GUARDIANS];
-      bossName = Bosses.GUARDIANS;
-      break;
-    case BossAliases.GUARDIANS_ALIAS5:
-      bossKc = playerStats[Bosses.GUARDIANS];
-      bossName = Bosses.GUARDIANS;
-      break;
-    case BossAliases.HESPORI_ALIAS1:
-      bossKc = playerStats[Bosses.GUARDIANS];
-      bossName = Bosses.GUARDIANS;
-      break;
-    case BossAliases.KQ_ALIAS1:
-      bossKc = playerStats[Bosses.KQ];
-      bossName = Bosses.KQ;
-      break;
-    case BossAliases.KQ_ALIAS2:
-      bossKc = playerStats[Bosses.KQ];
-      bossName = Bosses.KQ;
-      break;
-    case BossAliases.KQ_ALIAS3:
-      bossKc = playerStats[Bosses.KQ];
-      bossName = Bosses.KQ;
-      break;
-    case BossAliases.KBD_ALIAS1:
-      bossKc = playerStats[Bosses.KBD];
-      bossName = Bosses.KBD;
-      break;
-    case BossAliases.KBD_ALIAS2:
-      bossKc = playerStats[Bosses.KBD];
-      bossName = Bosses.KBD;
-      break;
-    case BossAliases.KRAKEN_ALIAS1:
-      bossKc = playerStats[Bosses.KRAKEN];
-      bossName = Bosses.KRAKEN;
-      break;
-    case BossAliases.ARMA_ALIAS1:
-      bossKc = playerStats[Bosses.KREE];
-      bossName = Bosses.KREE;
-      break;
-    case BossAliases.ARMA_ALIAS2:
-      bossKc = playerStats[Bosses.KREE];
-      bossName = Bosses.KREE;
-      break;
-    case BossAliases.ARMA_ALIAS3:
-      bossKc = playerStats[Bosses.KREE];
-      bossName = Bosses.KREE;
-      break;
-    case BossAliases.ARMA_ALIAS4:
-      bossKc = playerStats[Bosses.KREE];
-      bossName = Bosses.KREE;
-      break;
-    case BossAliases.ARMA_ALIAS5:
-      bossKc = playerStats[Bosses.KREE];
-      bossName = Bosses.KREE;
-      break;
-    case BossAliases.ZAMMY_ALIAS1:
-      bossKc = playerStats[Bosses.KRIL];
-      bossName = Bosses.KRIL;
-      break;
-    case BossAliases.ZAMMY_ALIAS2:
-      bossKc = playerStats[Bosses.KRIL];
-      bossName = Bosses.KRIL;
-      break;
-    case BossAliases.ZAMMY_ALIAS3:
-      bossKc = playerStats[Bosses.KRIL];
-      bossName = Bosses.KRIL;
-      break;
-    case BossAliases.ZAMMY_ALIAS4:
-      bossKc = playerStats[Bosses.KRIL];
-      bossName = Bosses.KRIL;
-      break;
-    case BossAliases.ZAMMY_ALIAS5:
-      bossKc = playerStats[Bosses.KRIL];
-      bossName = Bosses.KRIL;
-      break;
-    case BossAliases.MIMIC_ALIAS1:
-      bossKc = playerStats[Bosses.MIMIC];
-      bossName = Bosses.MIMIC;
-      break;
-    case BossAliases.NIGHTMARE_ALIAS1:
-      bossKc = playerStats[Bosses.NIGHTMARE];
-      bossName = Bosses.NIGHTMARE;
-      break;
-    case BossAliases.OBOR_ALIAS1:
-      bossKc = playerStats[Bosses.OBOR];
-      bossName = Bosses.OBOR;
-      break;
-    case BossAliases.SARACHNIS_ALIAS1:
-      bossKc = playerStats[Bosses.SARACHNIS];
-      bossName = Bosses.SARACHNIS;
-      break;
-    case BossAliases.SCORPIA_ALIAS1:
-      bossKc = playerStats[Bosses.SCORPIA];
-      bossName = Bosses.SCORPIA;
-      break;
-    case BossAliases.SKOTIZO_ALIAS1:
-      bossKc = playerStats[Bosses.SKOTIZO];
-      bossName = Bosses.SKOTIZO;
-      break;
-    case BossAliases.TEMPOROSS_ALIAS1:
-      bossKc = playerStats[Bosses.TEMPO];
-      bossName = Bosses.TEMPO;
-      break;
-    case BossAliases.TEMPOROSS_ALIAS2:
-      bossKc = playerStats[Bosses.TEMPO];
-      bossName = Bosses.TEMPO;
-      break;
-    case BossAliases.GAUNTLET_ALIAS1:
-      bossKc = playerStats[Bosses.GAUNTLET];
-      bossName = Bosses.GAUNTLET;
-      break;
-    case BossAliases.GAUNTLET_ALIAS2:
-      bossKc = playerStats[Bosses.GAUNTLET];
-      bossName = Bosses.GAUNTLET;
-      break;
-    case BossAliases.CORR_GAUNTLET_ALIAS1:
-      bossKc = playerStats[Bosses.CORR_GAUNTLET];
-      bossName = Bosses.CORR_GAUNTLET;
-      break;
-    case BossAliases.CORR_GAUNTLET_ALIAS2:
-      bossKc = playerStats[Bosses.CORR_GAUNTLET];
-      bossName = Bosses.CORR_GAUNTLET;
-      break;
-    case BossAliases.CORR_GAUNTLET_ALIAS3:
-      bossKc = playerStats[Bosses.CORR_GAUNTLET];
-      bossName = Bosses.CORR_GAUNTLET;
-      break;
-    case BossAliases.CORR_GAUNTLET_ALIAS4:
-      bossKc = playerStats[Bosses.CORR_GAUNTLET];
-      bossName = Bosses.CORR_GAUNTLET;
-      break;
-    case BossAliases.CORR_GAUNTLET_ALIAS5:
-      bossKc = playerStats[Bosses.CORR_GAUNTLET];
-      bossName = Bosses.CORR_GAUNTLET;
-      break;
-    case BossAliases.TOB_ALIAS1:
-      bossKc = playerStats[Bosses.TOB];
-      bossName = Bosses.TOB;
-      break;
-    case BossAliases.TOB_ALIAS2:
-      bossKc = playerStats[Bosses.TOB];
-      bossName = Bosses.TOB;
-      break;
-    case BossAliases.TOB_ALIAS3:
-      bossKc = playerStats[Bosses.TOB];
-      bossName = Bosses.TOB;
-      break;
-    case BossAliases.THERMY_ALIAS1:
-      bossKc = playerStats[Bosses.THERMY];
-      bossName = Bosses.THERMY;
-      break;
-    case BossAliases.THERMY_ALIAS2:
-      bossKc = playerStats[Bosses.THERMY];
-      bossName = Bosses.THERMY;
-      break;
-    case BossAliases.THERMY_ALIAS3:
-      bossKc = playerStats[Bosses.THERMY];
-      bossName = Bosses.THERMY;
-      break;
-    case BossAliases.ZUK_ALIAS1:
-      bossKc = playerStats[Bosses.ZUK];
-      bossName = Bosses.ZUK;
-      break;
-    case BossAliases.ZUK_ALIAS2:
-      bossKc = playerStats[Bosses.ZUK];
-      bossName = Bosses.ZUK;
-      break;
-    case BossAliases.JAD_ALIAS1:
-      bossKc = playerStats[Bosses.JAD];
-      bossName = Bosses.JAD;
-      break;
-    case BossAliases.JAD_ALIAS2:
-      bossKc = playerStats[Bosses.JAD];
-      bossName = Bosses.JAD;
-      break;
-    case BossAliases.VENE_ALIAS1:
-      bossKc = playerStats[Bosses.VENE];
-      bossName = Bosses.VENE;
-      break;
-    case BossAliases.VENE_ALIAS2:
-      bossKc = playerStats[Bosses.VENE];
-      bossName = Bosses.VENE;
-      break;
-    case BossAliases.VETION_ALIAS1:
-      bossKc = playerStats[Bosses.VETION];
-      bossName = Bosses.VETION;
-      break;
-    case BossAliases.VORK_ALIAS1:
-      bossKc = playerStats[Bosses.VORKATH];
-      bossName = Bosses.VORKATH;
-      break;
-    case BossAliases.VORK_ALIAS2:
-      bossKc = playerStats[Bosses.VORKATH];
-      bossName = Bosses.VORKATH;
-      break;
-    case BossAliases.WT_ALIAS1:
-      bossKc = playerStats[Bosses.WT];
-      bossName = Bosses.WT;
-      break;
-    case BossAliases.WT_ALIAS2:
-      bossKc = playerStats[Bosses.WT];
-      bossName = Bosses.WT;
-      break;
-    case BossAliases.ZALC_ALIAS1:
-      bossKc = playerStats[Bosses.ZALCANO];
-      bossName = Bosses.ZALCANO;
-      break;
-    case BossAliases.ZALC_ALIAS2:
-      bossKc = playerStats[Bosses.ZALCANO];
-      bossName = Bosses.ZALCANO;
-      break;
-    case BossAliases.ZULRAH_ALIAS1:
-      bossKc = playerStats[Bosses.ZULRAH];
-      bossName = Bosses.ZULRAH;
-      break;
-    default:
-      bossKc = {
-        rank: 'Unranked',
-        score: 'Unranked',
-      };
-      bossName = '';
+  else {
+    const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
+    embed.addField(`${field} kills`, `${boss[TempleOther.SCORE]}`);
+    return embed;
   }
-  return {
-    bossKc,
-    bossName,
-  };
 };

@@ -1,6 +1,7 @@
-import { OsrsPlayer } from '../../cache/osrsCache';
-import { Bosses, Clues, OsrsOther, Skills } from './enums';
-
+// UTILS: Interfaces
+import { OsrsPlayer } from './interfaces';
+// UTILS: Enums
+import { Bosses, Clues, OsrsOther, Skills, TempleOther } from './enums';
 // Read: https://runescape.wiki/w/Application_programming_interface#Hiscores_Lite_2
 export const osrsDataParser = (data: string): OsrsPlayer => {
   const stringToArray: string[] = data.split('\n');
@@ -156,7 +157,10 @@ export const osrsDataParser = (data: string): OsrsPlayer => {
     [Clues.HARD]: { rank: rankLevelExp[31][0], score: rankLevelExp[31][1] },
     [Clues.ELITE]: { rank: rankLevelExp[32][0], score: rankLevelExp[32][1] },
     [Clues.MASTER]: { rank: rankLevelExp[33][0], score: rankLevelExp[33][1] },
-    [OsrsOther.LMS]: { rank: rankLevelExp[34][0], score: rankLevelExp[34][1] },
+    [TempleOther.LMS]: {
+      rank: rankLevelExp[34][0],
+      score: rankLevelExp[34][1],
+    },
     [OsrsOther.SOULWARS]: {
       rank: rankLevelExp[35][0],
       score: rankLevelExp[35][1],

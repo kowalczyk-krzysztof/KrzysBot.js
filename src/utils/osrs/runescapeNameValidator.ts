@@ -1,5 +1,7 @@
-import { capitalizeFirstLetter } from '../capitalizeFirstLetter';
+// UTILS: Embeds
 import { Embed } from '../embed';
+// UTILS: Capitalize first letter
+import { capitalizeFirstLetter } from '../capitalizeFirstLetter';
 
 export const invalidRSN = 'INVALID';
 

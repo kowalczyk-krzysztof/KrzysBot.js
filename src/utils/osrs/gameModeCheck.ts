@@ -1,9 +1,11 @@
-import { GameMode, playerStats } from '../../cache/templeCache';
-import { TempleOther } from './enums';
+// TempleOSRS Cache
+import { playerStats } from '../../cache/templeCache';
+// UTILS: Enums
+import { TempleOther, GameMode, TrueOrFalse } from './enums';
 
 export const gameModeCheck = (username: string): string => {
-  const keyword: string = username;
-  const gameMode: GameMode = playerStats[keyword].info[TempleOther.GAME_MODE];
+  const gameMode: GameMode =
+    playerStats[username][TempleOther.INFO][TempleOther.GAME_MODE];
   if (gameMode === GameMode.IM) return GameModeString.IM;
   else if (gameMode === GameMode.UIM) return GameModeString.UIM;
   else if (gameMode === GameMode.HCIM) return GameModeString.HCIM;
@@ -11,12 +13,15 @@ export const gameModeCheck = (username: string): string => {
 };
 
 export const skillerOrF2P = (username: string): string => {
-  const keyword: string = username;
-  const skiller: number = playerStats[keyword].info[TempleOther.CB3];
-  const f2p: number = playerStats[keyword].info[TempleOther.F2P];
-  if (skiller === 1 && f2p === 1) return SkillerOrF2p.BOTH;
-  else if (skiller === 1 && f2p === 0) return SkillerOrF2p.SKILLER;
-  else if (skiller === 0 && f2p === 1) return SkillerOrF2p.F2P;
+  const skiller: number =
+    playerStats[username][TempleOther.INFO][TempleOther.CB3];
+  const f2p: number = playerStats[username][TempleOther.INFO][TempleOther.F2P];
+  if (skiller === TrueOrFalse.TRUE && f2p === TrueOrFalse.TRUE)
+    return SkillerOrF2p.BOTH;
+  else if (skiller === TrueOrFalse.TRUE && f2p === TrueOrFalse.FALSE)
+    return SkillerOrF2p.SKILLER;
+  else if (skiller === TrueOrFalse.FALSE && f2p === TrueOrFalse.TRUE)
+    return SkillerOrF2p.F2P;
   else return SkillerOrF2p.NONE;
 };
 
