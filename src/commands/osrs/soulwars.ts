@@ -12,6 +12,7 @@ import {
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
+import { OsrsOther, TempleOther } from '../../utils/osrs/enums';
 
 export const soulwars = async (
   msg: Message,
@@ -46,7 +47,7 @@ const generateResult = (
   if (playerObject === undefined) return new ErrorEmbed();
   inputEmbed.addField(
     `Soul Wars Zeals`,
-    `${playerObject.Soul_Wars_Zeal.score}`
+    `${playerObject[OsrsOther.SOULWARS][TempleOther.SCORE]}`
   );
   return inputEmbed;
 };

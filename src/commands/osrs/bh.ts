@@ -17,6 +17,11 @@ import {
   invalidPrefix,
 } from '../../utils/osrs/isPrefixValid';
 import { isOnCooldown } from '../../cache/cooldown';
+import {
+  OsrsOther,
+  OsrsOtherAliases,
+  TempleOther,
+} from '../../utils/osrs/enums';
 
 export const bh = async (
   msg: Message,
@@ -71,15 +76,18 @@ const generateResult = (
   if (playerObject === undefined) return new ErrorEmbed();
   let scoreType: string | number;
   let title: string;
-  if (prefix === bhTypes[0]) {
-    scoreType = playerObject.Bh_Rogue.score;
+  if (prefix === OsrsOtherAliases.BH_ROGUE) {
+    scoreType = playerObject[OsrsOther.BH_ROGUE][TempleOther.SCORE];
     title = BH.ROGUE;
   } else {
-    scoreType = playerObject.Bh_Hunter.score;
+    scoreType = playerObject[OsrsOther.BH_HUNTER][TempleOther.SCORE];
     title = BH.HUNTER;
   }
   inputEmbed.addField(`${title} score`, `${scoreType}`);
   return inputEmbed;
 };
 
-export const bhTypes: string[] = ['rogue', 'hunter'];
+export const bhTypes: string[] = [
+  OsrsOtherAliases.BH_ROGUE,
+  OsrsOtherAliases.BH_HUNTER,
+];

@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { TempleMinigamesOther, Clues, Skills } from '../../utils/osrs/enums';
+import { TempleOther, Clues, Skills } from '../../utils/osrs/enums';
 import {
   TempleEmbed,
   EmbedTitles,
@@ -34,13 +34,15 @@ export const record = async (
   const lowerCasedArguments = args.map((e: string) => {
     return e.toLowerCase();
   });
-  const parsedInput: {
-    rsn: string[] | undefined;
-    time: string | undefined;
-    field: string | undefined;
-    case: string | undefined;
-  } = templeGainsRecords(msg, args, commandName);
-
+  const parsedInput:
+    | {
+        rsn: string[] | undefined;
+        time: string | undefined;
+        field: string | undefined;
+        case: string | undefined;
+      }
+    | undefined = templeGainsRecords(msg, args, commandName);
+  if (parsedInput === undefined) return;
   const cooldown: number = 30;
   if (
     parsedInput.rsn !== undefined &&
@@ -65,7 +67,11 @@ export const record = async (
       .setTitle(EmbedTitles.RECORDS)
       .addField(usernameString, `${username}`);
     if (username in playerRecords) {
-      const field: string = fieldNameCheck(parsedInput.field, parsedInput.case);
+      const field: string | undefined = fieldNameCheck(
+        parsedInput.field,
+        parsedInput.case
+      );
+      if (field === undefined) return;
       const result: TempleEmbed = generateResult(
         field,
         embed,
@@ -78,10 +84,11 @@ export const record = async (
       const dataType: CacheTypes = CacheTypes.PLAYER_RECORDS;
       const isFetched: boolean = await fetchTemple(msg, username, dataType);
       if (isFetched === true) {
-        const field: string = fieldNameCheck(
+        const field: string | undefined = fieldNameCheck(
           parsedInput.field,
           parsedInput.case
         );
+        if (field === undefined) return;
         const result: TempleEmbed = generateResult(
           field,
           embed,
@@ -130,13 +137,13 @@ const generateResult = (
     case Clues.MASTER:
       formattedField = 'Master Clues';
       break;
-    case Skills.TEMPLE_RC:
-      formattedField = Skills.RC;
+    case Skills.RC:
+      formattedField = 'Runecrating';
       break;
-    case TempleMinigamesOther.EHB:
+    case TempleOther.EHB:
       formattedField = field.toUpperCase();
       break;
-    case TempleMinigamesOther.EHP:
+    case TempleOther.EHP:
       formattedField = field.toUpperCase();
       break;
     default:
@@ -146,12 +153,10 @@ const generateResult = (
 
   // If there are no records the key value is an empty array
   if (Array.isArray(playerObject[field]) === false) {
-    console.log(playerObject);
-
     // If there's no record for specific period of time then the key doesn't exist
     if (playerObject[field][time] !== undefined) {
       // Formatting how numbers are displayed
-      const value: string | number = playerObject[field][time].xp;
+      const value: string | number = playerObject[field][time][TempleOther.XP];
       let formattedValue;
 
       if (args[0] === 'other') formattedValue = parseInt(value as string);
@@ -164,7 +169,9 @@ const generateResult = (
       if (args[0] === 'skill') ending = ' xp';
       else ending = '';
       // Formatting date
-      const stringToDate: Date = new Date(playerObject[field][time].date);
+      const stringToDate: Date = new Date(
+        playerObject[field][time][TempleOther.DATE_LOWERCASE]
+      );
       const formattedDate: string = new Intl.DateTimeFormat('en-GB').format(
         stringToDate
       );

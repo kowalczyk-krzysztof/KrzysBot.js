@@ -8,6 +8,9 @@ export const commands = async (
   ...args: string[]
 ): Promise<void> => {
   const cooldown: number = 60;
-  if (isOnCooldown(msg, commandName, cooldown, false, args.join(''))) return;
+  if (
+    isOnCooldown(msg, commandName, cooldown, false, args.join('').toLowerCase())
+  )
+    return;
   else return createCommandList(msg, args);
 };

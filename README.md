@@ -1,4 +1,4 @@
-<center><h1>Command List</h1></center>
+<h1>Command List</h1>
 
 <h2>Random:</h2>
 

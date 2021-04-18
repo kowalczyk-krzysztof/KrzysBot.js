@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { SkillAliases, Skills } from '../../utils/osrs/enums';
+import { SkillAliases, Skills, TempleOther } from '../../utils/osrs/enums';
 import {
   fetchOsrsStats,
   osrsStats,
@@ -29,13 +29,24 @@ export const lvl = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  const lowerCasedArguments = args.map((e: string) => {
+    return e.toLowerCase();
+  });
   const prefix: string = isPrefixValid(msg, args, skillList, Categories.SKILL);
   if (prefix === invalidPrefix) return;
   const cooldown: number = 30;
   const nameCheck: string = runescapeNameValidator(args.slice(1));
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
-  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+  if (
+    isOnCooldown(
+      msg,
+      commandName,
+      cooldown,
+      false,
+      lowerCasedArguments.join('')
+    ) === true
+  )
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.LVL)
@@ -71,13 +82,20 @@ const generateResult = (
     skillName: string;
     skillExp: OsrsSkill;
   } = skillTypeCheck(inputPrefix, playerObject);
+  console.log(Object.keys(skill.skillName));
   // Intl is how I format number to have commas
   const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
   let formattedExp: Intl.NumberFormat | string;
   if (typeof skill.skillExp.exp === 'number')
     formattedExp = formatter.format(skill.skillExp.exp);
   else formattedExp = skill.skillExp.exp;
-  inputEmbed.addField(`${skill.skillName} lvl`, `${skill.skillExp.level}`);
+  let skillName: string;
+  if (skill.skillName === Skills.RC) skillName = 'Runecrafting';
+  else skillName = skill.skillName;
+  inputEmbed.addField(
+    `${skillName} lvl`,
+    `${skill.skillExp[TempleOther.LEVEL]}`
+  );
   inputEmbed.addField('Experience', `${formattedExp} exp`);
   return inputEmbed;
 };

@@ -13,6 +13,7 @@ import {
   fetchTemple,
   CacheTypes,
 } from '../../cache/templeCache';
+import { TempleOther } from '../../utils/osrs/enums';
 
 export const ehb = async (
   msg: Message,
@@ -46,17 +47,17 @@ const generateResult = (
   if (playerObject === undefined) return new ErrorEmbed();
   const embed: TempleEmbed = new TempleEmbed().addField(
     usernameString,
-    `${playerObject.info.Username}`
+    `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
   );
   const lastChecked: { title: string; time: string } = templeDateParser(
-    playerObject.info['Last checked']
+    playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
   );
   const gameMode: string = gameModeCheck(keyword);
   embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
   let data: number;
   if (gameMode === GameModeString.NORMAL)
-    data = parseInt(playerObject.Ehb.toString());
-  else data = parseInt(playerObject.Im_ehb.toString());
+    data = parseInt(playerObject[TempleOther.EHB].toString());
+  else data = parseInt(playerObject[TempleOther.IM_EHB].toString());
   embed.addField(`EHB ${gameMode}`, `${data}`);
   return embed;
 };

@@ -18,6 +18,7 @@ import {
   SkillerOrF2p,
   GameModeString,
 } from '../../utils/osrs/gameModeCheck';
+import { TempleOther } from '../../utils/osrs/enums';
 
 export const ehp = async (
   msg: Message,
@@ -51,10 +52,10 @@ const generateResult = (
   if (playerObject === undefined) return new ErrorEmbed();
   const embed: TempleEmbed = new TempleEmbed().addField(
     usernameString,
-    `${playerObject.info.Username}`
+    `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
   );
   const lastChecked: { title: string; time: string } = templeDateParser(
-    playerObject.info['Last checked']
+    playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
   );
   embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
   const f2pOrSkiller: string = skillerOrF2P(keyword);
@@ -73,36 +74,38 @@ const generateResult = (
     4064
 
   */
-  if (gameMode !== GameModeString.NORMAL) {
-    data = parseInt(playerObject.Im_ehp.toString());
+  const ehpString: string = 'EHP';
 
-    embed.addField(`EHP ${gameMode}`, `${data}`);
+  if (gameMode !== GameModeString.NORMAL) {
+    data = parseInt(playerObject[TempleOther.IM_EHP_CAPITAL].toString());
+
+    embed.addField(`${ehpString} ${gameMode}`, `${data}`);
   }
   if (f2pOrSkiller === SkillerOrF2p.BOTH) {
     embed.addField(
-      `EHP ${SkillerOrF2p.F2P}`,
-      `${parseInt(playerObject.F2p_ehp.toString())}`
+      `${ehpString} ${SkillerOrF2p.F2P}`,
+      `${parseInt(playerObject[TempleOther.F2P_EHP].toString())}`
     );
     embed.addField(
-      `EHP ${SkillerOrF2p.SKILLER}`,
-      `${parseInt(playerObject.Lvl3_ehp.toString())}`
+      `${ehpString} ${SkillerOrF2p.SKILLER}`,
+      `${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}`
     );
   } else if (f2pOrSkiller === SkillerOrF2p.SKILLER)
     embed.addField(
-      `EHP ${SkillerOrF2p.SKILLER}`,
-      `${parseInt(playerObject.Lvl3_ehp.toString())}`
+      `${ehpString} ${SkillerOrF2p.SKILLER}`,
+      `${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}`
     );
   else if (f2pOrSkiller === SkillerOrF2p.F2P)
     embed.addField(
-      `EHP ${SkillerOrF2p.F2P}`,
-      `${parseInt(playerObject.F2p_ehp.toString())}`
+      `${ehpString} ${SkillerOrF2p.F2P}`,
+      `${parseInt(playerObject[TempleOther.F2P_EHP].toString())}`
     );
   else if (
     f2pOrSkiller === SkillerOrF2p.NONE &&
     gameMode === GameModeString.NORMAL
   ) {
-    data = parseInt(playerObject.Ehp.toString());
-    embed.addField(`EHP ${gameMode}`, `${data}`);
+    data = parseInt(playerObject[TempleOther.EHP].toString());
+    embed.addField(`${ehpString} ${gameMode}`, `${data}`);
   }
   return embed;
 };

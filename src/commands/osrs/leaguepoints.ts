@@ -12,6 +12,7 @@ import {
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 import { isOnCooldown } from '../../cache/cooldown';
+import { OsrsOther, TempleOther } from '../../utils/osrs/enums';
 
 export const leaguepoints = async (
   msg: Message,
@@ -44,6 +45,9 @@ const generateResult = (
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined) return new ErrorEmbed();
-  inputEmbed.addField(`League Points`, `${playerObject.League_Points.score}`);
+  inputEmbed.addField(
+    `League Points`,
+    `${playerObject[OsrsOther.LEAGUE][TempleOther.SCORE]}`
+  );
   return inputEmbed;
 };

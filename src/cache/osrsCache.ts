@@ -4,10 +4,17 @@ import { osrsDataParser } from '../utils/osrs/osrsDataParser';
 import { errorHandler } from '../utils/errorHandler';
 import dotenv from 'dotenv';
 import { Message } from 'discord.js';
+import {
+  Bosses,
+  Clues,
+  OsrsOther,
+  Skills,
+  TempleOther,
+} from '../utils/osrs/enums';
 
 dotenv.config({ path: 'config.env' });
 const HISCORE_API: string = process.env.OSRS_HISCORE_API as string;
-const maxCacheSize = 1000;
+const maxCacheSize: number = 1000;
 export let osrsStats: { [key: string]: OsrsPlayer } = {};
 
 export const fetchOsrsStats = async (
@@ -17,16 +24,14 @@ export const fetchOsrsStats = async (
   const keyword: string = playerName;
   try {
     const res: AxiosResponse = await axios.get(`${HISCORE_API}${keyword}`);
-
     const data: OsrsPlayer = osrsDataParser(res.data);
-
     setOsrsStats(keyword, data);
     return true;
   } catch (err) {
     if (err.response.status === 404) {
-      const embed: Embed = new Embed();
-      embed.addField('ERROR', `Player **${keyword}** not found`);
-      msg.channel.send(embed);
+      msg.channel.send(
+        new Embed().addField('ERROR', `Player **${keyword}** not found`)
+      );
     } else errorHandler(err, msg);
     return false;
   }
@@ -34,101 +39,99 @@ export const fetchOsrsStats = async (
 
 const setOsrsStats = (username: string, data: OsrsPlayer): void => {
   if (Object.keys(osrsStats).length > maxCacheSize) osrsStats = {};
-  const playerName: string = username;
-  const playerData: OsrsPlayer = data;
-  osrsStats[playerName] = playerData;
+  osrsStats[username] = data;
 };
 export interface OsrsSkill {
-  rank: number | string;
-  level: number | string;
-  exp: number | string;
+  [TempleOther.RANK]: number | string;
+  [TempleOther.LEVEL]: number | string;
+  [TempleOther.EXP]: number | string;
 }
 
 export interface BossOrMinigame {
-  rank: number | string;
-  score: number | string;
+  [TempleOther.RANK]: number | string;
+  [TempleOther.SCORE]: number | string;
 }
 
 export interface OsrsPlayer {
-  Overall: OsrsSkill;
-  Attack: OsrsSkill;
-  Defence: OsrsSkill;
-  Strength: OsrsSkill;
-  Hitpoints: OsrsSkill;
-  Ranged: OsrsSkill;
-  Prayer: OsrsSkill;
-  Magic: OsrsSkill;
-  Cooking: OsrsSkill;
-  Woodcutting: OsrsSkill;
-  Fletching: OsrsSkill;
-  Fishing: OsrsSkill;
-  Firemaking: OsrsSkill;
-  Crafting: OsrsSkill;
-  Smithing: OsrsSkill;
-  Mining: OsrsSkill;
-  Herblore: OsrsSkill;
-  Agility: OsrsSkill;
-  Thieving: OsrsSkill;
-  Slayer: OsrsSkill;
-  Farming: OsrsSkill;
-  Runecrafting: OsrsSkill;
-  Hunter: OsrsSkill;
-  Construction: OsrsSkill;
-  League_Points: BossOrMinigame;
-  Bh_Hunter: BossOrMinigame;
-  Bh_Rogue: BossOrMinigame;
-  Clue_all: BossOrMinigame;
-  Clue_beginner: BossOrMinigame;
-  Clue_easy: BossOrMinigame;
-  Clue_medium: BossOrMinigame;
-  Clue_hard: BossOrMinigame;
-  Clue_elite: BossOrMinigame;
-  Clue_master: BossOrMinigame;
-  Lms_Rank: BossOrMinigame;
-  Soul_Wars_Zeal: BossOrMinigame;
-  'Abyssal Sire': BossOrMinigame;
-  'Alchemical Hydra': BossOrMinigame;
-  'Barrows Chests': BossOrMinigame;
-  Bryophyta: BossOrMinigame;
-  Callisto: BossOrMinigame;
-  Cerberus: BossOrMinigame;
-  'Chambers of Xeric': BossOrMinigame;
-  'Chambers of Xeric Challenge Mode': BossOrMinigame;
-  'Chaos Elemental': BossOrMinigame;
-  'Chaos Fanatic': BossOrMinigame;
-  'Commander Zilyana': BossOrMinigame;
-  'Corporeal Beast': BossOrMinigame;
-  'Crazy Archaeologist': BossOrMinigame;
-  'Dagannoth Prime': BossOrMinigame;
-  'Dagannoth Rex': BossOrMinigame;
-  'Dagannoth Supreme': BossOrMinigame;
-  'Deranged Archaeologist': BossOrMinigame;
-  'General Graardor': BossOrMinigame;
-  'Giant Mole': BossOrMinigame;
-  'Grotesque Guardians': BossOrMinigame;
-  Hespori: BossOrMinigame;
-  'Kalphite Queen': BossOrMinigame;
-  'King Black Dragon': BossOrMinigame;
-  Kraken: BossOrMinigame;
-  KreeArra: BossOrMinigame;
-  'Kril Tsutsaroth': BossOrMinigame;
-  Mimic: BossOrMinigame;
-  'The Nightmare': BossOrMinigame;
-  Obor: BossOrMinigame;
-  Sarachnis: BossOrMinigame;
-  Scorpia: BossOrMinigame;
-  Skotizo: BossOrMinigame;
-  Tempoross: BossOrMinigame;
-  'The Gauntlet': BossOrMinigame;
-  'The Corrupted Gauntlet': BossOrMinigame;
-  'Theatre of Blood': BossOrMinigame;
-  'Thermonuclear Smoke Devil': BossOrMinigame;
-  'TzKal-Zuk': BossOrMinigame;
-  'TzTok-Jad': BossOrMinigame;
-  Venenatis: BossOrMinigame;
-  Vetion: BossOrMinigame;
-  Vorkath: BossOrMinigame;
-  Wintertodt: BossOrMinigame;
-  Zalcano: BossOrMinigame;
-  Zulrah: BossOrMinigame;
+  [Skills.TOTAL]: OsrsSkill;
+  [Skills.ATT]: OsrsSkill;
+  [Skills.DEF]: OsrsSkill;
+  [Skills.STR]: OsrsSkill;
+  [Skills.HP]: OsrsSkill;
+  [Skills.RANGED]: OsrsSkill;
+  [Skills.PRAY]: OsrsSkill;
+  [Skills.MAGIC]: OsrsSkill;
+  [Skills.COOK]: OsrsSkill;
+  [Skills.WC]: OsrsSkill;
+  [Skills.FLETCH]: OsrsSkill;
+  [Skills.FISH]: OsrsSkill;
+  [Skills.FM]: OsrsSkill;
+  [Skills.CRAFT]: OsrsSkill;
+  [Skills.SMITH]: OsrsSkill;
+  [Skills.MINING]: OsrsSkill;
+  [Skills.HERB]: OsrsSkill;
+  [Skills.AGIL]: OsrsSkill;
+  [Skills.THIEV]: OsrsSkill;
+  [Skills.SLAYER]: OsrsSkill;
+  [Skills.FARM]: OsrsSkill;
+  [Skills.RC]: OsrsSkill;
+  [Skills.HUNT]: OsrsSkill;
+  [Skills.CON]: OsrsSkill;
+  [OsrsOther.LEAGUE]: BossOrMinigame;
+  [OsrsOther.BH_HUNTER]: BossOrMinigame;
+  [OsrsOther.BH_ROGUE]: BossOrMinigame;
+  [Clues.ALL]: BossOrMinigame;
+  [Clues.BEGINNER]: BossOrMinigame;
+  [Clues.EASY]: BossOrMinigame;
+  [Clues.MEDIUM]: BossOrMinigame;
+  [Clues.HARD]: BossOrMinigame;
+  [Clues.ELITE]: BossOrMinigame;
+  [Clues.MASTER]: BossOrMinigame;
+  [OsrsOther.LMS]: BossOrMinigame;
+  [OsrsOther.SOULWARS]: BossOrMinigame;
+  [Bosses.SIRE]: BossOrMinigame;
+  [Bosses.HYDRA]: BossOrMinigame;
+  [Bosses.BARROWS]: BossOrMinigame;
+  [Bosses.BRYOPHYTA]: BossOrMinigame;
+  [Bosses.CALLISTO]: BossOrMinigame;
+  [Bosses.CERBERUS]: BossOrMinigame;
+  [Bosses.COX]: BossOrMinigame;
+  [Bosses.COXCM]: BossOrMinigame;
+  [Bosses.CHAOS_ELE]: BossOrMinigame;
+  [Bosses.CHAOS_FANATIC]: BossOrMinigame;
+  [Bosses.ZILYANA]: BossOrMinigame;
+  [Bosses.CORP]: BossOrMinigame;
+  [Bosses.CRAZY_ARCH]: BossOrMinigame;
+  [Bosses.PRIME]: BossOrMinigame;
+  [Bosses.REX]: BossOrMinigame;
+  [Bosses.SUPREME]: BossOrMinigame;
+  [Bosses.DER_ARCH]: BossOrMinigame;
+  [Bosses.GRAARDOR]: BossOrMinigame;
+  [Bosses.MOLE]: BossOrMinigame;
+  [Bosses.GUARDIANS]: BossOrMinigame;
+  [Bosses.HESPORI]: BossOrMinigame;
+  [Bosses.KQ]: BossOrMinigame;
+  [Bosses.KBD]: BossOrMinigame;
+  [Bosses.KRAKEN]: BossOrMinigame;
+  [Bosses.KREE]: BossOrMinigame;
+  [Bosses.KRIL]: BossOrMinigame;
+  [Bosses.MIMIC]: BossOrMinigame;
+  [Bosses.NIGHTMARE]: BossOrMinigame;
+  [Bosses.OBOR]: BossOrMinigame;
+  [Bosses.SARACHNIS]: BossOrMinigame;
+  [Bosses.SCORPIA]: BossOrMinigame;
+  [Bosses.SKOTIZO]: BossOrMinigame;
+  [Bosses.TEMPO]: BossOrMinigame;
+  [Bosses.GAUNTLET]: BossOrMinigame;
+  [Bosses.CORR_GAUNTLET]: BossOrMinigame;
+  [Bosses.TOB]: BossOrMinigame;
+  [Bosses.THERMY]: BossOrMinigame;
+  [Bosses.ZUK]: BossOrMinigame;
+  [Bosses.JAD]: BossOrMinigame;
+  [Bosses.VENE]: BossOrMinigame;
+  [Bosses.VETION]: BossOrMinigame;
+  [Bosses.VORKATH]: BossOrMinigame;
+  [Bosses.WT]: BossOrMinigame;
+  [Bosses.ZALCANO]: BossOrMinigame;
+  [Bosses.ZULRAH]: BossOrMinigame;
 }

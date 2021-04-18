@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import { Message } from 'discord.js';
 import { Embed } from '../utils/embed';
 import { errorHandler } from '../utils/errorHandler';
+import { TempleOther } from '../utils/osrs/enums';
 
 export let playerStats: { [key: string]: PlayerStats } = {};
 export let playerNames: { [key: string]: PlayerNames } = {};
@@ -26,97 +27,100 @@ export enum GameMode {
 }
 
 export interface PlayerOverviewSkill {
-  info: {
-    last_check_text: string;
-    hours_played: number;
-    hours_per_day: number;
-    xp_gained: number;
-    xp_per_day: number;
-    avr_xph: number;
-    top_skill: number;
-    gp_spent: number;
+  [TempleOther.INFO]: {
+    [TempleOther.LAST_CHECK_TEXT]: string;
+    [TempleOther.HOURS_PLAYED]: number;
+    [TempleOther.HOURS_PER_DAY]: number;
+    [TempleOther.XP_GAINED]: number;
+    [TempleOther.XP_PER_DAY]: number;
+    [TempleOther.AVR_XPH]: number;
+    [TempleOther.TOP_SKILL]: number;
+    [TempleOther.GP_SPENT]: number;
   };
-  table: {
+  [TempleOther.TABLE]: {
     [key: string]: {
-      xp: number;
-      rank: number;
-      level: number;
-      ehp: number;
+      [TempleOther.XP]: number;
+      [TempleOther.RANK]: number;
+      [TempleOther.LEVEL]: number;
+      [TempleOther.EHP_LOWERCASE]: number;
     };
   };
 }
 
 export interface PlayerOverviewOther {
-  info: {
-    last_check_text: string;
-    hours_played: number;
-    hours_per_day: number;
-    boss_kills: number;
-    kc_per_day: number;
-    avr_kch: number;
-    top_boss: number;
-    gp_earned: number;
+  [TempleOther.INFO]: {
+    [TempleOther.LAST_CHECK_TEXT]: string;
+    [TempleOther.HOURS_PLAYED]: number;
+    [TempleOther.HOURS_PER_DAY]: number;
+    [TempleOther.BOSS_KILLS]: number;
+    [TempleOther.KC_PER_DAY]: number;
+    [TempleOther.AVR_KCH]: number;
+    [TempleOther.TOP_BOSS]: number;
+    [TempleOther.GP_EARNED]: number;
   };
-  table: {
+  [TempleOther.TABLE]: {
     [key: string]: {
-      xp: number;
-      rank: number;
-      ehb: number;
+      [TempleOther.XP]: number;
+      [TempleOther.RANK]: number;
+      [TempleOther.EHB_LOWERCASE]: number;
     };
   };
 }
 
 interface PlayerInfo {
-  Username: string;
-  Country: string;
-  'Game mode': GameMode;
-  'Cb-3': number;
-  F2p: number;
-  Banned: number;
-  Disqualified: number;
-  'Clan preference': null | string;
-  'Last checked': string;
-  'Last changed': string;
+  [TempleOther.USERNAME]: string;
+  [TempleOther.COUNTRY]: string;
+  [TempleOther.GAME_MODE]: GameMode;
+  [TempleOther.CB3]: number;
+  [TempleOther.F2P]: number;
+  [TempleOther.BANNED]: number;
+  [TempleOther.DISQUALIFIED]: number;
+  [TempleOther.CLAN_PREF]: null | string;
+  [TempleOther.LAST_CHECKED]: string;
+  [TempleOther.LAST_CHANGED]: string;
 }
 
 export interface PlayerStats {
-  Date: string;
-  Ehp: number;
-  Im_ehp: number;
-  Lvl3_ehp: number;
-  F2p_ehp: number;
-  Ehb: number;
-  Im_ehb: number;
-  info: PlayerInfo;
+  [TempleOther.DATE]: string;
+  [TempleOther.EHP]: number;
+  [TempleOther.IM_EHP_CAPITAL]: number;
+  [TempleOther.LVL3_EHP]: number;
+  [TempleOther.F2P_EHP]: number;
+  [TempleOther.EHB]: number;
+  [TempleOther.IM_EHB]: number;
+  [TempleOther.INFO]: PlayerInfo;
 }
 
 interface PlayerHistory {
-  name: string;
-  last_date: string;
-  first_date: string;
-  seconds: number;
-  ehp: number;
-  xp: number;
+  [TempleOther.NAME]: string;
+  [TempleOther.LATS_DATE]: string;
+  [TempleOther.FIRST_DATE]: string;
+  [TempleOther.SECONDS]: number;
+  [TempleOther.EHP_LOWERCASE]: number;
+  [TempleOther.XP]: number;
 }
 
 export interface PlayerNames {
-  aliases: {
+  [TempleOther.ALIASES]: {
     [key: string]: {
-      name: string;
-      last_used: string;
-      last_used_seconds: number;
-      ehp_gained: number;
-      time_used: number;
+      [TempleOther.NAME]: string;
+      [TempleOther.LAST_USED]: string;
+      [TempleOther.LAST_USED_SECONDS]: number;
+      [TempleOther.EHP_GAINED]: number;
+      [TempleOther.TIME_USED]: number;
     };
   };
-  history: PlayerHistory[];
-  info: {
-    total_history_seconds: number;
+  [TempleOther.HISTORY]: PlayerHistory[];
+  [TempleOther.INFO]: {
+    [TempleOther.HISTORY_SECONDS]: number;
   };
 }
 export interface PlayerRecords {
   [key: string]: {
-    [key: string]: { xp: string | number; date: string };
+    [key: string]: {
+      [TempleOther.XP]: string | number;
+      [TempleOther.DATE_LOWERCASE]: string;
+    };
   };
 }
 
