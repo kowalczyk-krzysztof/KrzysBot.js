@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 // Axios
 import axios, { AxiosResponse } from 'axios';
 // Cooldown cache
-import { isOnCooldown } from '../../cache/cooldown';
+import { isOnCooldown, cache, isInCache } from '../../cache/cooldown';
 // UTILS: Embeds
 import { Embed } from '../../utils/embed';
 // UTILS: Runescape name validator
@@ -19,48 +19,91 @@ import { errorHandler } from '../../utils/errorHandler';
 import { CommandCooldowns } from '../../utils/osrs/enums';
 
 dotenv.config({ path: 'config.env' });
-// TODO: Add conditional cooldown - if it returns player has been updated in the last 60 secs - allow again
+
+let lastFetchedCache: { [key: string]: number } = {};
+
+const TEMPLE_OVERVIEW: string = process.env.TEMPLE_OVERVIEW as string;
+const TEMPLE_DATA_POINT: string = process.env.TEMPLE_DATA_POINT as string;
+// TODO: Switch to player_info once cooldown has been added
+// First query player_info and see if player updating is on cooldown (if not, cooldown is displayed as "-" ) then add a cooldown on command === res.data.data.cooldown (so, cooldown on temple site). Then after this cooldown passes, command can be used again, then if there is no cooldown a data point is added then command is put on cooldown for CommandCooldowns.DATAPOINTS
 export const datapoint = async (
   msg: Message,
   commandName: string,
   ...args: string[]
-): Promise<Message | undefined> => {
-  const cooldown: number = CommandCooldowns.DATAPOINTS;
+): Promise<Message | undefined | void> => {
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
-  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
-    return;
-  else {
+  const cacheItem: string = commandName + username.toLowerCase();
+  if (cacheItem in cache)
+    return isInCache(msg, cacheItem, CommandCooldowns.DATAPOINTS, true);
+  const embed: Embed = new Embed();
+  if (username in lastFetchedCache) {
+    const timeWhenAddedToCache: number = lastFetchedCache[username];
+    const now: number = Date.now();
+    const timeLeftSecondsDecimal: number = (timeWhenAddedToCache - now) / 1000;
+    const timeLeftSeconds: number = parseInt(timeLeftSecondsDecimal.toString());
+    return msg.channel.send(
+      embed.setDescription(
+        `Player **${username}** has already been updated recently, if you still want to add a new datapoint, please wait **${timeLeftSeconds}s** and try again`
+      )
+    );
+  } else {
+    let cooldown: number;
     try {
       const res: AxiosResponse = await axios.get(
-        `${process.env.TEMPLE_DATA_POINT}${username}`
+        `${TEMPLE_OVERVIEW}${username}`
       );
-      if (res.status === 200) {
-        const embed: Embed = new Embed();
-        const data: string = res.data.toString();
-        // There's no API endpoint for this, I have to improvise
-        const notOnHiscores: string =
-          '<p style="text-align: center; color: black;"> Name not found on hiscores </p>';
-        const recentlyUpdated: string =
-          '<p style="text-align: center; color: black;"> User has already been updated in the last 60 seconds. </p>';
-        if (data.includes(notOnHiscores)) {
-          embed.setDescription(
+      if (res.data.error) {
+        if (res.data.error.Code === 402) {
+          const embed: Embed = new Embed();
+          embed.addField(
+            'ERROR',
             `Player **${username}** was not found on hiscores`
           );
-          return msg.channel.send(embed);
-        } else if (data.includes(recentlyUpdated)) {
-          embed.setDescription(
-            `Player **${username}** has already been updated in the last 60 seconds`
+        } else msg.channel.send(errorHandler(res.data.error));
+      } else if (res.data.data.info.cooldown !== '-') {
+        cooldown = parseInt(
+          res.data.data.info.cooldown.charAt(0) +
+            res.data.data.info.cooldown.charAt(1)
+        );
+        const secToMs: number = cooldown * 1000;
+        lastFetchedCache[username] = Date.now() + secToMs;
+        setTimeout(() => {
+          delete lastFetchedCache[username];
+        }, secToMs);
+        embed.setDescription(
+          `Player **${username}** has already been updated recently, if you still want to add a new datapoint, please wait **${cooldown}s** and try again`
+        );
+        return msg.channel.send(embed);
+      } else {
+        cooldown = CommandCooldowns.DATAPOINTS;
+        if (
+          isOnCooldown(
+            msg,
+            commandName,
+            CommandCooldowns.DATAPOINTS,
+            true,
+            username
+          ) === true
+        )
+          return;
+        try {
+          const res: AxiosResponse = await axios.get(
+            `${TEMPLE_DATA_POINT}${username}`
           );
-          return msg.channel.send(embed);
-        } else {
-          embed.setDescription(
-            `Updated datapoints for player: **${username}**`
-          );
-          return msg.channel.send(embed);
+          if (res.status === 200) {
+            embed.setDescription(
+              `Updated datapoints for player: \`\`\`${username}\`\`\``
+            );
+            return msg.channel.send(embed);
+          } else {
+            return msg.channel.send(errorHandler());
+          }
+        } catch (err) {
+          return msg.channel.send(errorHandler(err));
         }
-      } else return msg.channel.send(errorHandler());
+      }
     } catch (err) {
       return msg.channel.send(errorHandler(err));
     }

@@ -4,7 +4,7 @@ import { Message } from 'discord.js';
 import { Embed } from '../utils/embed';
 
 // Object which contains keys with names in format user.id + command name. The value for each key is date when it was created
-const cache: { [key: string]: number } = {};
+export const cache: { [key: string]: number } = {};
 // Generates cache item, then checks if it exists in cache. If true, sends a msng to user with time left and returns true. If item is not in cache, add it to cache and return false
 export const isOnCooldown = (
   msg: Message,
@@ -49,34 +49,43 @@ export const isOnCooldown = (
     optionalArgs
   );
   if (cacheItem in cache) {
-    const timeWhenAddedToCache: number = cache[cacheItem];
-    const now: number = Date.now();
-    const timeLeftSecondsDecimal: number =
-      cooldownInSec - (now - timeWhenAddedToCache) / 1000;
-    const timeLeftSeconds: number = parseInt(timeLeftSecondsDecimal.toString());
-    const timeLeftMinDecimal: number = timeLeftSeconds / 60;
-    const timeLeftMin: number = parseInt(timeLeftMinDecimal.toString());
-    let time: number;
-    let secondOrMin: string;
-    if (timeLeftSecondsDecimal > 60) {
-      time = timeLeftMin;
-      secondOrMin = ' min';
-    } else if (timeLeftSecondsDecimal >= 1) {
-      time = timeLeftSeconds;
-      secondOrMin = 's';
-    } else {
-      time = 1;
-      secondOrMin = 's';
-    }
-    const authorRequiredMsg: string = `You have used this command recently. Please wait **${time}${secondOrMin}** and try again`;
-    const authorOptionalMsg: string = `This command has been used recently. Please wait **${time}${secondOrMin}** and try again`;
-    let cooldownMsg: string;
-    if (isAuthorOptional === false) cooldownMsg = authorRequiredMsg;
-    else cooldownMsg = authorOptionalMsg;
-    msg.channel.send(new Embed().setDescription(cooldownMsg));
+    isInCache(msg, cacheItem, cooldownInSec, isAuthorOptional);
     return true;
   } else {
     addCacheItem(cacheItem, cooldownInSec);
     return false;
   }
+};
+
+export const isInCache = (
+  msg: Message,
+  cacheItem: string,
+  cooldownInSec: number,
+  isAuthorOptional: boolean
+) => {
+  const timeWhenAddedToCache: number = cache[cacheItem];
+  const now: number = Date.now();
+  const timeLeftSecondsDecimal: number =
+    cooldownInSec - (now - timeWhenAddedToCache) / 1000;
+  const timeLeftSeconds: number = parseInt(timeLeftSecondsDecimal.toString());
+  const timeLeftMinDecimal: number = timeLeftSeconds / 60;
+  const timeLeftMin: number = parseInt(timeLeftMinDecimal.toString());
+  let time: number;
+  let secondOrMin: string;
+  if (timeLeftSecondsDecimal > 60) {
+    time = timeLeftMin;
+    secondOrMin = ' min';
+  } else if (timeLeftSecondsDecimal >= 1) {
+    time = timeLeftSeconds;
+    secondOrMin = 's';
+  } else {
+    time = 1;
+    secondOrMin = 's';
+  }
+  const authorRequiredMsg: string = `You have used this command recently. Please wait **${time}${secondOrMin}** and try again`;
+  const authorOptionalMsg: string = `This command has been used recently. Please wait **${time}${secondOrMin}** and try again`;
+  let cooldownMsg: string;
+  if (isAuthorOptional === false) cooldownMsg = authorRequiredMsg;
+  else cooldownMsg = authorOptionalMsg;
+  msg.channel.send(new Embed().setDescription(cooldownMsg));
 };

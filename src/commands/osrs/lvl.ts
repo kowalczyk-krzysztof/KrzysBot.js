@@ -79,7 +79,7 @@ export const lvl = async (
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.LVL)
-    .addField(usernameString, `${username}`);
+    .addField(usernameString, `\`\`\`${username}\`\`\``);
   if (username in osrsStats) {
     const field: keyof OsrsPlayer | undefined = skillFields(
       prefix
@@ -134,7 +134,7 @@ const generateResult = (
     if (field === Skills.RC) skillName = OsrsRandom.RUNECRAFTING;
     else skillName = field;
     inputEmbed.addField(
-      `${OsrsRandom.SKILL.toUpperCase()}`,
+      `${OsrsRandom.SKILL.toUpperCase()}:`,
       `\`\`\`${skillName}\`\`\``
     );
     inputEmbed.addField(
@@ -142,7 +142,7 @@ const generateResult = (
       `\`\`\`${skill[TempleOther.LEVEL]}\`\`\``
     );
     inputEmbed.addField(
-      `${OsrsRandom.EXP_LONG.toUpperCase()}`,
+      `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
       `\`\`\`${formattedExp} ${TempleOther.EXP}\`\`\``
     );
     return inputEmbed;

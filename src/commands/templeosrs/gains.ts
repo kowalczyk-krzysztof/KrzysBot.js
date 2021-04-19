@@ -238,13 +238,15 @@ const generateResult = (
     return errorHandler();
   else {
     // Changing the time value (string) to have a first capital letter
-    const capitalFirst: string = capitalizeFirstLetter(time);
+    let capitalFirst: string = capitalizeFirstLetter(time);
+    if (capitalFirst === TempleOverviewTimeAliases.HALFYEAR)
+      capitalFirst = '6 months';
+    else if (capitalFirst === 'Alltime') capitalFirst = 'All Time';
+    else capitalFirst = capitalFirst;
     const formattedField: string = fieldNameFormatter(field);
     const table: TempleOtherTable & TempleSkillTable =
       playerObject[TempleOther.TABLE];
-
     const fieldTocheck: TempleOtherTableProps & SkillTableProps = table[field];
-
     // If there's no record for specific period of time then the key doesn't exist
     if (fieldTocheck !== undefined) {
       // Formatting how numbers are displayed
@@ -301,6 +303,8 @@ const generateResult = (
           fieldTocheck[TempleOther.RANK].toString()
         )}\`\`\``
       );
+      if (capitalFirst === 'All Time')
+        embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     } else {
       embed.addField(`TIME PERIOD:`, `\`\`\`${capitalFirst}\`\`\``);
       embed.addField(
