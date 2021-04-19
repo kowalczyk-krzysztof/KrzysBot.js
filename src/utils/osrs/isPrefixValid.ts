@@ -51,10 +51,11 @@ export const invalidPrefixMsg = (
   types: string[] | string,
   category: PrefixCategories = PrefixCategories.DEFAULT
 ): Embed => {
+  let result;
   let typesList;
   if (Array.isArray(types)) typesList = types.join(', ');
   else typesList = types;
-  let result;
+
   switch (category) {
     case PrefixCategories.BOSS:
       result = `Invalid boss name. Valid boss names: <${BOSS_LIST}>`;
