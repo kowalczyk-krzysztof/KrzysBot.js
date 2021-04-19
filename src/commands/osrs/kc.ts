@@ -14,7 +14,7 @@ import {
 // UTILS: Interfaces
 import { OsrsPlayer, BossOrMinigame } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { TempleOther, BossCases } from '../../utils/osrs/enums';
+import { TempleOther, BossCases, OsrsRandom } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -124,7 +124,10 @@ const generateResult = (
   if (playerObject === undefined) return errorHandler();
   else {
     const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
-    embed.addField(`${field} kills`, `${boss[TempleOther.SCORE]}`);
+    embed.addField(
+      `${field} ${OsrsRandom.KILLS}`,
+      `${boss[TempleOther.SCORE]}`
+    );
     return embed;
   }
 };

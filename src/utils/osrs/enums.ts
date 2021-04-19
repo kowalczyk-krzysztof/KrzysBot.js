@@ -64,7 +64,7 @@ export enum TempleTrueOrFalse {
   FALSE = 0,
 }
 // Temple OSRS indexes - used in Player Overview data, each index represents a skill or boss/minigame
-export enum TempleSkillIndex {
+export enum TempleIndex {
   TOTAL = 0,
   ATT = 1,
   DEF = 2,
@@ -496,7 +496,6 @@ export enum SkillAliases {
 export enum OsrsRandom {
   RUNECRAFTING = 'Runecrafting',
   EXP_LONG = 'Experience',
-  DATE_FORMAT = 'en-US',
   LVL_SHORT = 'lvl',
   KILLS = 'kills',
 }

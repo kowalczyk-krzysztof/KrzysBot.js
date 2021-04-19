@@ -31,6 +31,11 @@ import {
 import { skillFields, skillList } from '../../utils/osrs/inputValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+// UTIILS : Number formatter
+import {
+  numberFormatter,
+  NumberFormatTypes,
+} from '../../utils/numberFormatter';
 
 export const lvl = async (
   msg: Message,
@@ -107,12 +112,12 @@ const generateResult = (
   else {
     const skill = playerObject[field] as OsrsSkill;
     // Intl is how I format number to have commas
-    const formatter: Intl.NumberFormat = new Intl.NumberFormat(
-      `${OsrsRandom.DATE_FORMAT}`
-    );
     let formattedExp: Intl.NumberFormat | string;
     if (typeof skill[TempleOther.EXP] === 'number')
-      formattedExp = formatter.format(skill[TempleOther.EXP] as number);
+      formattedExp = numberFormatter(
+        skill[TempleOther.EXP],
+        NumberFormatTypes.EN_US
+      ) as string;
     else formattedExp = skill[TempleOther.EXP] as string;
     let skillName: string;
     if (field === Skills.RC) skillName = OsrsRandom.RUNECRAFTING;
