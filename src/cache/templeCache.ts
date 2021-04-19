@@ -23,10 +23,15 @@ dotenv.config({ path: 'config.env' });
 
 // Caches
 export let playerStats: { [key: string]: TemplePlayerStats } = {};
+let playerStatsLength: number = 0;
 export let playerNames: { [key: string]: TemplePlayerNames } = {};
+let playerNamesLength: number = 0;
 export let playerRecords: { [key: string]: TemplePlayerRecords } = {};
+let playerRecordsLength: number = 0;
 export let playerOverviewSkill: { [key: string]: TempleOverviewSkill } = {};
+let playerOverviewSkillLength: number = 0;
 export let playerOverviewOther: { [key: string]: TempleOverviewOther } = {};
+let playerOverviewOtherLength: number = 0;
 // URLs
 const TEMPLE_LINK: string = process.env.TEMPLE_PLAYER_STATS as string;
 const TEMPLE_PLAYER_NAMES: string = process.env.TEMPLE_PLAYER_NAMES as string;
@@ -100,22 +105,42 @@ const addToCache = (
     | TempleOverviewOther,
   type: TempleCacheType
 ): void => {
+  // Storing the length of cache as variable so I don't have to do Object.keys() every time
   if (type === TempleCacheType.PLAYER_STATS) {
-    if (Object.keys(playerStats).length > maxCacheSize) playerStats = {};
+    if (playerStatsLength >= maxCacheSize) {
+      playerStats = {};
+      playerStatsLength = 0;
+    }
+
+    playerStatsLength++;
     playerStats[username] = data as TemplePlayerStats;
   } else if (type === TempleCacheType.PLAYER_NAMES) {
-    if (Object.keys(playerNames).length > maxCacheSize) playerNames = {};
+    if (playerNamesLength >= maxCacheSize) {
+      playerNames = {};
+      playerNamesLength = 0;
+    }
+    playerNamesLength++;
     playerNames[username] = data as TemplePlayerNames;
   } else if (type === TempleCacheType.PLAYER_RECORDS) {
-    if (Object.keys(playerRecords).length > maxCacheSize) playerRecords = {};
+    if (playerRecordsLength >= maxCacheSize) {
+      playerRecords = {};
+      playerRecordsLength = 0;
+    }
+    playerRecordsLength++;
     playerRecords[username] = data as TemplePlayerRecords;
   } else if (type === TempleCacheType.PLAYER_OVERVIEW_SKILL) {
-    if (Object.keys(playerOverviewSkill).length > maxCacheSize)
+    if (playerOverviewSkillLength >= maxCacheSize) {
       playerOverviewSkill = {};
+      playerOverviewSkillLength = 0;
+    }
+    playerOverviewSkillLength++;
     playerOverviewSkill[username] = data as TempleOverviewSkill;
   } else if (type === TempleCacheType.PLAYER_OVERVIEW_OTHER) {
-    if (Object.keys(playerOverviewOther).length > maxCacheSize)
+    if (playerOverviewOtherLength >= maxCacheSize) {
       playerOverviewOther = {};
+      playerOverviewOtherLength = 0;
+    }
+    playerOverviewOtherLength++;
     playerOverviewOther[username] = data as TempleOverviewOther;
   }
 };

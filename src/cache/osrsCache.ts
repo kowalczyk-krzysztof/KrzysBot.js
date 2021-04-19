@@ -19,6 +19,7 @@ const HISCORE_API: string = process.env.OSRS_HISCORE_API as string;
 // Max cache size
 const maxCacheSize: number = 1000;
 // Cache
+let osrsCacheLength: number = 0;
 export let osrsStats: { [key: string]: OsrsPlayer } = {};
 
 // Fetch data
@@ -43,6 +44,10 @@ export const fetchOsrsStats = async (
 };
 // Cache result
 const setOsrsStats = (username: string, data: OsrsPlayer): void => {
-  if (Object.keys(osrsStats).length > maxCacheSize) osrsStats = {};
+  if (osrsCacheLength >= maxCacheSize) {
+    osrsStats = {};
+    osrsCacheLength = 0;
+  }
+  osrsCacheLength++;
   osrsStats[username] = data;
 };
