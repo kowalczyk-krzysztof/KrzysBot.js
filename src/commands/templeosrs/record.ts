@@ -24,6 +24,7 @@ import {
   TempleCacheType,
   OsrsRandom,
   ValidInputCases,
+  CommandCooldowns,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -73,7 +74,7 @@ export const record = async (
       }
     | undefined = templeGainsRecords(msg, args, commandName);
   if (parsedInput === undefined) return;
-  const cooldown: number = 30;
+  const cooldown: number = CommandCooldowns.RECORD;
   if (
     parsedInput.rsn !== undefined &&
     parsedInput.time !== undefined &&
@@ -99,7 +100,7 @@ export const record = async (
     const userNameWithTime: string = username + parsedInput.time;
     const embed: TempleEmbed = new TempleEmbed()
       .setTitle(EmbedTitles.RECORDS)
-      .addField(usernameString, `${username}`);
+      .addField(usernameString, `\`\`\`${username}\`\`\``);
     // Check if item is in cache
     if (userNameWithTime in playerRecords) {
       // Try to match the input field with key name on player object
@@ -195,11 +196,14 @@ const generateResult = (
           playerObject[field][time][TempleOther.DATE_LOWERCASE],
           NumberFormatTypes.EN_GB
         ) as string;
-        embed.addField('Time Period', `${capitalFirst}`);
-        embed.addField(`${formattedField}`, `${formattedValue}${ending}`);
-        embed.addField('Record set on:', `${formattedDate}`);
+        embed.addField('TIME PERIOD:', `\`\`\`${capitalFirst}\`\`\``);
+        embed.addField(
+          `${formattedField}`,
+          `\`\`\`${formattedValue}${ending}\`\`\``
+        );
+        embed.addField('RECORD SET ON:', `\`\`\`${formattedDate}\`\`\``);
       } else {
-        embed.addField(`Time Period`, `${capitalFirst}`);
+        embed.addField(`TIMED PERIOD:`, `\`\`\`${capitalFirst}\`\`\``);
         embed.addField(
           `NO DATA`,
           `No records for this period of time for \`\`\`${formattedField}\`\`\``

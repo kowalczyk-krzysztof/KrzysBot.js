@@ -1,13 +1,4 @@
 {
-  "random": {
-    "tenor": {
-      "name": "tenor",
-      "description": "Search for a random image with provided keyword",
-      "example": ".tenor cat",
-      "category": "Random",
-      "aliases": []
-    }
-  },
   "templeosrs": {
     "ehp": {
       "name": "ehp",
@@ -62,6 +53,13 @@
       "name": "gains",
       "description": "Get player's gains",
       "example": ".gains clues easy week username\n.gains other imehp 5min username\n.gains skill slay 6hmonths username\n.gains boss theatre of blood year username",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "topboss": {
+      "name": "topboss",
+      "description": "Get player's most killed boss in specified period of time",
+      "example": ".topboss week username",
       "category": "Temple OSRS",
       "aliases": []
     }

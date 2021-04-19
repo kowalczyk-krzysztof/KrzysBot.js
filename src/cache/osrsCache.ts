@@ -30,7 +30,6 @@ export const fetchOsrsStats = async (
   const keyword: string = playerName;
   try {
     const res: AxiosResponse = await axios.get(`${HISCORE_API}${keyword}`);
-    console.log(res.status);
     if (res.status === 200) {
       const data: OsrsPlayer = osrsDataParser(res.data);
       setOsrsStats(keyword, data);

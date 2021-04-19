@@ -14,7 +14,12 @@ import {
 // UTILS: Interfaces
 import { OsrsPlayer, OsrsSkill } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { OsrsRandom, Skills, TempleOther } from '../../utils/osrs/enums';
+import {
+  CommandCooldowns,
+  OsrsRandom,
+  Skills,
+  TempleOther,
+} from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -58,7 +63,7 @@ export const lvl = async (
     PrefixCategories.SKILL
   );
   if (prefix === invalidPrefix) return;
-  const cooldown: number = 30;
+  const cooldown: number = CommandCooldowns.LVL;
   const nameCheck: string = runescapeNameValidator(args.slice(1));
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
@@ -129,12 +134,16 @@ const generateResult = (
     if (field === Skills.RC) skillName = OsrsRandom.RUNECRAFTING;
     else skillName = field;
     inputEmbed.addField(
-      `${skillName} ${OsrsRandom.LVL_SHORT}`,
-      `${skill[TempleOther.LEVEL]}`
+      `${OsrsRandom.SKILL.toUpperCase()}`,
+      `\`\`\`${skillName}\`\`\``
     );
     inputEmbed.addField(
-      `${OsrsRandom.EXP_LONG}`,
-      `${formattedExp} ${TempleOther.EXP}`
+      `${TempleOther.LEVEL.toUpperCase()}:`,
+      `\`\`\`${skill[TempleOther.LEVEL]}\`\`\``
+    );
+    inputEmbed.addField(
+      `${OsrsRandom.EXP_LONG.toUpperCase()}`,
+      `\`\`\`${formattedExp} ${TempleOther.EXP}\`\`\``
     );
     return inputEmbed;
   }

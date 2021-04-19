@@ -22,7 +22,7 @@ enum Indexes {
   SECOND_WORD = 1,
   THIRD_WORD = 2,
 }
-
+// Boss name validator for kc, records and gains commands
 export const bossValidator = (
   msg: Message,
   lowerCasedArguments: string[],

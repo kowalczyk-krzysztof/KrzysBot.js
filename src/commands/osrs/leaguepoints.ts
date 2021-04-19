@@ -14,7 +14,11 @@ import {
 // UTILS: Interfaces
 import { OsrsPlayer } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { OsrsOther, TempleOther } from '../../utils/osrs/enums';
+import {
+  CommandCooldowns,
+  OsrsOther,
+  TempleOther,
+} from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -29,7 +33,7 @@ export const leaguepoints = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const cooldown: number = 30;
+  const cooldown: number = CommandCooldowns.LEAGUEPOINTS;
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
@@ -37,7 +41,7 @@ export const leaguepoints = async (
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.LEAGUEPTS)
-    .addField(usernameString, `${username}`);
+    .addField(usernameString, `\`\`\`${username}\`\`\``);
   if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(embed, osrsStats[username]);
     return msg.channel.send(result);
@@ -58,8 +62,8 @@ const generateResult = (
     return errorHandler();
   else {
     embed.addField(
-      `${OsrsOther.LEAGUE}`,
-      `${playerObject[OsrsOther.LEAGUE][TempleOther.SCORE]}`
+      `${OsrsOther.LEAGUE.toUpperCase()}:`,
+      `\`\`\`${playerObject[OsrsOther.LEAGUE][TempleOther.SCORE]}\`\`\``
     );
     return embed;
   }

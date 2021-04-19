@@ -33,6 +33,7 @@ import {
   TempleCacheType,
   ValidInputCases,
   OsrsRandom,
+  CommandCooldowns,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -115,7 +116,7 @@ export const gains = async (
     }),
       (dataType = TempleCacheType.PLAYER_OVERVIEW_SKILL);
   }
-  const cooldown: number = 30;
+  const cooldown: number = CommandCooldowns.GAINS;
   if (
     parsedInput.rsn !== undefined &&
     parsedInput.time !== undefined &&
@@ -140,7 +141,7 @@ export const gains = async (
 
     const embed: TempleEmbed = new TempleEmbed()
       .setTitle(EmbedTitles.GAINS)
-      .addField(usernameString, `${username}`);
+      .addField(usernameString, `\`\`\`${username}\`\`\``);
     // Changing time aliases
     let timePeriod: string;
     switch (parsedInput.time) {
@@ -161,6 +162,9 @@ export const gains = async (
         break;
       case TempleOverviewTimeAliases.YEAR:
         timePeriod = TempleOverviewTimes.YEAR;
+        break;
+      case TempleOverviewTimeAliases.ALLTIME:
+        timePeriod = TempleOverviewTimes.ALLTIME;
         break;
       default:
         timePeriod = parsedInput.time;
@@ -264,32 +268,41 @@ const generateResult = (
       else if (args[0] === ValidInputCases.BOSS)
         ending = ` ${OsrsRandom.KILLS}`;
       else ending = '';
-      embed.addField('Time Period', `${capitalFirst}`);
-      embed.addField(`${formattedField}`, `${formattedValue}${ending}`);
+      embed.addField('TIME PERIOD:', `\`\`\`${capitalFirst}\`\`\``);
+      embed.addField(
+        `${formattedField}`,
+        `\`\`\`${formattedValue}${ending}\`\`\``
+      );
       if (args[0] === ValidInputCases.SKILL)
         embed.addField(
-          `${capitalizeFirstLetter(TempleOther.LEVEL)}s gained:`,
-          `${fieldTocheck[TempleOther.LEVEL]}`
+          `${TempleOther.LEVEL.toUpperCase}S GAINED:`,
+          `\`\`\`${fieldTocheck[TempleOther.LEVEL]}\`\`\``
         );
       if (args[0] === ValidInputCases.SKILL)
         embed.addField(
-          `${TempleOther.EHP.toUpperCase()} gained:`,
-          `${parseInt(fieldTocheck[TempleOther.EHP_LOWERCASE].toString())}`
+          `${TempleOther.EHP.toUpperCase()} GAINED:`,
+          `\`\`\`${parseInt(
+            fieldTocheck[TempleOther.EHP_LOWERCASE].toString()
+          )}\`\`\``
         );
       if (args[0] === ValidInputCases.BOSS)
         embed.addField(
-          `${TempleOther.EHB.toUpperCase()} gained:`,
-          `${parseInt(fieldTocheck[TempleOther.EHB_LOWERCASE].toString())}`
+          `${TempleOther.EHB.toUpperCase()} GAINED:`,
+          `\`\`\`${parseInt(
+            fieldTocheck[TempleOther.EHB_LOWERCASE].toString()
+          )}\`\`\``
         );
       let plusOrMinus: string;
       if (fieldTocheck[TempleOther.RANK] > 0) plusOrMinus = '+';
       else plusOrMinus = '';
       embed.addField(
-        `Ranks gained or lost:`,
-        `${plusOrMinus}${parseInt(fieldTocheck[TempleOther.RANK].toString())}`
+        `RANKS GAINED OR LOST:`,
+        `\`\`\`${plusOrMinus}${parseInt(
+          fieldTocheck[TempleOther.RANK].toString()
+        )}\`\`\``
       );
     } else {
-      embed.addField(`Time Period`, `${capitalFirst}`);
+      embed.addField(`TIME PERIOD:`, `\`\`\`${capitalFirst}\`\`\``);
       embed.addField(
         `NO DATA`,
         `No gains for this period of time for \`\`\`${formattedField}\`\`\``

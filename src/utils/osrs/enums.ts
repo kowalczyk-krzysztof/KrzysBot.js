@@ -1,3 +1,26 @@
+// OSRS and TempleOSRS command names
+export enum OsrsCommands {
+  GAINS = 'gains',
+  RECORD = 'record',
+}
+// Command cooldowns
+export enum CommandCooldowns {
+  COMMAND_LIST = 60,
+  BH = 30,
+  CLUES = 30,
+  KC = 30,
+  LEAGUEPOINTS = 30,
+  LMS = 30,
+  LVL = 30,
+  OSRSFETCH = 600,
+  SOULWARS = 30,
+  DATAPOINTS = 1800,
+  GAINS = 30,
+  RECORD = 30,
+  TEMPLEFETCH = 600,
+  TOPBOSS = 30,
+}
+
 // TempleOSRS Player Overview Time Field Names
 export enum TempleOverviewTimes {
   FIVEMIN = '5min',
@@ -6,6 +29,7 @@ export enum TempleOverviewTimes {
   MONTH = '31days',
   HALFYEAR = '186days',
   YEAR = '365days',
+  ALLTIME = 'alltime',
 }
 // TempleOSRS Player Overview Time Field Aliases
 export enum TempleOverviewTimeAliases {
@@ -15,6 +39,7 @@ export enum TempleOverviewTimeAliases {
   MONTH = 'month',
   HALFYEAR = '6months',
   YEAR = 'year',
+  ALLTIME = 'alltime',
 }
 // Valid cases for inputValidator
 export enum ValidInputCases {
@@ -498,4 +523,6 @@ export enum OsrsRandom {
   EXP_LONG = 'Experience',
   LVL_SHORT = 'lvl',
   KILLS = 'kills',
+  SKILL = 'skill',
+  BOSS = 'boss',
 }

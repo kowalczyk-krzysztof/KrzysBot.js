@@ -1,9 +1,5 @@
 <h1>Command List</h1>
 
-<h2>Random:</h2>
-
-<strong>Name</strong>: "tenor"<br /><strong>Description: </strong> Search for a random image with provided keyword<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote> .tenor cat"</blockquote><br />
-
 <h2>Old School Runescape:</h2>
 
 <strong>Name</strong>: "clues"<br /><strong>Description: </strong> Get clue stats for player<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote>.clues tier username</blockquote><br />
@@ -31,3 +27,4 @@ Aliases: </strong> [ ]<br /><strong>Example: </strong>
 <strong>Name</strong>: "gains"<br /><strong>Description: </strong> Get player's gains<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote> .gains clues easy week username<br/>.gains other imehp 5min
 username<br/>.gains skill slay 6hmonths username<br/>.gains boss theatre of
 blood year username</blockquote><br />
+<strong>Name</strong>: "topboss"<br /><strong>Description: </strong> Get player's most killed boss in specified period of time<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote> .topboss week username</blockquote><br />

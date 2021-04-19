@@ -17,7 +17,6 @@ export enum PrefixCategories {
   BOSS_EDGE_CASE = 'bossedge',
   SKILL = 'skill',
   CLUES = 'clues',
-  BH = 'bh',
   TIME_OTHER = 'timeother',
   OTHER = 'other',
   DEFAULT = '',

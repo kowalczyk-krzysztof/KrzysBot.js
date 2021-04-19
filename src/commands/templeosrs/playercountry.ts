@@ -46,11 +46,16 @@ const generateResult = (
   else {
     const embed: TempleEmbed = new TempleEmbed().addField(
       usernameString,
-      `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
+      `\`\`\`${playerObject[TempleOther.INFO][TempleOther.USERNAME]}\`\`\``
     );
     const data: string = playerObject[TempleOther.INFO][TempleOther.COUNTRY];
-    if (data === '-') embed.addField(`${TempleOther.COUNTRY}`, 'No Info');
-    else embed.addField(`${TempleOther.COUNTRY}`, `${data}`);
+    if (data === '-')
+      embed.addField(`${TempleOther.COUNTRY}`, `\`\`\`NO INFO\`\`\``);
+    else
+      embed.addField(
+        `${TempleOther.COUNTRY.toUpperCase()}:`,
+        `\`\`\`${data}\`\`\``
+      );
     return embed;
   }
 };
