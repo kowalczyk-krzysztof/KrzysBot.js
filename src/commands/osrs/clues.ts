@@ -26,6 +26,7 @@ import {
   isPrefixValid,
   PrefixCategories,
   invalidPrefix,
+  invalidPrefixMsg,
 } from '../../utils/osrs/isPrefixValid';
 // UTILS: Input validator
 import { clueFields, clueList } from '../../utils/osrs/inputValidator';
@@ -39,6 +40,8 @@ export const clues = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (args.length === 0)
+    return msg.channel.send(invalidPrefixMsg(clueList, PrefixCategories.CLUES));
   // This is done so the cooldown is per unique command
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();

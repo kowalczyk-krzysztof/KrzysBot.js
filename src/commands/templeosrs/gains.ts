@@ -14,6 +14,7 @@ import {
   EmbedTitles,
   usernameString,
   ErrorEmbed,
+  Embed,
 } from '../../utils/embed';
 // UTILS: Interfaces
 import {
@@ -50,12 +51,24 @@ import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: FIeld name formatter
 import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
+// UTIILS : Number formatter
+import {
+  numberFormatter,
+  NumberFormatTypes,
+} from '../../utils/numberFormatter';
 
+Embed;
 export const gains = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
+  if (args.length === 0)
+    return msg.channel.send(
+      new Embed().setDescription(
+        `**Please provide arguments. Valid formats**:\`\`\`.${commandName} clues tier time username\n\n.${commandName} lms time username\n\n.${commandName} skill skill-name time username\n\n.${commandName} boss boss-name time username\`\`\``
+      )
+    );
   // This is done so the cooldown is per unique command
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
@@ -233,14 +246,17 @@ const generateResult = (
       const value: number = fieldTocheck[TempleOther.XP];
       let formattedValue;
 
-      if (args[0] === ValidInputCases.SKILL) {
-        const formatter: Intl.NumberFormat = new Intl.NumberFormat(
-          OsrsRandom.DATE_FORMAT
+      if (args[0] === ValidInputCases.SKILL)
+        formattedValue = numberFormatter(
+          value as number,
+          NumberFormatTypes.EN_US
         );
-        formattedValue = formatter.format(value as number);
-      } else {
-        formattedValue = parseInt(value.toString());
-      }
+      else
+        formattedValue = numberFormatter(
+          value as number,
+          NumberFormatTypes.INT
+        );
+
       // Changing sufix depending on whether the type is skill or not
       let ending: string;
       if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;

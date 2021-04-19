@@ -22,17 +22,24 @@ import {
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Input validator
-import { bossFields } from '../../utils/osrs/inputValidator';
+import { bossFields, bossList } from '../../utils/osrs/inputValidator';
 // UTILS: Boss validator
 import { bossValidator } from '../../utils/osrs/bossValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+import {
+  invalidPrefixMsg,
+  PrefixCategories,
+} from '../../utils/osrs/isPrefixValid';
 
 export const kc = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (args.length === 0)
+    return msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
+
   const indexes: number[] = [0, 1, 2];
   // This is done so the cooldown is per unique command + boss validation needs lowercase
   const lowerCasedArguments: string[] = args.map((e: string) => {
