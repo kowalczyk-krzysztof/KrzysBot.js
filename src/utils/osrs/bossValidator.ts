@@ -95,12 +95,9 @@ export const bossValidator = (
   else {
     if ((bossCase = BossCases.EDGE_CASE))
       msg.channel.send(
-        invalidPrefixMsg(PrefixCategories.BOSS_EDGE_CASE, bossList.join(', '))
+        invalidPrefixMsg(bossList, PrefixCategories.BOSS_EDGE_CASE)
       );
-    else
-      msg.channel.send(
-        invalidPrefixMsg(PrefixCategories.BOSS, bossList.join(', '))
-      );
+    else msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
     return;
   }
 };

@@ -20,12 +20,27 @@ import {
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 
+const types: (TempleCacheType | string)[] = [
+  TempleCacheType.PLAYER_NAMES,
+  TempleCacheType.PLAYER_RECORDS,
+  TempleCacheType.PLAYER_STATS,
+  TempleCacheType.PLAYER_OVERVIEW_SKILL,
+  TempleCacheType.PLAYER_OVERVIEW_OTHER,
+];
+
 export const templefetch = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
   const embed: Embed = new Embed();
+  if (args.length === 0)
+    return msg.channel.send(
+      embed.setDescription(
+        `Invalid arguments. Valid arguments:\`\`\`\n${TempleCacheType.PLAYER_NAMES}\n${TempleCacheType.PLAYER_STATS}\n${TempleCacheType.PLAYER_RECORDS}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER}\`\`\``
+      )
+    );
+
   let dataType: TempleCacheType | string;
   let user: string[];
   if (args.length >= 2) {
@@ -45,13 +60,7 @@ export const templefetch = async (
   } else {
     return;
   }
-  const types: (TempleCacheType | string)[] = [
-    TempleCacheType.PLAYER_NAMES,
-    TempleCacheType.PLAYER_RECORDS,
-    TempleCacheType.PLAYER_STATS,
-    TempleCacheType.PLAYER_OVERVIEW_SKILL,
-    TempleCacheType.PLAYER_OVERVIEW_OTHER,
-  ];
+
   if (!types.includes(dataType))
     return msg.channel.send(
       embed.setDescription(

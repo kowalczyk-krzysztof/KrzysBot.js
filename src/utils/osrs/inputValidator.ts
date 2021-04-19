@@ -22,7 +22,7 @@ import { bossValidator } from './bossValidator';
 
 const gains: string = 'gains';
 
-const validInputCases: string[] = [
+export const validInputCases: string[] = [
   ValidInputCases.CLUES,
   ValidInputCases.BOSS,
   ValidInputCases.SKILL,
@@ -106,9 +106,7 @@ export const templeGainsRecords = (
   }
   // Check if the first argument is valid case (e.g boss)
   if (!validInputCases.includes(lowerCasedArguments[0])) {
-    msg.channel.send(
-      invalidPrefixMsg(PrefixCategories.EMPTY, validInputCases.join(', '))
-    );
+    msg.channel.send(invalidPrefixMsg(validInputCases));
     return;
   } else {
     validFirstArgument = lowerCasedArguments[0];
@@ -120,9 +118,7 @@ export const templeGainsRecords = (
   switch (validFirstArgument) {
     case ValidInputCases.CLUES:
       if (!clueList.includes(lowerCasedArguments[1])) {
-        msg.channel.send(
-          invalidPrefixMsg(PrefixCategories.CLUES, clueList.join(', '))
-        );
+        msg.channel.send(invalidPrefixMsg(clueList, PrefixCategories.CLUES));
         return;
       } else {
         isFirstArgumentValid = true;
@@ -133,10 +129,7 @@ export const templeGainsRecords = (
     case ValidInputCases.OTHER:
       if (!conditionalTypeOther.includes(lowerCasedArguments[1])) {
         msg.channel.send(
-          invalidPrefixMsg(
-            PrefixCategories.OTHER,
-            conditionalTypeOther.join(', ')
-          )
+          invalidPrefixMsg(conditionalTypeOther, PrefixCategories.OTHER)
         );
         return;
       } else {
@@ -147,9 +140,7 @@ export const templeGainsRecords = (
       break;
     case ValidInputCases.SKILL:
       if (!skillList.includes(lowerCasedArguments[1])) {
-        msg.channel.send(
-          invalidPrefixMsg(PrefixCategories.SKILL, skillList.join(', '))
-        );
+        msg.channel.send(invalidPrefixMsg(skillList, PrefixCategories.SKILL));
         return;
       } else {
         isFirstArgumentValid = true;
@@ -206,7 +197,7 @@ export const templeGainsRecords = (
       case FirstArgumentType.OTHER:
         if (!fullArray.includes(lowerCasedArguments[2])) {
           msg.channel.send(
-            invalidPrefixMsg(PrefixCategories.TIME_OTHER, fullArray.join(', '))
+            invalidPrefixMsg(fullArray, PrefixCategories.TIME_OTHER)
           );
           return;
         } else {
@@ -217,9 +208,7 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.CLUES:
         if (!notFullArray.includes(lowerCasedArguments[2])) {
-          msg.channel.send(
-            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
-          );
+          msg.channel.send(invalidPrefixMsg(notFullArray));
           return;
         } else {
           rsn = lowerCasedArguments.slice(3);
@@ -228,9 +217,7 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.SKILL:
         if (!fullArray.includes(lowerCasedArguments[2])) {
-          msg.channel.send(
-            invalidPrefixMsg(PrefixCategories.TIME, fullArray.join(', '))
-          );
+          msg.channel.send(invalidPrefixMsg(fullArray));
           return;
         } else {
           rsn = lowerCasedArguments.slice(3);
@@ -239,9 +226,7 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.BOSS_ONE_WORD:
         if (!notFullArray.includes(lowerCasedArguments[2])) {
-          msg.channel.send(
-            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
-          );
+          msg.channel.send(invalidPrefixMsg(notFullArray));
           return;
         } else {
           rsn = lowerCasedArguments.slice(3);
@@ -250,9 +235,7 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.BOSS_TWO_WORD:
         if (!notFullArray.includes(lowerCasedArguments[3])) {
-          msg.channel.send(
-            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
-          );
+          msg.channel.send(invalidPrefixMsg(notFullArray));
           return;
         } else {
           rsn = lowerCasedArguments.slice(4);
@@ -261,9 +244,7 @@ export const templeGainsRecords = (
         break;
       case FirstArgumentType.BOSS_THREE_WORD:
         if (!notFullArray.includes(lowerCasedArguments[4])) {
-          msg.channel.send(
-            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
-          );
+          msg.channel.send(invalidPrefixMsg(notFullArray));
           return;
         } else {
           rsn = lowerCasedArguments.slice(5);
