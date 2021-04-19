@@ -12,7 +12,7 @@ const BOSS_LIST: string = process.env.OSRS_BOSS_LIST as string;
 const SKILL_LIST: string = process.env.OSRS_SKILL_LIST as string;
 
 // TODO improve this
-export enum Categories {
+export enum PrefixCategories {
   BOSS = 'boss',
   BOSS_EDGE_CASE = 'bossedge',
   SKILL = 'skill',
@@ -20,7 +20,7 @@ export enum Categories {
   BH = 'bh',
   GAINS = 'gains',
   TIME = 'time',
-  TIME_LMS = 'timelms',
+  TIME_OTHER = 'timeother',
   OTHER = 'other',
   EMPTY = '',
 }
@@ -31,7 +31,7 @@ export const isPrefixValid = (
   msg: Message,
   args: string[],
   types: string[],
-  category: Categories
+  category: PrefixCategories
 ): string => {
   const typesList: string = types.join(', ');
   const parsedArgument: string = args[0]
@@ -45,17 +45,17 @@ export const isPrefixValid = (
 };
 // Generate msg
 export const invalidPrefixMsg = (
-  category: Categories,
+  category: PrefixCategories,
   types: string
 ): Embed => {
   let result;
-  if (category === Categories.BOSS) {
+  if (category === PrefixCategories.BOSS) {
     result = `Invalid boss name. Valid boss names: <${BOSS_LIST}>`;
-  } else if (category === Categories.BOSS_EDGE_CASE)
+  } else if (category === PrefixCategories.BOSS_EDGE_CASE)
     result = `Invalid boss name or username. Valid boss names: <${BOSS_LIST}>`;
-  else if (category === Categories.SKILL)
+  else if (category === PrefixCategories.SKILL)
     result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>`;
-  else if (category === Categories.TIME_LMS)
+  else if (category === PrefixCategories.TIME_OTHER)
     result = `Invalid ${category} type. Valid types: **${types}**\n\nFor LMS there is no 6h record`;
   else result = `Invalid ${category} type. Valid types: **${types}**`;
   return new Embed().setDescription(result);

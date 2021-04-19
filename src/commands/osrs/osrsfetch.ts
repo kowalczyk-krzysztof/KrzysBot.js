@@ -34,6 +34,6 @@ export const osrsfetch = async (
         `Fetched latest data available for player:\`\`\`${username}\`\`\``
       );
       return msg.channel.send(embed);
-    } else return errorHandler(msg);
+    } else msg.channel.send(errorHandler());
   }
 };

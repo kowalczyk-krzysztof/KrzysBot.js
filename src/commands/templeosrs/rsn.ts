@@ -14,6 +14,8 @@ import {
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const rsn = async (
   msg: Message,
@@ -41,7 +43,7 @@ const generateResult = (
   embed: TempleEmbed,
   playerObject: TemplePlayerNames
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     const names: string[] = [];
     for (const alias in playerObject[TempleOther.ALIASES]) {

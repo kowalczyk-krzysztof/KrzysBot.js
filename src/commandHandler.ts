@@ -23,6 +23,8 @@ import { lms } from './commands/osrs/lms';
 import { bh } from './commands/osrs/bh';
 import { soulwars } from './commands/osrs/soulwars';
 import { leaguepoints } from './commands/osrs/leaguepoints';
+// UTILS: Embeds
+import { ErrorEmbed } from './utils/embed';
 
 dotenv.config({ path: 'config.env' });
 // Command prefix
@@ -32,7 +34,7 @@ export const commandList: {
   [key: string]: (
     msg: Message,
     ...args: string[]
-  ) => Promise<Message | undefined | void>;
+  ) => Promise<Message | undefined | void | ErrorEmbed>;
 } = {
   commands,
   tenor,

@@ -59,9 +59,9 @@ export const datapoint = async (
           );
           return msg.channel.send(embed);
         }
-      } else return errorHandler(msg);
+      } else return msg.channel.send(errorHandler());
     } catch (err) {
-      return errorHandler(msg, err);
+      return msg.channel.send(errorHandler(err));
     }
   }
 };

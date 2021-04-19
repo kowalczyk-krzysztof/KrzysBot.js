@@ -20,11 +20,9 @@ import {
 // UTILS: Enums
 import {
   TempleOther,
-  Clues,
-  Skills,
   TempleCacheType,
-  ClueNamesFormatted,
   OsrsRandom,
+  ValidInputCases,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -39,15 +37,21 @@ import {
 } from '../../utils/osrs/inputValidator';
 // UTILS: Capitalize first letter
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
+// UTILS: FIeld name formatter
+import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
 
 export const record = async (
   msg: Message,
   commandName: string,
   ...args: string[]
-): Promise<Message | undefined> => {
-  const lowerCasedArguments = args.map((e: string) => {
+): Promise<Message | undefined | ErrorEmbed> => {
+  // This is done so the cooldown is per unique command e.g if someone checks weekly record then wants to check monthly record then it won't give them a cooldown
+  const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
+  // Validate user input and returns an object
   const parsedInput:
     | {
         rsn: string[] | undefined;
@@ -56,7 +60,7 @@ export const record = async (
         case: string | undefined;
       }
     | undefined = templeGainsRecords(msg, args, commandName);
-  if (parsedInput === undefined) return;
+  if (parsedInput === undefined) return errorHandler();
   const cooldown: number = 30;
   if (
     parsedInput.rsn !== undefined &&
@@ -64,9 +68,11 @@ export const record = async (
     parsedInput.field !== undefined &&
     parsedInput.case !== undefined
   ) {
+    // Check if rsn is valid runescape name
     const nameCheck: string = runescapeNameValidator(parsedInput.rsn);
     if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
     const username: string = nameCheck;
+    // Check if command is on cooldown
     if (
       isOnCooldown(
         msg,
@@ -77,20 +83,25 @@ export const record = async (
       ) === true
     )
       return;
+    // Because there are multiple time options, I want to have separate keys for each option, so instead of passing username I'm passing username + time so the key name becomes "zezimaweek" instead of just "zezima"
+    const userNameWithTime: string = username + parsedInput.time;
     const embed: TempleEmbed = new TempleEmbed()
       .setTitle(EmbedTitles.RECORDS)
       .addField(usernameString, `${username}`);
-    if (username in playerRecords) {
+    // Check if item is in cache
+    if (userNameWithTime in playerRecords) {
+      // Try to match the input field with key name on player object
       const field: keyof TemplePlayerRecords | undefined = fieldNameCheck(
         parsedInput.field,
         parsedInput.case
       ) as keyof TemplePlayerRecords;
-      if (field === undefined) return;
+      if (field === undefined) return errorHandler();
+      // Generate embed
       else {
         const result: TempleEmbed = generateResult(
           field,
           embed,
-          playerRecords[username],
+          playerRecords[userNameWithTime],
           parsedInput.time as keyof PlayerRecordsTimes,
           lowerCasedArguments
         );
@@ -98,18 +109,26 @@ export const record = async (
       }
     } else {
       const dataType: TempleCacheType = TempleCacheType.PLAYER_RECORDS;
-      const isFetched: boolean = await fetchTemple(msg, username, dataType);
+      // Fetch data from API endpoint
+      const isFetched: boolean = await fetchTemple(
+        msg,
+        username,
+        dataType,
+        parsedInput.time
+      );
       if (isFetched === true) {
+        // Try to match the input field with key name on player object
         const field: keyof TemplePlayerRecords | undefined = fieldNameCheck(
           parsedInput.field,
           parsedInput.case
         ) as keyof TemplePlayerRecords;
-        if (field === undefined) return;
+        if (field === undefined) return errorHandler();
         else {
+          // Generate result
           const result: TempleEmbed = generateResult(
             field,
             embed,
-            playerRecords[username],
+            playerRecords[userNameWithTime],
             parsedInput.time as keyof PlayerRecordsTimes,
             lowerCasedArguments
           );
@@ -128,46 +147,11 @@ const generateResult = (
   time: keyof PlayerRecordsTimes,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     // Changing the time value (string) to have a first capital letter
     const capitalFirst: string = capitalizeFirstLetter(time);
-    let formattedField: string;
-    switch (field) {
-      case Clues.ALL:
-        formattedField = ClueNamesFormatted.ALL;
-        break;
-      case Clues.BEGINNER:
-        formattedField = ClueNamesFormatted.BEGINNER;
-        break;
-      case Clues.EASY:
-        formattedField = ClueNamesFormatted.EASY;
-        break;
-      case Clues.MEDIUM:
-        formattedField = ClueNamesFormatted.MEDIUM;
-        break;
-      case Clues.HARD:
-        formattedField = ClueNamesFormatted.HARD;
-        break;
-      case Clues.ELITE:
-        formattedField = ClueNamesFormatted.ELITE;
-        break;
-      case Clues.MASTER:
-        formattedField = ClueNamesFormatted.MASTER;
-        break;
-      case Skills.RC:
-        formattedField = OsrsRandom.RUNECRAFTING;
-        break;
-      case TempleOther.EHB:
-        formattedField = field.toUpperCase();
-        break;
-      case TempleOther.EHP:
-        formattedField = field.toUpperCase();
-        break;
-      default:
-        formattedField = field;
-        break;
-    }
+    const formattedField: string = fieldNameFormatter(field);
     // If there are no records the key value is an empty array
     if (Array.isArray(playerObject[field]) === false) {
       // If there's no record for specific period of time then the key doesn't exist
@@ -176,22 +160,24 @@ const generateResult = (
         const timeField: ExpAndDate = playerObject[field][time] as ExpAndDate;
         const value: string | number = timeField[TempleOther.XP];
         let formattedValue;
-        if (args[0] === 'other') formattedValue = parseInt(value as string);
-        else {
+        if (args[0] === ValidInputCases.SKILL) {
           const formatter: Intl.NumberFormat = new Intl.NumberFormat(
-            `${OsrsRandom.DATE_FORMAT}`
+            OsrsRandom.DATE_FORMAT
           );
           formattedValue = formatter.format(value as number);
+        } else {
+          formattedValue = parseInt(value.toString());
         }
         // Changing sufix depending on whether the type is skill or not
         let ending: string;
-        if (args[0] === 'skill') ending = ` ${TempleOther.XP}`;
+        if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
+        else if (args[0] === ValidInputCases.BOSS)
+          ending = ` ${OsrsRandom.KILLS}`;
         else ending = '';
         // Formatting date
         const stringToDate: Date = new Date(
           playerObject[field][time][TempleOther.DATE_LOWERCASE]
         );
-
         const formattedDate: string = new Intl.DateTimeFormat('en-GB').format(
           stringToDate
         );

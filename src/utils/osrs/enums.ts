@@ -1,5 +1,5 @@
-// Temple OSRS Player Overview times
-export enum PlayerOverviewTimes {
+// TempleOSRS Player Overview Time Field Names
+export enum TempleOverviewTimes {
   FIVEMIN = '5min',
   DAY = '1day',
   WEEK = '7days',
@@ -7,23 +7,8 @@ export enum PlayerOverviewTimes {
   HALFYEAR = '186days',
   YEAR = '365days',
 }
-// TODO: Cleanup
-
-export enum TempleCacheType {
-  PLAYER_STATS = 'stats',
-  PLAYER_NAMES = 'names',
-  PLAYER_RECORDS = 'records',
-  PLAYER_OVERVIEW_SKILL = 'skillgains',
-  PLAYER_OVERVIEW_OTHER = 'othergains',
-}
-
-export enum TempleCacheTypeAliases {
-  PLAYER_OVERVIEW_SKILL = 'skill gains',
-  PLAYER_OVERVIEW_OTHER = 'other gains',
-}
-
-// Temple OSRS Player Overview time aliases
-export enum PlayerOverviewTimesAliases {
+// TempleOSRS Player Overview Time Field Aliases
+export enum TempleOverviewTimeAliases {
   FIVEMIN = '5min',
   DAY = 'day',
   WEEK = 'week',
@@ -31,21 +16,55 @@ export enum PlayerOverviewTimesAliases {
   HALFYEAR = '6months',
   YEAR = 'year',
 }
-
-export enum GameMode {
+// Valid cases for inputValidator
+export enum ValidInputCases {
+  CLUES = 'clues',
+  BOSS = 'boss',
+  SKILL = 'skill',
+  OTHER = 'other',
+}
+// Types of TempleOSRS cache
+export enum TempleCacheType {
+  PLAYER_STATS = 'stats',
+  PLAYER_NAMES = 'names',
+  PLAYER_RECORDS = 'records',
+  PLAYER_OVERVIEW_SKILL = 'skillgains',
+  PLAYER_OVERVIEW_OTHER = 'othergains',
+}
+// Aliases for types of TempleOSRS cache
+export enum TempleCacheTypeAliases {
+  PLAYER_OVERVIEW_SKILL = 'skill gains',
+  PLAYER_OVERVIEW_OTHER = 'other gains',
+}
+// TempleOSRS game modes
+export enum TempleGameMode {
   MAIN = 0,
   IM = 1,
   UIM = 2,
   HCIM = 3,
 }
+// TempleOSRS game mode formatted
+export enum TempleGameModeFormatted {
+  IM = 'IM',
+  UIM = 'UIM',
+  HCIM = 'HCIM',
+  NORMAL = '',
+}
+// TempleOSRS skiller or f2p check
+export enum SkillerOrF2p {
+  BOTH = 'Skiller and F2P',
+  SKILLER = 'Level 3 skiller',
+  F2P = 'F2P',
+  NONE = 'None',
+}
 
-export enum TrueOrFalse {
+// Temple OSRS true or false values e.g if field F2P has 0 as value then this means that player isn't F2P
+export enum TempleTrueOrFalse {
   TRUE = 1,
   FALSE = 0,
 }
-
-// Temple OSRS indexes:
-export enum SKillIndex {
+// Temple OSRS indexes - used in Player Overview data, each index represents a skill or boss/minigame
+export enum TempleSkillIndex {
   TOTAL = 0,
   ATT = 1,
   DEF = 2,
@@ -126,8 +145,7 @@ export enum SKillIndex {
   IM_EHP = 79,
   NIGHTMARE = 82,
 }
-
-// Osrs other key names
+// OSRS other key names
 export enum OsrsOther {
   BH_ROGUE = 'BH Rogue',
   BH_HUNTER = 'BH Hunter',
@@ -135,12 +153,11 @@ export enum OsrsOther {
   SOULWARS = 'Soul Wars Zeals',
 }
 
-// OSRS other aliases
+// OSRS other key aliases
 export enum OsrsOtherAliases {
   BH_ROGUE = 'rogue',
   BH_HUNTER = 'hunter',
 }
-
 // Temple OSRS other key names
 export enum TempleOther {
   INFO = 'info',
@@ -224,8 +241,17 @@ export enum ClueAliases {
   ELITE = 'elite',
   MASTER = 'master',
 }
-
-// Boss names
+// Formatted clue names
+export enum ClueNamesFormatted {
+  ALL = 'All Clues',
+  BEGINNER = 'Beginner Clues',
+  EASY = 'Easy Clues',
+  MEDIUM = 'Medium Clues',
+  HARD = 'Hard Clues',
+  ELITE = 'Elite Clues',
+  MASTER = 'Master Clues',
+}
+// OSRS boss names
 export enum Bosses {
   SIRE = 'Abyssal Sire',
   HYDRA = 'Alchemical Hydra',
@@ -273,7 +299,7 @@ export enum Bosses {
   ZALCANO = 'Zalcano',
   ZULRAH = 'Zulrah',
 }
-// Boss aliases
+// OSRS boss aliases
 export enum BossAliases {
   SIRE_ALIAS1 = 'abyssalsire',
   SIRE_ALIAS2 = 'sire',
@@ -376,8 +402,15 @@ export enum BossAliases {
   ZALC_ALIAS2 = 'zalcano',
   ZULRAH_ALIAS1 = 'zulrah',
 }
-
-// SKill names
+// BossCases used in bossValidator
+export enum BossCases {
+  INVALID = 0,
+  ONE_WORD = 1,
+  TWO_WORD = 2,
+  THREE_WORDS = 3,
+  EDGE_CASE = 4,
+}
+// OSRS sKill names
 export enum Skills {
   TOTAL = 'Overall',
   ATT = 'Attack',
@@ -404,7 +437,7 @@ export enum Skills {
   HUNT = 'Hunter',
   CON = 'Construction',
 }
-// Skill aliases
+// OSRS skill aliases
 export enum SkillAliases {
   TOTAL_ALIAS1 = 'total',
   TOTAL_ALIAS2 = 'overall',
@@ -459,20 +492,11 @@ export enum SkillAliases {
   CONSTR_ALIAS3 = 'con',
   CONSTR_ALIAS4 = 'constr',
 }
-
-export enum ClueNamesFormatted {
-  ALL = 'All Clues',
-  BEGINNER = 'Beginner Clues',
-  EASY = 'Easy Clues',
-  MEDIUM = 'Medium Clues',
-  HARD = 'Hard Clues',
-  ELITE = 'Elite Clues',
-  MASTER = 'Master Clues',
-}
-
+// Random OSRS enums
 export enum OsrsRandom {
   RUNECRAFTING = 'Runecrafting',
   EXP_LONG = 'Experience',
   DATE_FORMAT = 'en-US',
   LVL_SHORT = 'lvl',
+  KILLS = 'kills',
 }

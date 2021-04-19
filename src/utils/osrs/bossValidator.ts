@@ -1,11 +1,11 @@
 // Discord
 import { Message } from 'discord.js';
 // UTILS: Enums
-import { BossAliases } from './enums';
+import { BossAliases, BossCases } from './enums';
 // UTILS: Input validator
 import { bossList } from './inputValidator';
 // UTILS: Prefix validator
-import { Categories, invalidPrefixMsg } from './isPrefixValid';
+import { PrefixCategories, invalidPrefixMsg } from './isPrefixValid';
 /* 
   Boss list is an array of lowercase joined boss name e.g "abyssalsire". 
   User input is a string array e.g ["abyssal", "sire", "zezima"]
@@ -16,15 +16,7 @@ import { Categories, invalidPrefixMsg } from './isPrefixValid';
   User to search for is args.slice(<length of args that are the boss name>)
   */
 
-// TODO: Cleanup
-export enum BossCases {
-  INVALID = 0,
-  ONE_WORD = 1,
-  TWO_WORD = 2,
-  THREE_WORDS = 3,
-  EDGE_CASE = 4,
-}
-
+// Indexes for which input argument is used as index
 enum Indexes {
   FIRST_WORD = 0,
   SECOND_WORD = 1,
@@ -103,10 +95,12 @@ export const bossValidator = (
   else {
     if ((bossCase = BossCases.EDGE_CASE))
       msg.channel.send(
-        invalidPrefixMsg(Categories.BOSS_EDGE_CASE, bossList.join(', '))
+        invalidPrefixMsg(PrefixCategories.BOSS_EDGE_CASE, bossList.join(', '))
       );
     else
-      msg.channel.send(invalidPrefixMsg(Categories.BOSS, bossList.join(', ')));
+      msg.channel.send(
+        invalidPrefixMsg(PrefixCategories.BOSS, bossList.join(', '))
+      );
     return;
   }
 };

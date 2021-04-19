@@ -28,16 +28,18 @@ import {
 // UTILS: Prefix validator
 import {
   isPrefixValid,
-  Categories,
+  PrefixCategories,
   invalidPrefix,
 } from '../../utils/osrs/isPrefixValid';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const bh = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const prefix: string = isPrefixValid(msg, args, bhTypes, Categories.BH);
+  const prefix: string = isPrefixValid(msg, args, bhTypes, PrefixCategories.BH);
   if (prefix === invalidPrefix) return;
   const cooldown: number = 30;
 
@@ -75,7 +77,7 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     let scoreType: string | number;
     let title: string;

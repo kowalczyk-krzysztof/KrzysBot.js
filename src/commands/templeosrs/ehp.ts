@@ -7,7 +7,12 @@ import { ErrorEmbed, TempleEmbed, usernameString } from '../../utils/embed';
 // UTILS: Interfaces
 import { TemplePlayerStats } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { TempleOther, TempleCacheType } from '../../utils/osrs/enums';
+import {
+  TempleOther,
+  TempleCacheType,
+  SkillerOrF2p,
+  TempleGameModeFormatted,
+} from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -17,18 +22,15 @@ import {
 // UTILS: Temple date parser
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
 // UTILS: Game mode validator
-import {
-  gameModeCheck,
-  skillerOrF2P,
-  SkillerOrF2p,
-  GameModeString,
-} from '../../utils/osrs/gameModeCheck';
+import { gameModeCheck, skillerOrF2P } from '../../utils/osrs/gameModeCheck';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const ehp = async (
   msg: Message,
   commandName: string,
   ...args: string[]
-): Promise<Message | undefined> => {
+): Promise<Message | undefined | ErrorEmbed> => {
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
@@ -52,7 +54,7 @@ const generateResult = (
   playerObject: TemplePlayerStats,
   keyword: string
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     const embed: TempleEmbed = new TempleEmbed().addField(
       usernameString,
@@ -63,7 +65,7 @@ const generateResult = (
     );
     embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
     const f2pOrSkiller: string = skillerOrF2P(keyword);
-    const gameMode: string = gameModeCheck(keyword);
+    const TempleGameMode: string = gameModeCheck(keyword);
     let data: number;
     /*
     First check if player is ironman, if so add ironman ehp (the value is the same for all ironman accounts)
@@ -78,10 +80,12 @@ const generateResult = (
     4064
 
   */
-    if (gameMode !== GameModeString.NORMAL) {
+    if (TempleGameMode !== TempleGameModeFormatted.NORMAL) {
       data = parseInt(playerObject[TempleOther.IM_EHP_CAPITAL].toString());
-
-      embed.addField(`${TempleOther.EHP.toUpperCase()} ${gameMode}`, `${data}`);
+      embed.addField(
+        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}`,
+        `${data}`
+      );
     }
     if (f2pOrSkiller === SkillerOrF2p.BOTH) {
       embed.addField(
@@ -104,10 +108,13 @@ const generateResult = (
       );
     else if (
       f2pOrSkiller === SkillerOrF2p.NONE &&
-      gameMode === GameModeString.NORMAL
+      TempleGameMode === TempleGameModeFormatted.NORMAL
     ) {
       data = parseInt(playerObject[TempleOther.EHP].toString());
-      embed.addField(`${TempleOther.EHP.toUpperCase()} ${gameMode}`, `${data}`);
+      embed.addField(
+        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}`,
+        `${data}`
+      );
     }
     return embed;
   }

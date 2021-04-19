@@ -37,7 +37,7 @@ export const fetchOsrsStats = async (
       msg.channel.send(
         new Embed().addField('ERROR', `Player **${keyword}** not found`)
       );
-    } else errorHandler(msg, err);
+    } else errorHandler(msg);
     return false;
   }
 };
