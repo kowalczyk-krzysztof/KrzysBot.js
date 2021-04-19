@@ -2,9 +2,8 @@
 import { Message } from 'discord.js';
 // Dotenv
 import dotenv from 'dotenv';
-// Commands: Random
+// Commands: Command List
 import { commands } from './commands/commands';
-import { tenor } from './commands/tenor';
 // Commands: TempleOSRS
 import { ehp } from './commands/templeosrs/ehp';
 import { ehb } from './commands/templeosrs/ehb';
@@ -14,6 +13,7 @@ import { templefetch } from './commands/templeosrs/templefetch';
 import { datapoint } from './commands/templeosrs/datapoint';
 import { record } from './commands/templeosrs/record';
 import { gains } from './commands/templeosrs/gains';
+import { topboss } from './commands/templeosrs/topsboss';
 // Commands: OSRS
 import { clues } from './commands/osrs/clues';
 import { kc } from './commands/osrs/kc';
@@ -37,7 +37,6 @@ export const commandList: {
   ) => Promise<Message | undefined | void | ErrorEmbed>;
 } = {
   commands,
-  tenor,
   ehp,
   ehb,
   rsn,
@@ -54,6 +53,7 @@ export const commandList: {
   leaguepoints,
   record,
   gains,
+  topboss,
 };
 // Alias handler - take a command name and check if it has an alias then return the original name
 export const aliasHandler = (commandName: string) => {

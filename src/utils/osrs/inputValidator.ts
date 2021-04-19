@@ -14,13 +14,12 @@ import {
   TempleOverviewTimeAliases,
   ValidInputCases,
   BossCases,
+  OsrsCommands,
 } from './enums';
 // UTILS: Prefix validator
 import { PrefixCategories, invalidPrefixMsg } from './isPrefixValid';
 // UTILS: Boss validator
 import { bossValidator } from './bossValidator';
-
-const gains: string = 'gains';
 
 export const validInputCases: string[] = [
   ValidInputCases.CLUES,
@@ -40,13 +39,14 @@ const otherTypes = [
   TempleOther.EHB_LOWERCASE,
   TempleOther.EHP_LOWERCASE,
 ];
-const templeOverviewTimes: string[] = [
+export const templeOverviewTimeAliases: string[] = [
   TempleOverviewTimeAliases.FIVEMIN,
   TempleOverviewTimeAliases.DAY,
   TempleOverviewTimeAliases.WEEK,
   TempleOverviewTimeAliases.MONTH,
   TempleOverviewTimeAliases.HALFYEAR,
   TempleOverviewTimeAliases.YEAR,
+  TempleOverviewTimeAliases.ALLTIME,
 ];
 
 enum FirstArgumentType {
@@ -88,15 +88,18 @@ export const templeGainsRecords = (
     return e.toLowerCase();
   });
   let conditionalTypeOther: string[];
+  // Change the command name in erorr msg based on commandName
+
+  let usedCommand: string;
   // Change valid other case arguments based on command used
-  if (commandName === gains)
+  if (commandName === OsrsCommands.GAINS) {
     conditionalTypeOther = [...otherTypes, TempleOther.IM_EHP_JOINED];
-  else conditionalTypeOther = otherTypes;
+    usedCommand = OsrsCommands.GAINS;
+  } else {
+    conditionalTypeOther = otherTypes;
+    usedCommand = OsrsCommands.RECORD;
+  }
   if (args.length === 0) {
-    // Changed the command name in erorr msg based on commandName
-    let usedCommand: string;
-    if (commandName === gains) usedCommand = gains;
-    else usedCommand = 'record';
     msg.channel.send(
       new Embed().setDescription(
         `**Please provide arguments. Valid formats**:\`\`\`.${usedCommand} clues tier time username\n\n.${usedCommand} lms time username\n\n.${usedCommand} skill skill-name time username\n\n.${usedCommand} boss boss-name time username\`\`\``
@@ -183,14 +186,13 @@ export const templeGainsRecords = (
   let fullArray: string[];
   let notFullArray: string[];
   // Change available times based on command used
-  if (commandName === gains) {
-    fullArray = templeOverviewTimes;
-    notFullArray = templeOverviewTimes;
+  if (usedCommand === OsrsCommands.GAINS) {
+    fullArray = templeOverviewTimeAliases;
+    notFullArray = templeOverviewTimeAliases;
   } else {
     fullArray = timeTypesAll;
     notFullArray = timeTypes;
   }
-
   if (isFirstArgumentValid === true) {
     // Check if input time is valid depending on first argument type. This is because for example bosses don't have 6h records. Slice everything before and including time. Whatever is left is username
     switch (firstArgumentType) {
@@ -644,7 +646,7 @@ export const bossFields = (fieldName: string): string | undefined => {
       fieldToCheck = Bosses.GUARDIANS;
       break;
     case BossAliases.HESPORI_ALIAS1:
-      fieldToCheck = Bosses.GUARDIANS;
+      fieldToCheck = Bosses.HESPORI;
       break;
     case BossAliases.KQ_ALIAS1:
       fieldToCheck = Bosses.KQ;

@@ -2,7 +2,7 @@
 import { MessageEmbed } from 'discord.js';
 
 // Username field
-export const usernameString: string = 'Username';
+export const usernameString: string = 'USERNAME:';
 
 // General embed
 export class Embed extends MessageEmbed {
@@ -48,4 +48,5 @@ export enum EmbedTitles {
   LMS = 'LMS',
   RECORDS = 'RECORDS',
   GAINS = 'GAINS',
+  TOPBOSS = 'MOST KILLED BOSS',
 }

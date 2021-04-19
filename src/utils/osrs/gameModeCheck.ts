@@ -8,7 +8,7 @@ import {
   TempleGameModeFormatted,
   SkillerOrF2p,
 } from './enums';
-
+// Game mode check for EHP and EHB commands
 export const gameModeCheck = (username: string): string => {
   const gameMode: TempleGameMode =
     playerStats[username][TempleOther.INFO][TempleOther.GAME_MODE];

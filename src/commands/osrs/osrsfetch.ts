@@ -14,13 +14,14 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+import { CommandCooldowns } from '../../utils/osrs/enums';
 
 export const osrsfetch = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const cooldown: number = 600;
+  const cooldown: number = CommandCooldowns.OSRSFETCH;
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;

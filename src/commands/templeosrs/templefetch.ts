@@ -8,6 +8,7 @@ import { isOnCooldown } from '../../cache/cooldown';
 import { Embed } from '../../utils/embed';
 // UTILS: Enums
 import {
+  CommandCooldowns,
   TempleCacheType,
   TempleCacheTypeAliases,
 } from '../../utils/osrs/enums';
@@ -19,6 +20,7 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
 
 const types: (TempleCacheType | string)[] = [
   TempleCacheType.PLAYER_NAMES,
@@ -40,22 +42,43 @@ export const templefetch = async (
         `Invalid arguments. Valid arguments:\`\`\`\n${TempleCacheType.PLAYER_NAMES}\n${TempleCacheType.PLAYER_STATS}\n${TempleCacheType.PLAYER_RECORDS}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER}\`\`\``
       )
     );
+  const lowerCasedArguments: string[] = args.map((e: string) => {
+    return e.toLowerCase();
+  });
 
   let dataType: TempleCacheType | string;
   let user: string[];
+  let time: string;
   if (args.length >= 2) {
     const joinedArgs: string = args[0] + args[1];
     if (joinedArgs.toLowerCase() === TempleCacheType.PLAYER_OVERVIEW_SKILL) {
       dataType = joinedArgs.toLowerCase();
-      user = args.slice(2);
+      const validTime: string | undefined = templeOverviewTimeValidator(
+        msg,
+        args.slice(2)
+      );
+      if (validTime === undefined) return;
+      else {
+        user = args.slice(3);
+        time = validTime;
+      }
     } else if (
       joinedArgs.toLowerCase() === TempleCacheType.PLAYER_OVERVIEW_OTHER
     ) {
       dataType = joinedArgs.toLowerCase();
-      user = args.slice(2);
+      const validTime: string | undefined = templeOverviewTimeValidator(
+        msg,
+        args.slice(2)
+      );
+      if (validTime === undefined) return;
+      else {
+        user = args.slice(3);
+        time = validTime;
+      }
     } else {
       dataType = args[0].toLowerCase();
       user = args.slice(1);
+      time = '';
     }
   } else {
     return;
@@ -68,16 +91,26 @@ export const templefetch = async (
       )
     );
 
-  const cooldown: number = 600;
+  const cooldown: number = CommandCooldowns.TEMPLEFETCH;
   const nameCheck: string = runescapeNameValidator(user);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
-  if (isOnCooldown(msg, commandName, cooldown, true, username) === true) return;
+  if (
+    isOnCooldown(
+      msg,
+      commandName,
+      cooldown,
+      true,
+      lowerCasedArguments.join('')
+    ) === true
+  )
+    return;
   else {
     const isFetched: boolean = await fetchTemple(
       msg,
       username,
-      dataType as TempleCacheType
+      dataType as TempleCacheType,
+      time
     );
     if (isFetched === true) {
       let formattedTypes: string;

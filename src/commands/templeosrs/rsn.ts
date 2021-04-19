@@ -51,7 +51,7 @@ const generateResult = (
       names.push(alias);
     }
     const data: string = names.join('\n');
-    embed.addField('Names', `${data}`);
+    embed.addField('NAMES:', `\`\`\`${data}\`\`\``);
     return embed;
   }
 };

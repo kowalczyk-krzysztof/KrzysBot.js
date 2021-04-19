@@ -15,6 +15,7 @@ import {
 import { OsrsPlayer } from '../../utils/osrs/interfaces';
 // UTILS: Enums
 import {
+  CommandCooldowns,
   OsrsOther,
   OsrsOtherAliases,
   TempleOther,
@@ -43,7 +44,7 @@ export const bh = async (
   const prefix: string = isPrefixValid(msg, args, bhTypes);
   if (prefix === invalidPrefix) return;
 
-  const cooldown: number = 30;
+  const cooldown: number = CommandCooldowns.BH;
 
   const user: string[] = args.slice(1);
   const nameCheck: string = runescapeNameValidator(user);
@@ -53,7 +54,7 @@ export const bh = async (
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.BH)
-    .addField(usernameString, `${username}`);
+    .addField(usernameString, `\`\`\`${username}\`\`\``);
   if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(
       prefix,
@@ -91,7 +92,10 @@ const generateResult = (
       scoreType = playerObject[OsrsOther.BH_HUNTER][TempleOther.SCORE];
       title = OsrsOther.BH_HUNTER;
     }
-    embed.addField(`${title} ${TempleOther.SCORE}`, `${scoreType}`);
+    embed.addField(
+      `${title.toUpperCase()} ${TempleOther.SCORE.toUpperCase()}:`,
+      `\`\`\`${scoreType}\`\`\``
+    );
     return embed;
   }
 };

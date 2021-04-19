@@ -14,7 +14,7 @@ import {
 // UTILS: Interfaces
 import { OsrsPlayer, BossOrMinigame } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { TempleOther } from '../../utils/osrs/enums';
+import { CommandCooldowns, TempleOther } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -53,7 +53,7 @@ export const clues = async (
     PrefixCategories.CLUES
   );
   if (prefix === invalidPrefix) return;
-  const cooldown: number = 30;
+  const cooldown: number = CommandCooldowns.CLUES;
   const nameCheck: string = runescapeNameValidator(args.slice(1));
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
@@ -69,7 +69,7 @@ export const clues = async (
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.CLUES)
-    .addField(usernameString, `${username}`);
+    .addField(usernameString, `\`\`\`${username}\`\`\``);
   if (username in osrsStats) {
     const field: keyof OsrsPlayer | undefined = clueFields(
       prefix
@@ -104,7 +104,10 @@ const generateResult = (
   else {
     const clueType: BossOrMinigame = playerObject[field] as BossOrMinigame;
     const formattedField: string = fieldNameFormatter(field);
-    embed.addField(`${formattedField}`, `${clueType[TempleOther.SCORE]}`);
+    embed.addField(
+      `${formattedField.toUpperCase()}:`,
+      `\`\`\`${clueType[TempleOther.SCORE]}\`\`\``
+    );
     return embed;
   }
 };

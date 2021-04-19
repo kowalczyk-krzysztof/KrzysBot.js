@@ -14,7 +14,12 @@ import {
 // UTILS: Interfaces
 import { OsrsPlayer, BossOrMinigame } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { TempleOther, BossCases, OsrsRandom } from '../../utils/osrs/enums';
+import {
+  TempleOther,
+  BossCases,
+  OsrsRandom,
+  CommandCooldowns,
+} from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -65,7 +70,7 @@ export const kc = async (
   }
   const boss: keyof OsrsPlayer = bossValidation.boss as keyof OsrsPlayer;
 
-  const cooldown: number = 30;
+  const cooldown: number = CommandCooldowns.KC;
 
   const nameCheck: string = runescapeNameValidator(user);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
@@ -124,9 +129,10 @@ const generateResult = (
     return errorHandler();
   else {
     const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
+    embed.addField(`${OsrsRandom.BOSS.toUpperCase()}:`, `\`\`\`${field}\`\`\``);
     embed.addField(
-      `${field} ${OsrsRandom.KILLS}`,
-      `${boss[TempleOther.SCORE]}`
+      `${OsrsRandom.KILLS.toUpperCase()}:`,
+      `\`\`\`${boss[TempleOther.SCORE]}\`\`\``
     );
     return embed;
   }

@@ -4,13 +4,14 @@ import { Message } from 'discord.js';
 import { isOnCooldown } from '../cache/cooldown';
 // UTILS: Create commands list
 import { createCommandList } from '../utils/createCommandList';
+import { CommandCooldowns } from '../utils/osrs/enums';
 
 export const commands = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<void> => {
-  const cooldown: number = 60;
+  const cooldown: number = CommandCooldowns.COMMAND_LIST;
   if (
     isOnCooldown(msg, commandName, cooldown, false, args.join('').toLowerCase())
   )

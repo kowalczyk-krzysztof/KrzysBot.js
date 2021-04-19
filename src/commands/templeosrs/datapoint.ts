@@ -16,15 +16,16 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+import { CommandCooldowns } from '../../utils/osrs/enums';
 
 dotenv.config({ path: 'config.env' });
-
+// TODO: Add conditional cooldown - if it returns player has been updated in the last 60 secs - allow again
 export const datapoint = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const cooldown: number = 1800;
+  const cooldown: number = CommandCooldowns.DATAPOINTS;
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;

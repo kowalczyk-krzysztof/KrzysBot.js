@@ -59,12 +59,15 @@ const generateResult = (
   else {
     const embed: TempleEmbed = new TempleEmbed().addField(
       usernameString,
-      `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
+      `\`\`\`${playerObject[TempleOther.INFO][TempleOther.USERNAME]}\`\`\``
     );
     const lastChecked: { title: string; time: string } = templeDateParser(
       playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
     );
-    embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
+    embed.addField(
+      `${lastChecked.title.toUpperCase()}:`,
+      `\`\`\`${lastChecked.time}\`\`\``
+    );
     const f2pOrSkiller: string = skillerOrF2P(keyword);
     const TempleGameMode: string = gameModeCheck(keyword);
     let data: number;
@@ -84,28 +87,28 @@ const generateResult = (
     if (TempleGameMode !== TempleGameModeFormatted.NORMAL) {
       data = parseInt(playerObject[TempleOther.IM_EHP_CAPITAL].toString());
       embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}`,
-        `${data}`
+        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}:`,
+        `\`\`\`${data}\`\`\``
       );
     }
     if (f2pOrSkiller === SkillerOrF2p.BOTH) {
       embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}`,
-        `${parseInt(playerObject[TempleOther.F2P_EHP].toString())}`
+        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}:`,
+        `\`\`\`${parseInt(playerObject[TempleOther.F2P_EHP].toString())}\`\`\``
       );
       embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}`,
-        `${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}`
+        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}:`,
+        `\`\`\`${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}\`\`\``
       );
     } else if (f2pOrSkiller === SkillerOrF2p.SKILLER)
       embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}`,
-        `${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}`
+        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}:`,
+        `\`\`\`${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}\`\`\``
       );
     else if (f2pOrSkiller === SkillerOrF2p.F2P)
       embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}`,
-        `${parseInt(playerObject[TempleOther.F2P_EHP].toString())}`
+        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}:`,
+        `\`\`\`${parseInt(playerObject[TempleOther.F2P_EHP].toString())}\`\`\``
       );
     else if (
       f2pOrSkiller === SkillerOrF2p.NONE &&
@@ -113,8 +116,8 @@ const generateResult = (
     ) {
       data = parseInt(playerObject[TempleOther.EHP].toString());
       embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}`,
-        `${data}`
+        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}:`,
+        `\`\`\`${data}\`\`\``
       );
     }
     return embed;

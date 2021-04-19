@@ -58,20 +58,23 @@ const generateResult = (
   else {
     const embed: TempleEmbed = new TempleEmbed().addField(
       usernameString,
-      `${playerObject[TempleOther.INFO][TempleOther.USERNAME]}`
+      `\`\`\`${playerObject[TempleOther.INFO][TempleOther.USERNAME]}\`\`\``
     );
     const lastChecked: { title: string; time: string } = templeDateParser(
       playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
     );
     const TempleGameMode: string = gameModeCheck(keyword);
-    embed.addField(`${lastChecked.title}`, `${lastChecked.time}`);
+    embed.addField(
+      `${lastChecked.title.toUpperCase()}:`,
+      `\`\`\`${lastChecked.time}\`\`\``
+    );
     let data: number;
     if (TempleGameMode === TempleGameModeFormatted.NORMAL)
       data = parseInt(playerObject[TempleOther.EHB].toString());
     else data = parseInt(playerObject[TempleOther.IM_EHB].toString());
     embed.addField(
-      `${TempleOther.EHB.toUpperCase()} ${TempleGameMode}`,
-      `${data}`
+      `${TempleOther.EHB.toUpperCase()} ${TempleGameMode}:`,
+      `\`\`\`${data}\`\`\``
     );
     return embed;
   }
