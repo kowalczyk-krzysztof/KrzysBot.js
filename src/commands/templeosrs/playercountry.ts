@@ -41,7 +41,8 @@ export const playercountry = async (
 const generateResult = (
   playerObject: TemplePlayerStats
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     const embed: TempleEmbed = new TempleEmbed().addField(
       usernameString,

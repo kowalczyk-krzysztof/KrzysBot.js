@@ -43,7 +43,8 @@ const generateResult = (
   embed: TempleEmbed,
   playerObject: TemplePlayerNames
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     const names: string[] = [];
     for (const alias in playerObject[TempleOther.ALIASES]) {

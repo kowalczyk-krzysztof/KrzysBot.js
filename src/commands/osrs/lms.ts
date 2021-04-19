@@ -56,7 +56,8 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     embed.addField(
       `${TempleOther.LMS} ${capitalizeFirstLetter(TempleOther.SCORE)}`,

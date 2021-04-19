@@ -39,7 +39,6 @@ export const kc = async (
 ): Promise<Message | undefined> => {
   if (args.length === 0)
     return msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
-
   const indexes: number[] = [0, 1, 2];
   // This is done so the cooldown is per unique command + boss validation needs lowercase
   const lowerCasedArguments: string[] = args.map((e: string) => {
@@ -121,7 +120,8 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
     embed.addField(
