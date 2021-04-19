@@ -47,4 +47,5 @@ export enum EmbedTitles {
   SOULWARS = 'SOUL WARS',
   LMS = 'LMS',
   RECORDS = 'RECORDS',
+  GAINS = 'GAINS',
 }

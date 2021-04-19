@@ -81,6 +81,6 @@ export const templefetch = async (
         `Fetched latest **${formattedTypes}** data available for player:\`\`\`${username}\`\`\`To get more recent data - add a new datapoint and fetch again`
       );
       return msg.channel.send(embed);
-    } else return errorHandler(msg);
+    } else msg.channel.send(errorHandler());
   }
 };

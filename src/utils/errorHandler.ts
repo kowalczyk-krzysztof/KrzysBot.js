@@ -1,5 +1,3 @@
-// Discord
-import { Message } from 'discord.js';
 // Dotenv
 import dotenv from 'dotenv';
 // UTILS: Embeds
@@ -9,11 +7,8 @@ dotenv.config({ path: 'config.env' });
 // Env status
 const env: string = process.env.NODE_ENV as string;
 // TODO: Make this good
-export const errorHandler = (
-  msg: Message,
-  err: any = null
-): Promise<Message> => {
+export const errorHandler = (err: any = null): ErrorEmbed => {
   const embed: ErrorEmbed = new ErrorEmbed();
   if (env === 'development') console.log(err);
-  return msg.channel.send(embed);
+  return embed;
 };

@@ -23,6 +23,8 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Capitalize first letter
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const lms = async (
   msg: Message,
@@ -54,7 +56,7 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     embed.addField(
       `${TempleOther.LMS} ${capitalizeFirstLetter(TempleOther.SCORE)}`,

@@ -64,7 +64,7 @@ export const fetchTemple = async (
           `Player **${playerName}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
         );
         msg.channel.send(embed);
-      } else errorHandler(msg, res.data.error);
+      } else msg.channel.send(errorHandler(res.data.error));
       return false;
     } else {
       let data;
@@ -77,13 +77,15 @@ export const fetchTemple = async (
         data = res.data.data;
       else if (type === TempleCacheType.PLAYER_RECORDS) data = res.data.records;
       let cacheItemName: string;
+
+      // For some cases like records and gains, there are different objects depending on time field, so I want to store keys like "zezimaweek"
       if (time !== '') cacheItemName = playerName + time;
       else cacheItemName = playerName;
       addToCache(cacheItemName, data, type);
       return true;
     }
   } catch (err) {
-    errorHandler(msg, err);
+    msg.channel.send(errorHandler(err));
     return false;
   }
 };

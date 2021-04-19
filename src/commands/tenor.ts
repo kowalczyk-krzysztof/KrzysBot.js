@@ -33,6 +33,6 @@ export const tenor = async (
     const index: number = Math.floor(Math.random() * res.data.results.length);
     return msg.channel.send(res.data.results[index].url);
   } catch (err) {
-    return errorHandler(msg, err);
+    return msg.channel.send(errorHandler(err));
   }
 };

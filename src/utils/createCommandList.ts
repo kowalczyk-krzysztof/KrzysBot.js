@@ -29,25 +29,28 @@ export const createCommandList = (msg: Message, args: string[]) => {
   // If command was used without arguments (".commands") then check if it's on cooldown, if not the send send user list of cateogires
   if (content.length === 0) {
     fs.readFile(dir, (err, data: Buffer) => {
-      if (err) return errorHandler(msg, err);
+      if (err) return msg.channel.send(errorHandler(err));
       const json: CommandList = JSON.parse(data.toString());
-      const categories: string[] = [];
+      const PrefixCategories: string[] = [];
       // Here I'm mapping each category and getting the first object in it, then getting its category property. I'm doing it like this so I can have easily indexable lowercase category names as keys and still be able to return category names nicely formatted to user.
       Object.values(json).map((command: { [key: string]: Command }) => {
-        categories.push(Object.values(command)[0].category);
+        PrefixCategories.push(Object.values(command)[0].category);
       });
       return msg.channel.send(
         embed
           .setFooter(
             `To get a list of commands in a category use\n.commands category`
           )
-          .addField('Command Categories', `\n${categories.join('\n')}`)
+          .addField(
+            'Command PrefixCategories',
+            `\n${PrefixCategories.join('\n')}`
+          )
       );
     });
   } else {
     // If user provided arguments e.g ".commands foo bar" then join them into lowercase string and check if category with such name exists (keyword in json). If not return a msg to user. If category exists then check if it's on cooldown, if not return list of commands in that category. If a category has aliases, include them, if not then don't include aliases
     fs.readFile(dir, (err, data: Buffer) => {
-      if (err) return errorHandler(msg, err);
+      if (err) return msg.channel.send(errorHandler(err));
       const keyword: string = content.join('').toLowerCase();
       const json: CommandList = JSON.parse(data.toString());
       if (keyword in json === true) {

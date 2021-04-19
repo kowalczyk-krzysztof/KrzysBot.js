@@ -21,6 +21,8 @@ import {
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const soulwars = async (
   msg: Message,
@@ -52,7 +54,7 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     embed.addField(
       `${OsrsOther.SOULWARS}`,

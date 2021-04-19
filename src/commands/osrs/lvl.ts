@@ -24,21 +24,29 @@ import {
 // UTILS: Prefix validator
 import {
   isPrefixValid,
-  Categories,
+  PrefixCategories,
   invalidPrefix,
 } from '../../utils/osrs/isPrefixValid';
 // UTILS: Input validator
 import { skillFields, skillList } from '../../utils/osrs/inputValidator';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const lvl = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const lowerCasedArguments = args.map((e: string) => {
+  // This is done so the cooldown is per unique command
+  const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
-  const prefix: string = isPrefixValid(msg, args, skillList, Categories.SKILL);
+  const prefix: string = isPrefixValid(
+    msg,
+    args,
+    skillList,
+    PrefixCategories.SKILL
+  );
   if (prefix === invalidPrefix) return;
   const cooldown: number = 30;
   const nameCheck: string = runescapeNameValidator(args.slice(1));
@@ -95,7 +103,7 @@ const generateResult = (
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   // keyof is how I can index objects like that
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     const skill = playerObject[field] as OsrsSkill;
     // Intl is how I format number to have commas

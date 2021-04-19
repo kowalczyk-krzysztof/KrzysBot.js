@@ -5,119 +5,95 @@ import {
   Clues,
   OsrsOther,
   TempleOther,
-  GameMode,
+  TempleGameMode,
 } from './enums';
-
-// TODO make better names
-
-export interface TempleTableSkill extends Osrs<TempleOverviewTableSkill> {
-  [TempleOther.EHP]: TempleOverviewTableSkill;
-  [TempleOther.IM_EHP]: TempleOverviewTableSkill;
-}
-
-export interface TempleTableOther extends Osrs<TempleOverviewTableOther> {
-  [TempleOther.EHB]: TempleOverviewTableOther;
-}
-// General OSRS interface
-export interface Osrs<T> {
-  [Skills.TOTAL]: T;
-  [Skills.ATT]: T;
-  [Skills.DEF]: T;
-  [Skills.STR]: T;
-  [Skills.HP]: T;
-  [Skills.RANGED]: T;
-  [Skills.PRAY]: T;
-  [Skills.MAGIC]: T;
-  [Skills.COOK]: T;
-  [Skills.WC]: T;
-  [Skills.FLETCH]: T;
-  [Skills.FISH]: T;
-  [Skills.FM]: T;
-  [Skills.CRAFT]: T;
-  [Skills.SMITH]: T;
-  [Skills.MINING]: T;
-  [Skills.HERB]: T;
-  [Skills.AGIL]: T;
-  [Skills.THIEV]: T;
-  [Skills.SLAYER]: T;
-  [Skills.FARM]: T;
-  [Skills.RC]: T;
-  [Skills.HUNT]: T;
-  [Skills.CON]: T;
-  [Clues.ALL]: T;
-  [Clues.BEGINNER]: T;
-  [Clues.EASY]: T;
-  [Clues.MEDIUM]: T;
-  [Clues.HARD]: T;
-  [Clues.ELITE]: T;
-  [Clues.MASTER]: T;
-  [Bosses.SIRE]: T;
-  [Bosses.HYDRA]: T;
-  [Bosses.BARROWS]: T;
-  [Bosses.BRYOPHYTA]: T;
-  [Bosses.CALLISTO]: T;
-  [Bosses.CERBERUS]: T;
-  [Bosses.COX]: T;
-  [Bosses.COXCM]: T;
-  [Bosses.CHAOS_ELE]: T;
-  [Bosses.CHAOS_FANATIC]: T;
-  [Bosses.ZILYANA]: T;
-  [Bosses.CORP]: T;
-  [Bosses.CRAZY_ARCH]: T;
-  [Bosses.PRIME]: T;
-  [Bosses.REX]: T;
-  [Bosses.SUPREME]: T;
-  [Bosses.DER_ARCH]: T;
-  [Bosses.GRAARDOR]: T;
-  [Bosses.MOLE]: T;
-  [Bosses.GUARDIANS]: T;
-  [Bosses.HESPORI]: T;
-  [Bosses.KQ]: T;
-  [Bosses.KBD]: T;
-  [Bosses.KRAKEN]: T;
-  [Bosses.KREE]: T;
-  [Bosses.KRIL]: T;
-  [Bosses.MIMIC]: T;
-  [Bosses.NIGHTMARE]: T;
-  [Bosses.OBOR]: T;
-  [Bosses.SARACHNIS]: T;
-  [Bosses.SCORPIA]: T;
-  [Bosses.SKOTIZO]: T;
-  [Bosses.TEMPO]: T;
-  [Bosses.GAUNTLET]: T;
-  [Bosses.CORR_GAUNTLET]: T;
-  [Bosses.TOB]: T;
-  [Bosses.THERMY]: T;
-  [Bosses.ZUK]: T;
-  [Bosses.JAD]: T;
-  [Bosses.VENE]: T;
-  [Bosses.VETION]: T;
-  [Bosses.VORKATH]: T;
-  [Bosses.WT]: T;
-  [Bosses.ZALCANO]: T;
-  [Bosses.ZULRAH]: T;
-  [TempleOther.LMS]: T;
-}
-// Player overview skill
-export interface TempleOverviewSkill {
-  [TempleOther.INFO]: TempleOverviewSkillInfo;
-  [TempleOther.TABLE]: TempleTableSkill;
-}
-// Player overview other
+// TempleOSRS overview type other main interface
 export interface TempleOverviewOther {
-  [TempleOther.INFO]: TempleOverviewOtherInfo;
-  [TempleOther.TABLE]: TempleTableOther;
+  [TempleOther.INFO]: TempleOtherInfo;
+  [TempleOther.TABLE]: TempleOtherTable;
+}
+// Interface for TempleOSRS overview (other) info key
+export interface TempleOtherInfo {
+  [TempleOther.LAST_CHECK_TEXT]: string;
+  [TempleOther.HOURS_PLAYED]: number;
+  [TempleOther.HOURS_PER_DAY]: number;
+  [TempleOther.BOSS_KILLS]: number;
+  [TempleOther.KC_PER_DAY]: number;
+  [TempleOther.AVR_KCH]: number;
+  [TempleOther.TOP_BOSS]: number;
+  [TempleOther.GP_EARNED]: number;
+}
+// Interface for TempleOSRS overview (other) table key
+export interface TempleOtherTable extends Osrs<TempleOtherTableProps> {
+  [TempleOther.EHB]: TempleOtherTableProps;
+}
+// Props for TempleOtherTable
+export interface TempleOtherTableProps extends TempleOverviewTable {
+  [TempleOther.EHB_LOWERCASE]: number;
+}
+// TempleOSRS overview type skill main interface
+export interface TempleOverviewSkill {
+  [TempleOther.INFO]: TempleSkillInfo;
+  [TempleOther.TABLE]: TempleSkillTable;
+}
+// Interface for TempleOSRS overview (skill) info key
+export interface TempleSkillInfo {
+  [TempleOther.LAST_CHECK_TEXT]: string;
+  [TempleOther.HOURS_PLAYED]: number;
+  [TempleOther.HOURS_PER_DAY]: number;
+  [TempleOther.XP_GAINED]: number;
+  [TempleOther.XP_PER_DAY]: number;
+  [TempleOther.AVR_XPH]: number;
+  [TempleOther.TOP_SKILL]: number;
+  [TempleOther.GP_SPENT]: number;
+}
+// Interface for TempleOSRS overview (skill) table key
+export interface TempleSkillTable extends Osrs<SkillTableProps> {
+  [TempleOther.EHP]: SkillTableProps;
+  [TempleOther.IM_EHP]: SkillTableProps;
+}
+// Props for TempleSkillTable
+export interface SkillTableProps extends TempleOverviewTable {
+  [TempleOther.LEVEL]: number;
+  [TempleOther.EHP_LOWERCASE]: number;
 }
 
-// Player records
+// General TempleOSRS overview table field (common properties)
+interface TempleOverviewTable {
+  [TempleOther.XP]: number;
+  [TempleOther.RANK]: number;
+}
+// Interface for TempleOSRS player records
 export interface TemplePlayerRecords extends Osrs<PlayerRecordsTimes> {
   [TempleOther.EHB]: PlayerRecordsTimes;
   [TempleOther.EHP]: PlayerRecordsTimes;
 }
-
-// Player stats
+// Interface for props of keys in TemplePlayerRecords
+export interface PlayerRecordsTimes {
+  [TempleOther.SIX_HOURS]: ExpAndDate;
+  [TempleOther.WEEK]: ExpAndDate;
+  [TempleOther.MONTH]: ExpAndDate;
+  [TempleOther.YEAR]: ExpAndDate;
+}
+// Interface for PlayerRecordsTimes props
+export interface ExpAndDate {
+  [TempleOther.XP]: string | number;
+  [TempleOther.DATE_LOWERCASE]: string;
+}
+// Interface for TempleOSRS player stats
 export interface TemplePlayerStats extends Osrs<number> {
-  [TempleOther.INFO]: PlayerInfo;
+  [TempleOther.INFO]: {
+    [TempleOther.USERNAME]: string;
+    [TempleOther.COUNTRY]: string;
+    [TempleOther.GAME_MODE]: TempleGameMode;
+    [TempleOther.CB3]: number;
+    [TempleOther.F2P]: number;
+    [TempleOther.BANNED]: number;
+    [TempleOther.DISQUALIFIED]: number;
+    [TempleOther.CLAN_PREF]: null | string;
+    [TempleOther.LAST_CHECKED]: string;
+    [TempleOther.LAST_CHANGED]: string;
+  };
   [TempleOther.DATE]: string;
   [TempleOther.EHP]: number;
   [TempleOther.IM_EHP_CAPITAL]: number;
@@ -126,7 +102,7 @@ export interface TemplePlayerStats extends Osrs<number> {
   [TempleOther.EHB]: number;
   [TempleOther.IM_EHB]: number;
 }
-// Player Names
+// TempleOSRS player names interface
 export interface TemplePlayerNames {
   [TempleOther.ALIASES]: {
     [key: string]: {
@@ -142,7 +118,15 @@ export interface TemplePlayerNames {
     [TempleOther.HISTORY_SECONDS]: number;
   };
 }
-
+// Props for history key on TemplePlayerNames
+interface PlayerHistory {
+  [TempleOther.NAME]: string;
+  [TempleOther.LATS_DATE]: string;
+  [TempleOther.FIRST_DATE]: string;
+  [TempleOther.SECONDS]: number;
+  [TempleOther.EHP_LOWERCASE]: number;
+  [TempleOther.XP]: number;
+}
 // OSRS API Object
 export interface OsrsPlayer extends Osrs<OsrsSkill | BossOrMinigame> {
   [Skills.TOTAL]: OsrsSkill;
@@ -227,84 +211,95 @@ export interface OsrsPlayer extends Osrs<OsrsSkill | BossOrMinigame> {
   [Bosses.ZALCANO]: BossOrMinigame;
   [Bosses.ZULRAH]: BossOrMinigame;
 }
-
-// Sub-interfaces
-interface PlayerInfo {
-  [TempleOther.USERNAME]: string;
-  [TempleOther.COUNTRY]: string;
-  [TempleOther.GAME_MODE]: GameMode;
-  [TempleOther.CB3]: number;
-  [TempleOther.F2P]: number;
-  [TempleOther.BANNED]: number;
-  [TempleOther.DISQUALIFIED]: number;
-  [TempleOther.CLAN_PREF]: null | string;
-  [TempleOther.LAST_CHECKED]: string;
-  [TempleOther.LAST_CHANGED]: string;
-}
-
-interface PlayerHistory {
-  [TempleOther.NAME]: string;
-  [TempleOther.LATS_DATE]: string;
-  [TempleOther.FIRST_DATE]: string;
-  [TempleOther.SECONDS]: number;
-  [TempleOther.EHP_LOWERCASE]: number;
-  [TempleOther.XP]: number;
-}
-
-export interface PlayerRecordsTimes {
-  [TempleOther.SIX_HOURS]: ExpAndDate;
-  [TempleOther.WEEK]: ExpAndDate;
-  [TempleOther.MONTH]: ExpAndDate;
-  [TempleOther.YEAR]: ExpAndDate;
-}
+// Props for OSRS skill fields
 export interface OsrsSkill {
   [TempleOther.RANK]: number | string;
   [TempleOther.LEVEL]: number | string;
   [TempleOther.EXP]: number | string;
 }
-
+// Props for OSRS boss and minigame fields
 export interface BossOrMinigame {
   [TempleOther.RANK]: number | string;
   [TempleOther.SCORE]: number | string;
 }
 
-export interface ExpAndDate {
-  [TempleOther.XP]: string | number;
-  [TempleOther.DATE_LOWERCASE]: string;
-}
-
-export interface TempleOverviewSkillInfo {
-  [TempleOther.LAST_CHECK_TEXT]: string;
-  [TempleOther.HOURS_PLAYED]: number;
-  [TempleOther.HOURS_PER_DAY]: number;
-  [TempleOther.XP_GAINED]: number;
-  [TempleOther.XP_PER_DAY]: number;
-  [TempleOther.AVR_XPH]: number;
-  [TempleOther.TOP_SKILL]: number;
-  [TempleOther.GP_SPENT]: number;
-}
-
-export interface TempleOverviewOtherInfo {
-  [TempleOther.LAST_CHECK_TEXT]: string;
-  [TempleOther.HOURS_PLAYED]: number;
-  [TempleOther.HOURS_PER_DAY]: number;
-  [TempleOther.BOSS_KILLS]: number;
-  [TempleOther.KC_PER_DAY]: number;
-  [TempleOther.AVR_KCH]: number;
-  [TempleOther.TOP_BOSS]: number;
-  [TempleOther.GP_EARNED]: number;
-}
-
-export interface TempleOverviewTableOther extends TempleOverviewTable {
-  [TempleOther.EHB_LOWERCASE]: number;
-}
-
-export interface TempleOverviewTableSkill extends TempleOverviewTable {
-  [TempleOther.LEVEL]: number;
-  [TempleOther.EHP_LOWERCASE]: number;
-}
-
-export interface TempleOverviewTable {
-  [TempleOther.XP]: number;
-  [TempleOther.RANK]: number;
+// General OSRS interface
+export interface Osrs<T> {
+  [Skills.TOTAL]: T;
+  [Skills.ATT]: T;
+  [Skills.DEF]: T;
+  [Skills.STR]: T;
+  [Skills.HP]: T;
+  [Skills.RANGED]: T;
+  [Skills.PRAY]: T;
+  [Skills.MAGIC]: T;
+  [Skills.COOK]: T;
+  [Skills.WC]: T;
+  [Skills.FLETCH]: T;
+  [Skills.FISH]: T;
+  [Skills.FM]: T;
+  [Skills.CRAFT]: T;
+  [Skills.SMITH]: T;
+  [Skills.MINING]: T;
+  [Skills.HERB]: T;
+  [Skills.AGIL]: T;
+  [Skills.THIEV]: T;
+  [Skills.SLAYER]: T;
+  [Skills.FARM]: T;
+  [Skills.RC]: T;
+  [Skills.HUNT]: T;
+  [Skills.CON]: T;
+  [Clues.ALL]: T;
+  [Clues.BEGINNER]: T;
+  [Clues.EASY]: T;
+  [Clues.MEDIUM]: T;
+  [Clues.HARD]: T;
+  [Clues.ELITE]: T;
+  [Clues.MASTER]: T;
+  [Bosses.SIRE]: T;
+  [Bosses.HYDRA]: T;
+  [Bosses.BARROWS]: T;
+  [Bosses.BRYOPHYTA]: T;
+  [Bosses.CALLISTO]: T;
+  [Bosses.CERBERUS]: T;
+  [Bosses.COX]: T;
+  [Bosses.COXCM]: T;
+  [Bosses.CHAOS_ELE]: T;
+  [Bosses.CHAOS_FANATIC]: T;
+  [Bosses.ZILYANA]: T;
+  [Bosses.CORP]: T;
+  [Bosses.CRAZY_ARCH]: T;
+  [Bosses.PRIME]: T;
+  [Bosses.REX]: T;
+  [Bosses.SUPREME]: T;
+  [Bosses.DER_ARCH]: T;
+  [Bosses.GRAARDOR]: T;
+  [Bosses.MOLE]: T;
+  [Bosses.GUARDIANS]: T;
+  [Bosses.HESPORI]: T;
+  [Bosses.KQ]: T;
+  [Bosses.KBD]: T;
+  [Bosses.KRAKEN]: T;
+  [Bosses.KREE]: T;
+  [Bosses.KRIL]: T;
+  [Bosses.MIMIC]: T;
+  [Bosses.NIGHTMARE]: T;
+  [Bosses.OBOR]: T;
+  [Bosses.SARACHNIS]: T;
+  [Bosses.SCORPIA]: T;
+  [Bosses.SKOTIZO]: T;
+  [Bosses.TEMPO]: T;
+  [Bosses.GAUNTLET]: T;
+  [Bosses.CORR_GAUNTLET]: T;
+  [Bosses.TOB]: T;
+  [Bosses.THERMY]: T;
+  [Bosses.ZUK]: T;
+  [Bosses.JAD]: T;
+  [Bosses.VENE]: T;
+  [Bosses.VETION]: T;
+  [Bosses.VORKATH]: T;
+  [Bosses.WT]: T;
+  [Bosses.ZALCANO]: T;
+  [Bosses.ZULRAH]: T;
+  [TempleOther.LMS]: T;
 }

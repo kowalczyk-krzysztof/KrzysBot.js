@@ -14,7 +14,7 @@ import {
 // UTILS: Interfaces
 import { OsrsPlayer, BossOrMinigame } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { TempleOther } from '../../utils/osrs/enums';
+import { TempleOther, BossCases } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -24,7 +24,9 @@ import {
 // UTILS: Input validator
 import { bossFields } from '../../utils/osrs/inputValidator';
 // UTILS: Boss validator
-import { bossValidator, BossCases } from '../../utils/osrs/bossValidator';
+import { bossValidator } from '../../utils/osrs/bossValidator';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const kc = async (
   msg: Message,
@@ -32,7 +34,8 @@ export const kc = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   const indexes: number[] = [0, 1, 2];
-  const lowerCasedArguments = args.map((e: string) => {
+  // This is done so the cooldown is per unique command + boss validation needs lowercase
+  const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
   const bossValidation:
@@ -111,7 +114,7 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
     embed.addField(`${field} kills`, `${boss[TempleOther.SCORE]}`);

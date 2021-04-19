@@ -14,7 +14,7 @@ import {
 // UTILS: Interfaces
 import { OsrsPlayer, BossOrMinigame } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { ClueNamesFormatted, Clues, TempleOther } from '../../utils/osrs/enums';
+import { TempleOther } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -24,21 +24,31 @@ import {
 // UTILS: Prefix validator
 import {
   isPrefixValid,
-  Categories,
+  PrefixCategories,
   invalidPrefix,
 } from '../../utils/osrs/isPrefixValid';
 // UTILS: Input validator
 import { clueFields, clueList } from '../../utils/osrs/inputValidator';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
+// UTILS: FIeld name formatter
+import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
 
 export const clues = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  const lowerCasedArguments = args.map((e: string) => {
+  // This is done so the cooldown is per unique command
+  const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
-  const prefix: string = isPrefixValid(msg, args, clueList, Categories.CLUES);
+  const prefix: string = isPrefixValid(
+    msg,
+    args,
+    clueList,
+    PrefixCategories.CLUES
+  );
   if (prefix === invalidPrefix) return;
   const cooldown: number = 30;
   const nameCheck: string = runescapeNameValidator(args.slice(1));
@@ -86,37 +96,10 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     const clueType: BossOrMinigame = playerObject[field] as BossOrMinigame;
-    let formattedField: string;
-    switch (field) {
-      case Clues.ALL:
-        formattedField = ClueNamesFormatted.ALL;
-        break;
-      case Clues.BEGINNER:
-        formattedField = ClueNamesFormatted.BEGINNER;
-        break;
-      case Clues.EASY:
-        formattedField = ClueNamesFormatted.EASY;
-        break;
-      case Clues.MEDIUM:
-        formattedField = ClueNamesFormatted.MEDIUM;
-        break;
-      case Clues.HARD:
-        formattedField = ClueNamesFormatted.HARD;
-        break;
-      case Clues.ELITE:
-        formattedField = ClueNamesFormatted.ELITE;
-        break;
-      case Clues.MASTER:
-        formattedField = ClueNamesFormatted.MASTER;
-        break;
-
-      default:
-        formattedField = field;
-        break;
-    }
+    const formattedField: string = fieldNameFormatter(field);
     embed.addField(`${formattedField}`, `${clueType[TempleOther.SCORE]}`);
     return embed;
   }

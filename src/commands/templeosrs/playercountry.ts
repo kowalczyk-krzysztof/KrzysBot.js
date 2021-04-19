@@ -14,6 +14,8 @@ import {
   invalidUsername,
   invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
 
 export const playercountry = async (
   msg: Message,
@@ -39,7 +41,7 @@ export const playercountry = async (
 const generateResult = (
   playerObject: TemplePlayerStats
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     const embed: TempleEmbed = new TempleEmbed().addField(
       usernameString,

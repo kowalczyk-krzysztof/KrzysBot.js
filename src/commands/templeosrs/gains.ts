@@ -17,19 +17,21 @@ import {
 } from '../../utils/embed';
 // UTILS: Interfaces
 import {
-  TempleOverviewSkill,
+  TempleOtherTableProps,
+  SkillTableProps,
   TempleOverviewOther,
-  TempleTableSkill,
-  TempleTableOther,
+  TempleOverviewSkill,
+  TempleOtherTable,
+  TempleSkillTable,
 } from '../../utils/osrs/interfaces';
 // UTILS: Enums
 import {
   TempleOther,
-  Clues,
-  Skills,
-  PlayerOverviewTimesAliases,
-  PlayerOverviewTimes,
+  TempleOverviewTimeAliases,
+  TempleOverviewTimes,
   TempleCacheType,
+  ValidInputCases,
+  OsrsRandom,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -41,19 +43,24 @@ import {
 import {
   templeGainsRecords,
   fieldNameCheck,
-  ValidCases,
 } from '../../utils/osrs/inputValidator';
 // UTILS: Capitalize first letter
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
+// UTILS: Error handler
+import { errorHandler } from '../../utils/errorHandler';
+// UTILS: FIeld name formatter
+import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
 
 export const gains = async (
   msg: Message,
   commandName: string,
   ...args: string[]
-): Promise<Message | undefined> => {
-  const lowerCasedArguments = args.map((e: string) => {
+): Promise<Message | undefined | ErrorEmbed> => {
+  // This is done so the cooldown is per unique command
+  const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
+  // Validate user input and returns an object
   const parsedInput:
     | {
         rsn: string[] | undefined;
@@ -62,29 +69,37 @@ export const gains = async (
         case: string | undefined;
       }
     | undefined = templeGainsRecords(msg, args, commandName);
-
-  let playerCache;
+  // There are two API endpoints, one for bosses/other and one for skills. Assign relevant cache based on "case" field. NOTE: for getting ehp or ehb user uses ".gains other" command but EHP is a key on skills object and EHB is a key on boss object
+  let playerCache: { [key: string]: TempleOverviewOther & TempleOverviewSkill };
   let dataType: TempleCacheType;
-  if (parsedInput === undefined) return;
+  if (parsedInput === undefined) return errorHandler();
   else if (
-    parsedInput.case === ValidCases.BOSS ||
-    parsedInput.case === ValidCases.CLUES
+    parsedInput.case === ValidInputCases.BOSS ||
+    parsedInput.case === ValidInputCases.CLUES
   ) {
-    playerCache = playerOverviewOther;
+    playerCache = playerOverviewOther as {
+      [key: string]: TempleOverviewOther & TempleOverviewSkill;
+    };
     dataType = TempleCacheType.PLAYER_OVERVIEW_OTHER;
-  } else if (parsedInput.case === ValidCases.OTHER) {
+  } else if (parsedInput.case === ValidInputCases.OTHER) {
     if (
       parsedInput.field === TempleOther.EHB_LOWERCASE ||
       parsedInput.field === TempleOther.LMS_LOWERCASE
     ) {
-      playerCache = playerOverviewOther;
+      playerCache = playerOverviewOther as {
+        [key: string]: TempleOverviewOther & TempleOverviewSkill;
+      };
       dataType = TempleCacheType.PLAYER_OVERVIEW_OTHER;
     } else {
-      playerCache = playerOverviewSkill;
+      playerCache = playerOverviewSkill as {
+        [key: string]: TempleOverviewOther & TempleOverviewSkill;
+      };
       dataType = TempleCacheType.PLAYER_OVERVIEW_SKILL;
     }
   } else {
-    (playerCache = playerOverviewSkill),
+    (playerCache = playerOverviewSkill as {
+      [key: string]: TempleOverviewOther & TempleOverviewSkill;
+    }),
       (dataType = TempleCacheType.PLAYER_OVERVIEW_SKILL);
   }
   const cooldown: number = 30;
@@ -94,10 +109,11 @@ export const gains = async (
     parsedInput.field !== undefined &&
     parsedInput.case !== undefined
   ) {
+    // Check is username is correct runescape name
     const nameCheck: string = runescapeNameValidator(parsedInput.rsn);
     if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
     const username: string = nameCheck;
-
+    // Check cooldown
     if (
       isOnCooldown(
         msg,
@@ -108,51 +124,60 @@ export const gains = async (
       ) === true
     )
       return;
+
     const embed: TempleEmbed = new TempleEmbed()
-      .setTitle(EmbedTitles.RECORDS)
+      .setTitle(EmbedTitles.GAINS)
       .addField(usernameString, `${username}`);
-    if (username + parsedInput.time in playerCache) {
-      const field: keyof TempleTableOther = fieldNameCheck(
+    // Changing time aliases
+    let timePeriod: string;
+    switch (parsedInput.time) {
+      case TempleOverviewTimeAliases.FIVEMIN:
+        timePeriod = TempleOverviewTimes.FIVEMIN;
+        break;
+      case TempleOverviewTimeAliases.DAY:
+        timePeriod = TempleOverviewTimes.DAY;
+        break;
+      case TempleOverviewTimeAliases.WEEK:
+        timePeriod = TempleOverviewTimes.WEEK;
+        break;
+      case TempleOverviewTimeAliases.MONTH:
+        timePeriod = TempleOverviewTimes.MONTH;
+        break;
+      case TempleOverviewTimeAliases.HALFYEAR:
+        timePeriod = TempleOverviewTimes.HALFYEAR;
+        break;
+      case TempleOverviewTimeAliases.YEAR:
+        timePeriod = TempleOverviewTimes.YEAR;
+        break;
+      default:
+        timePeriod = parsedInput.time;
+        break;
+    }
+    // Because there are multiple time options, I want to have separate keys for each option, so instead of passing username I'm passing username + time so the key name becomes "zezimaweek" instead of just "zezima"
+    const userNameWithTime: string = username + timePeriod;
+    // Check if object is in relevant cache
+    if (userNameWithTime in playerCache) {
+      // Try to match the input field with key name on player object
+      const field: keyof TempleOtherTable &
+        keyof TempleSkillTable = fieldNameCheck(
         parsedInput.field,
         parsedInput.case
-      ) as keyof TempleTableOther;
-      if (field === undefined) return;
+      ) as keyof TempleOtherTable & keyof TempleSkillTable;
+      if (field === undefined) return errorHandler();
       else {
+        // Generate embed
         const result: TempleEmbed = generateResult(
           field,
           embed,
-          playerCache[username + parsedInput.time],
+          playerCache[userNameWithTime] as TempleOverviewSkill &
+            TempleOverviewOther,
           parsedInput.time,
           lowerCasedArguments
         );
         return msg.channel.send(result);
       }
     } else {
-      // Changing time aliases
-      let timePeriod: string;
-      switch (parsedInput.time) {
-        case PlayerOverviewTimesAliases.FIVEMIN:
-          timePeriod = PlayerOverviewTimes.FIVEMIN;
-          break;
-        case PlayerOverviewTimesAliases.DAY:
-          timePeriod = PlayerOverviewTimes.DAY;
-          break;
-        case PlayerOverviewTimesAliases.WEEK:
-          timePeriod = PlayerOverviewTimes.WEEK;
-          break;
-        case PlayerOverviewTimesAliases.MONTH:
-          timePeriod = PlayerOverviewTimes.MONTH;
-          break;
-        case PlayerOverviewTimesAliases.HALFYEAR:
-          timePeriod = PlayerOverviewTimes.HALFYEAR;
-          break;
-        case PlayerOverviewTimesAliases.YEAR:
-          timePeriod = PlayerOverviewTimes.YEAR;
-          break;
-        default:
-          timePeriod = parsedInput.time;
-          break;
-      }
+      // Fetch data
       const isFetched: boolean = await fetchTemple(
         msg,
         username,
@@ -160,18 +185,20 @@ export const gains = async (
         timePeriod
       );
       if (isFetched === true) {
-        const field:
-          | keyof TempleTableOther
-          | keyof TempleTableSkill = fieldNameCheck(
+        const field: keyof TempleOtherTable &
+          // Try to match the input field with key name on player object
+          keyof TempleSkillTable = fieldNameCheck(
           parsedInput.field,
           parsedInput.case
-        ) as keyof TempleTableOther | keyof TempleTableSkill;
-        if (field === undefined) return;
+        ) as keyof TempleOtherTable & keyof TempleSkillTable;
+        if (field === undefined) return errorHandler();
         else {
+          // Generate embed
           const result: TempleEmbed = generateResult(
             field,
             embed,
-            playerCache[username + timePeriod],
+            playerCache[userNameWithTime] as TempleOverviewSkill &
+              TempleOverviewOther,
             parsedInput.time,
             lowerCasedArguments
           );
@@ -184,80 +211,66 @@ export const gains = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  field: keyof TempleTableOther | keyof TempleTableSkill,
+  field: keyof TempleOtherTable & keyof TempleSkillTable,
   embed: TempleEmbed,
-  playerObject: TempleOverviewSkill | TempleOverviewOther,
+  playerObject: TempleOverviewOther & TempleOverviewSkill,
   time: string,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return new ErrorEmbed();
+  if (playerObject === undefined) return errorHandler();
   else {
     // Changing the time value (string) to have a first capital letter
     const capitalFirst: string = capitalizeFirstLetter(time);
-    let formattedField: string;
-    switch (field) {
-      case Clues.ALL:
-        formattedField = 'All Clues';
-        break;
-      case Clues.BEGINNER:
-        formattedField = 'Beginner Clues';
-        break;
-      case Clues.EASY:
-        formattedField = 'Easy Clues';
-        break;
-      case Clues.MEDIUM:
-        formattedField = 'Medium Clues';
-        break;
-      case Clues.HARD:
-        formattedField = 'Hard Clues';
-        break;
-      case Clues.ELITE:
-        formattedField = 'Hard Clues';
-        break;
-      case Clues.MASTER:
-        formattedField = 'Master Clues';
-        break;
-      case Skills.RC:
-        formattedField = 'Runecrating';
-        break;
-      case TempleOther.EHB:
-        formattedField = field.toUpperCase();
-        break;
-      case TempleOther.EHP:
-        formattedField = field.toUpperCase();
-        break;
-      case TempleOther.IM_EHP:
-        formattedField = 'Ironman EHP';
-        break;
-
-      default:
-        formattedField = field;
-        break;
-    }
-    console.log(playerObject);
-    const table: TempleTableOther | TempleTableSkill =
+    const formattedField: string = fieldNameFormatter(field);
+    const table: TempleOtherTable & TempleSkillTable =
       playerObject[TempleOther.TABLE];
 
-    // If there are no records the key value is an empty array
+    const fieldTocheck: TempleOtherTableProps & SkillTableProps = table[field];
 
     // If there's no record for specific period of time then the key doesn't exist
-    if (table[field] !== undefined) {
+    if (fieldTocheck !== undefined) {
       // Formatting how numbers are displayed
-      const value: string | number = table[field][TempleOther.XP];
+      const value: number = fieldTocheck[TempleOther.XP];
       let formattedValue;
 
-      if (args[0] === 'other') formattedValue = value;
-      else {
-        const formatter: Intl.NumberFormat = new Intl.NumberFormat('en-US');
+      if (args[0] === ValidInputCases.SKILL) {
+        const formatter: Intl.NumberFormat = new Intl.NumberFormat(
+          OsrsRandom.DATE_FORMAT
+        );
         formattedValue = formatter.format(value as number);
+      } else {
+        formattedValue = parseInt(value.toString());
       }
       // Changing sufix depending on whether the type is skill or not
       let ending: string;
-      if (args[0] === 'skill') ending = ' xp';
+      if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
+      else if (args[0] === ValidInputCases.BOSS)
+        ending = ` ${OsrsRandom.KILLS}`;
       else ending = '';
-
       embed.addField('Time Period', `${capitalFirst}`);
       embed.addField(`${formattedField}`, `${formattedValue}${ending}`);
+      if (args[0] === ValidInputCases.SKILL)
+        embed.addField(
+          `${capitalizeFirstLetter(TempleOther.LEVEL)}s gained:`,
+          `${fieldTocheck[TempleOther.LEVEL]}`
+        );
+      if (args[0] === ValidInputCases.SKILL)
+        embed.addField(
+          `${TempleOther.EHP.toUpperCase()} gained:`,
+          `${parseInt(fieldTocheck[TempleOther.EHP_LOWERCASE].toString())}`
+        );
+      if (args[0] === ValidInputCases.BOSS)
+        embed.addField(
+          `${TempleOther.EHB.toUpperCase()} gained:`,
+          `${parseInt(fieldTocheck[TempleOther.EHB_LOWERCASE].toString())}`
+        );
+      let plusOrMinus: string;
+      if (fieldTocheck[TempleOther.RANK] > 0) plusOrMinus = '+';
+      else plusOrMinus = '';
+      embed.addField(
+        `Ranks gained or lost:`,
+        `${plusOrMinus}${parseInt(fieldTocheck[TempleOther.RANK].toString())}`
+      );
     } else {
       embed.addField(`Time Period`, `${capitalFirst}`);
       embed.addField(

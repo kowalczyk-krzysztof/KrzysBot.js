@@ -11,36 +11,42 @@ import {
   SkillAliases,
   Skills,
   TempleOther,
-  PlayerOverviewTimesAliases,
+  TempleOverviewTimeAliases,
+  ValidInputCases,
+  BossCases,
 } from './enums';
 // UTILS: Prefix validator
-import { Categories, invalidPrefixMsg } from './isPrefixValid';
+import { PrefixCategories, invalidPrefixMsg } from './isPrefixValid';
 // UTILS: Boss validator
-import { BossCases, bossValidator } from './bossValidator';
+import { bossValidator } from './bossValidator';
 
-// Valid first arguments TODO: Cleanup
-export enum ValidCases {
-  CLUES = 'clues',
-  BOSS = 'boss',
-  SKILL = 'skill',
-  OTHER = 'other',
-}
-const validCases: string[] = [
-  ValidCases.CLUES,
-  ValidCases.BOSS,
-  ValidCases.SKILL,
-  ValidCases.OTHER,
+const gains: string = 'gains';
+
+const validInputCases: string[] = [
+  ValidInputCases.CLUES,
+  ValidInputCases.BOSS,
+  ValidInputCases.SKILL,
+  ValidInputCases.OTHER,
 ];
-const timeTypes = ['day', 'week', 'month', 'year'];
-const timeTypesAll = ['6h', ...timeTypes];
-const otherTypes = ['lms', 'ehb', 'ehp'];
-const playerOverviewTimes: string[] = [
-  PlayerOverviewTimesAliases.FIVEMIN,
-  PlayerOverviewTimesAliases.DAY,
-  PlayerOverviewTimesAliases.WEEK,
-  PlayerOverviewTimesAliases.MONTH,
-  PlayerOverviewTimesAliases.HALFYEAR,
-  PlayerOverviewTimesAliases.YEAR,
+const timeTypes = [
+  TempleOther.DAY,
+  TempleOther.WEEK,
+  TempleOther.MONTH,
+  TempleOther.YEAR,
+];
+const timeTypesAll = [TempleOther.SIX_HOURS, ...timeTypes];
+const otherTypes = [
+  TempleOther.LMS_LOWERCASE,
+  TempleOther.EHB_LOWERCASE,
+  TempleOther.EHP_LOWERCASE,
+];
+const templeOverviewTimes: string[] = [
+  TempleOverviewTimeAliases.FIVEMIN,
+  TempleOverviewTimeAliases.DAY,
+  TempleOverviewTimeAliases.WEEK,
+  TempleOverviewTimeAliases.MONTH,
+  TempleOverviewTimeAliases.HALFYEAR,
+  TempleOverviewTimeAliases.YEAR,
 ];
 
 enum FirstArgumentType {
@@ -77,35 +83,45 @@ export const templeGainsRecords = (
     }
   | undefined => {
   let validFirstArgument: string | undefined;
+  // Lowercase everything first
   const lowerCasedArguments = args.map((e: string) => {
     return e.toLowerCase();
   });
   let conditionalTypeOther: string[];
-  if (commandName === 'gains') conditionalTypeOther = [...otherTypes, 'imehp'];
+  // Change valid other case arguments based on command used
+  if (commandName === gains)
+    conditionalTypeOther = [...otherTypes, TempleOther.IM_EHP_JOINED];
   else conditionalTypeOther = otherTypes;
   if (args.length === 0) {
+    // Changed the command name in erorr msg based on commandName
+    let usedCommand: string;
+    if (commandName === gains) usedCommand = gains;
+    else usedCommand = 'record';
     msg.channel.send(
       new Embed().setDescription(
-        '**Please provide arguments. Valid formats**:```.record clues tier time username\n\n.record lms time username\n\n.record skill skill-name time username\n\n.record boss boss-name time username```'
+        `**Please provide arguments. Valid formats**:\`\`\`.${usedCommand} clues tier time username\n\n.${usedCommand} lms time username\n\n.${usedCommand} skill skill-name time username\n\n.${usedCommand} boss boss-name time username\`\`\``
       )
     );
     return;
   }
-  if (!validCases.includes(lowerCasedArguments[0])) {
-    msg.channel.send(invalidPrefixMsg(Categories.EMPTY, validCases.join(', ')));
+  // Check if the first argument is valid case (e.g boss)
+  if (!validInputCases.includes(lowerCasedArguments[0])) {
+    msg.channel.send(
+      invalidPrefixMsg(PrefixCategories.EMPTY, validInputCases.join(', '))
+    );
     return;
   } else {
     validFirstArgument = lowerCasedArguments[0];
   }
-  let inputFieldName: string | undefined;
+  let inputFieldName: string;
   let isFirstArgumentValid: boolean;
   let firstArgumentType: number;
-
+  // Check if second argument is valid for relevant first argument e.g check if ".clues test" is valid
   switch (validFirstArgument) {
-    case ValidCases.CLUES:
+    case ValidInputCases.CLUES:
       if (!clueList.includes(lowerCasedArguments[1])) {
         msg.channel.send(
-          invalidPrefixMsg(Categories.CLUES, clueList.join(', '))
+          invalidPrefixMsg(PrefixCategories.CLUES, clueList.join(', '))
         );
         return;
       } else {
@@ -114,10 +130,13 @@ export const templeGainsRecords = (
         inputFieldName = lowerCasedArguments[1];
       }
       break;
-    case ValidCases.OTHER:
+    case ValidInputCases.OTHER:
       if (!conditionalTypeOther.includes(lowerCasedArguments[1])) {
         msg.channel.send(
-          invalidPrefixMsg(Categories.OTHER, conditionalTypeOther.join(', '))
+          invalidPrefixMsg(
+            PrefixCategories.OTHER,
+            conditionalTypeOther.join(', ')
+          )
         );
         return;
       } else {
@@ -126,10 +145,10 @@ export const templeGainsRecords = (
         inputFieldName = lowerCasedArguments[1];
       }
       break;
-    case ValidCases.SKILL:
+    case ValidInputCases.SKILL:
       if (!skillList.includes(lowerCasedArguments[1])) {
         msg.channel.send(
-          invalidPrefixMsg(Categories.SKILL, skillList.join(', '))
+          invalidPrefixMsg(PrefixCategories.SKILL, skillList.join(', '))
         );
         return;
       } else {
@@ -138,7 +157,8 @@ export const templeGainsRecords = (
         inputFieldName = lowerCasedArguments[1];
       }
       break;
-    case ValidCases.BOSS:
+    // For bosses perform boss validation using bossValidator
+    case ValidInputCases.BOSS:
       const indexes: number[] = [1, 2, 3];
       const bossValidation:
         | {
@@ -171,20 +191,22 @@ export const templeGainsRecords = (
   let rsn: string[] | undefined;
   let fullArray: string[];
   let notFullArray: string[];
-  if (commandName === 'gains') {
-    fullArray = playerOverviewTimes;
-    notFullArray = playerOverviewTimes;
+  // Change available times based on command used
+  if (commandName === gains) {
+    fullArray = templeOverviewTimes;
+    notFullArray = templeOverviewTimes;
   } else {
     fullArray = timeTypesAll;
     notFullArray = timeTypes;
   }
 
   if (isFirstArgumentValid === true) {
+    // Check if input time is valid depending on first argument type. This is because for example bosses don't have 6h records. Slice everything before and including time. Whatever is left is username
     switch (firstArgumentType) {
       case FirstArgumentType.OTHER:
         if (!fullArray.includes(lowerCasedArguments[2])) {
           msg.channel.send(
-            invalidPrefixMsg(Categories.TIME_LMS, fullArray.join(', '))
+            invalidPrefixMsg(PrefixCategories.TIME_OTHER, fullArray.join(', '))
           );
           return;
         } else {
@@ -196,7 +218,7 @@ export const templeGainsRecords = (
       case FirstArgumentType.CLUES:
         if (!notFullArray.includes(lowerCasedArguments[2])) {
           msg.channel.send(
-            invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
+            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
           );
           return;
         } else {
@@ -207,7 +229,7 @@ export const templeGainsRecords = (
       case FirstArgumentType.SKILL:
         if (!fullArray.includes(lowerCasedArguments[2])) {
           msg.channel.send(
-            invalidPrefixMsg(Categories.TIME, fullArray.join(', '))
+            invalidPrefixMsg(PrefixCategories.TIME, fullArray.join(', '))
           );
           return;
         } else {
@@ -218,7 +240,7 @@ export const templeGainsRecords = (
       case FirstArgumentType.BOSS_ONE_WORD:
         if (!notFullArray.includes(lowerCasedArguments[2])) {
           msg.channel.send(
-            invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
+            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
           );
           return;
         } else {
@@ -229,7 +251,7 @@ export const templeGainsRecords = (
       case FirstArgumentType.BOSS_TWO_WORD:
         if (!notFullArray.includes(lowerCasedArguments[3])) {
           msg.channel.send(
-            invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
+            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
           );
           return;
         } else {
@@ -240,7 +262,7 @@ export const templeGainsRecords = (
       case FirstArgumentType.BOSS_THREE_WORD:
         if (!notFullArray.includes(lowerCasedArguments[4])) {
           msg.channel.send(
-            invalidPrefixMsg(Categories.TIME, notFullArray.join(', '))
+            invalidPrefixMsg(PrefixCategories.TIME, notFullArray.join(', '))
           );
           return;
         } else {
@@ -261,18 +283,18 @@ export const templeGainsRecords = (
     case: validFirstArgument,
   };
 };
-// Take in a lowecase joined field e.g "theatreofblood". Check what case is fieldName and then perform relevant switch statement and return the field name eg. "Theatre Of Blood"
-// TODO: Add Tempoross when Temple updates
+// Take in a lowecase joined field e.g "theatreofblood". Check what case is fieldName and then perform relevant switch statement and try to match the finput field with actual key name eg. "Theatre Of Blood"
 export const fieldNameCheck = (
   fieldName: string,
   checkCase: string
 ): string | undefined => {
   let fieldToCheck: string | undefined;
-  if (checkCase === ValidCases.BOSS) fieldToCheck = bossFields(fieldName);
-  else if (checkCase === ValidCases.SKILL)
+  if (checkCase === ValidInputCases.BOSS) fieldToCheck = bossFields(fieldName);
+  else if (checkCase === ValidInputCases.SKILL)
     fieldToCheck = skillFields(fieldName);
-  else if (checkCase === ValidCases.CLUES) fieldToCheck = clueFields(fieldName);
-  else if (checkCase === ValidCases.OTHER)
+  else if (checkCase === ValidInputCases.CLUES)
+    fieldToCheck = clueFields(fieldName);
+  else if (checkCase === ValidInputCases.OTHER)
     fieldToCheck = otherFields(fieldName);
   return fieldToCheck;
 };
