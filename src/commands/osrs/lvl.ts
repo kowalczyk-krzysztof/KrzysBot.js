@@ -26,6 +26,7 @@ import {
   isPrefixValid,
   PrefixCategories,
   invalidPrefix,
+  invalidPrefixMsg,
 } from '../../utils/osrs/isPrefixValid';
 // UTILS: Input validator
 import { skillFields, skillList } from '../../utils/osrs/inputValidator';
@@ -42,6 +43,10 @@ export const lvl = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (args.length === 0)
+    return msg.channel.send(
+      invalidPrefixMsg(skillList, PrefixCategories.SKILL)
+    );
   // This is done so the cooldown is per unique command
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
@@ -108,7 +113,8 @@ const generateResult = (
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   // keyof is how I can index objects like that
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     const skill = playerObject[field] as OsrsSkill;
     // Intl is how I format number to have commas

@@ -54,7 +54,8 @@ const generateResult = (
   playerObject: TemplePlayerStats,
   keyword: string
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     const embed: TempleEmbed = new TempleEmbed().addField(
       usernameString,

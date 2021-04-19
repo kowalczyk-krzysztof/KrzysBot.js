@@ -99,7 +99,8 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     const clueType: BossOrMinigame = playerObject[field] as BossOrMinigame;
     const formattedField: string = fieldNameFormatter(field);

@@ -85,7 +85,7 @@ export const gains = async (
   // There are two API endpoints, one for bosses/other and one for skills. Assign relevant cache based on "case" field. NOTE: for getting ehp or ehb user uses ".gains other" command but EHP is a key on skills object and EHB is a key on boss object
   let playerCache: { [key: string]: TempleOverviewOther & TempleOverviewSkill };
   let dataType: TempleCacheType;
-  if (parsedInput === undefined) return errorHandler();
+  if (parsedInput === undefined) return;
   else if (
     parsedInput.case === ValidInputCases.BOSS ||
     parsedInput.case === ValidInputCases.CLUES
@@ -230,7 +230,8 @@ const generateResult = (
   time: string,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     // Changing the time value (string) to have a first capital letter
     const capitalFirst: string = capitalizeFirstLetter(time);

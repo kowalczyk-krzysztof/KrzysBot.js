@@ -30,9 +30,12 @@ export const fetchOsrsStats = async (
   const keyword: string = playerName;
   try {
     const res: AxiosResponse = await axios.get(`${HISCORE_API}${keyword}`);
-    const data: OsrsPlayer = osrsDataParser(res.data);
-    setOsrsStats(keyword, data);
-    return true;
+    console.log(res.status);
+    if (res.status === 200) {
+      const data: OsrsPlayer = osrsDataParser(res.data);
+      setOsrsStats(keyword, data);
+      return true;
+    } else return false;
   } catch (err) {
     if (err.response.status === 404) {
       msg.channel.send(
@@ -46,6 +49,9 @@ export const fetchOsrsStats = async (
 const setOsrsStats = (username: string, data: OsrsPlayer): void => {
   if (osrsCacheLength >= maxCacheSize) {
     osrsStats = {};
+    Object.keys(osrsStats).forEach((key) => {
+      delete osrsStats[key];
+    });
     osrsCacheLength = 0;
   }
   osrsCacheLength++;

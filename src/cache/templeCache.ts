@@ -117,27 +117,36 @@ const addToCache = (
   } else if (type === TempleCacheType.PLAYER_NAMES) {
     if (playerNamesLength >= maxCacheSize) {
       playerNames = {};
+      Object.keys(playerNames).forEach((key) => {
+        delete playerNames[key];
+      });
       playerNamesLength = 0;
     }
     playerNamesLength++;
     playerNames[username] = data as TemplePlayerNames;
   } else if (type === TempleCacheType.PLAYER_RECORDS) {
     if (playerRecordsLength >= maxCacheSize) {
-      playerRecords = {};
+      Object.keys(playerRecords).forEach((key) => {
+        delete playerRecords[key];
+      });
       playerRecordsLength = 0;
     }
     playerRecordsLength++;
     playerRecords[username] = data as TemplePlayerRecords;
   } else if (type === TempleCacheType.PLAYER_OVERVIEW_SKILL) {
     if (playerOverviewSkillLength >= maxCacheSize) {
-      playerOverviewSkill = {};
+      Object.keys(playerOverviewSkill).forEach((key) => {
+        delete playerOverviewSkill[key];
+      });
       playerOverviewSkillLength = 0;
     }
     playerOverviewSkillLength++;
     playerOverviewSkill[username] = data as TempleOverviewSkill;
   } else if (type === TempleCacheType.PLAYER_OVERVIEW_OTHER) {
     if (playerOverviewOtherLength >= maxCacheSize) {
-      playerOverviewOther = {};
+      Object.keys(playerOverviewOther).forEach((key) => {
+        delete playerOverviewOther[key];
+      });
       playerOverviewOtherLength = 0;
     }
     playerOverviewOtherLength++;

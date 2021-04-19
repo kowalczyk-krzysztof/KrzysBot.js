@@ -72,7 +72,7 @@ export const record = async (
         case: string | undefined;
       }
     | undefined = templeGainsRecords(msg, args, commandName);
-  if (parsedInput === undefined) return errorHandler();
+  if (parsedInput === undefined) return;
   const cooldown: number = 30;
   if (
     parsedInput.rsn !== undefined &&
@@ -159,7 +159,8 @@ const generateResult = (
   time: keyof PlayerRecordsTimes,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined) return errorHandler();
+  if (playerObject === undefined || playerObject === null)
+    return errorHandler();
   else {
     // Changing the time value (string) to have a first capital letter
     const capitalFirst: string = capitalizeFirstLetter(time);
