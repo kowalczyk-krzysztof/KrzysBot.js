@@ -133,6 +133,8 @@ const generateResult = (
         `${OsrsRandom.KILLS.toUpperCase()}:`,
         `\`\`\`${playerObject[TempleOther.TABLE][boss].xp}\`\`\``
       );
+      if (capitalFirst === 'All Time')
+        embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     }
 
     return embed;

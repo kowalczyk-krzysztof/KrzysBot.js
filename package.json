@@ -1,7 +1,7 @@
 {
-  "name": "krzysbot",
+  "name": "efficiencybot",
   "version": "1.0.0",
-  "description": "Utility Discord bot",
+  "description": "Discord bot fetching and displaying data from OSRS Hiscores and TempleOSRS",
   "main": "main.js",
   "scripts": {
     "dev": "tsc -w",
@@ -11,7 +11,9 @@
   },
   "keywords": [
     "discord",
-    "bot"
+    "bot",
+    "osrs",
+    "templeosrs"
   ],
   "author": "Krzysztof Kowalczyk",
   "license": "ISC",
