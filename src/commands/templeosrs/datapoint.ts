@@ -58,6 +58,16 @@ export const datapoint = async (
       );
       if (res.data.error) {
         if (res.data.error.Code === 402 || res.data.error.Code === 401) {
+          if (
+            isOnCooldown(
+              msg,
+              commandName,
+              CommandCooldowns.DATAPOINTS,
+              true,
+              username
+            ) === true
+          )
+            return;
           const embed: Embed = new Embed();
           embed.addField(
             'ERROR',
@@ -80,7 +90,6 @@ export const datapoint = async (
         );
         return msg.channel.send(embed);
       } else {
-        cooldown = CommandCooldowns.DATAPOINTS;
         if (
           isOnCooldown(
             msg,

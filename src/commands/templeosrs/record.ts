@@ -174,7 +174,15 @@ const generateResult = (
     if (Array.isArray(playerObject[field]) === false) {
       // If there's no record for specific period of time then the key doesn't exist
       if (playerObject[field] !== undefined) {
-        if (playerObject[field][time] === undefined) return errorHandler();
+        embed.addField(
+          `${OsrsRandom.TIME_PERIOD}:`,
+          `\`\`\`${capitalFirst}\`\`\``
+        );
+        if (playerObject[field][time] === undefined)
+          return embed.addField(
+            `${OsrsRandom.NO_DATA}`,
+            `No records for this period of time for \`\`\`${formattedField}\`\`\``
+          );
         // Formatting how numbers are displayed
         const timeField: ExpAndDate = playerObject[field][time] as ExpAndDate;
         const value: string | number = timeField[TempleOther.XP];
@@ -202,20 +210,13 @@ const generateResult = (
           playerObject[field][time][TempleOther.DATE_LOWERCASE],
           NumberFormatTypes.EN_GB
         ) as string;
-        embed.addField(
-          `${OsrsRandom.TIME_PERIOD}:`,
-          `\`\`\`${capitalFirst}\`\`\``
-        );
+
         embed.addField(
           `${formattedField}`,
           `\`\`\`${formattedValue}${ending}\`\`\``
         );
         embed.addField('RECORD SET ON:', `\`\`\`${formattedDate}\`\`\``);
       } else {
-        embed.addField(
-          `${OsrsRandom.TIME_PERIOD}:`,
-          `\`\`\`${capitalFirst}\`\`\``
-        );
         embed.addField(
           `${OsrsRandom.NO_DATA}`,
           `No records for this period of time for \`\`\`${formattedField}\`\`\``

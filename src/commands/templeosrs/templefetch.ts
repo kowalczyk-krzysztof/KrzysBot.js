@@ -19,7 +19,7 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
-import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
+import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTime';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 

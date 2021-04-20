@@ -1,5 +1,7 @@
-// Discord
+// UTILS: Enums
 import { TempleOverviewTimeAliases, TempleOverviewTimes } from './enums';
+// UTILS: Capitalize first letter
+import { capitalizeFirstLetter } from '../capitalizeFirstLetter';
 
 // Validator for commands using player overview endpoint
 export const templeOverviewTimeValidator = (
@@ -34,4 +36,22 @@ export const templeOverviewTimeValidator = (
   }
 
   return timePeriod;
+};
+
+export const formatOverviewTime = (time: string): string => {
+  let formattedTime: string;
+  switch (time) {
+    case TempleOverviewTimeAliases.HALFYEAR:
+      formattedTime = '6 months';
+      break;
+    case TempleOverviewTimeAliases.FIVEMIN:
+      formattedTime = '5 min';
+      break;
+    case TempleOverviewTimeAliases.ALLTIME:
+      formattedTime = 'All Time';
+      break;
+    default:
+      formattedTime = capitalizeFirstLetter(time);
+  }
+  return formattedTime;
 };

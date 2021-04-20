@@ -22,7 +22,6 @@ import {
   OsrsRandom,
   TempleCacheType,
   TempleOther,
-  TempleOverviewTimeAliases,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -31,13 +30,14 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Prefix validator
 import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
-// UTILS: Capitalize first letter
-import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: Temple Overview time validator
 import { templeOverviewTimeAliases } from '../../utils/osrs/inputValidator';
-import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
+import {
+  formatOverviewTime,
+  templeOverviewTimeValidator,
+} from '../../utils/osrs/templeOverviewTime';
 // UTILS: Temple index to key
 import { indexToBoss } from '../../utils/osrs/templeIndex';
 // Anti-spam
@@ -87,7 +87,7 @@ export const topboss = async (
     const result: TempleEmbed = generateResult(
       embed,
       playerOverviewOther[userNameWithTime],
-      formattedTime as string
+      time as string
     );
     return msg.channel.send(result);
   } else {
@@ -102,7 +102,7 @@ export const topboss = async (
       const result: TempleEmbed = generateResult(
         embed,
         playerOverviewOther[userNameWithTime],
-        formattedTime as string
+        time as string
       );
       return msg.channel.send(result);
     } else return;
@@ -119,16 +119,15 @@ const generateResult = (
     return errorHandler();
   else {
     // Format time
-    let capitalFirst: string = capitalizeFirstLetter(time);
-    if (capitalFirst === TempleOverviewTimeAliases.HALFYEAR)
-      capitalFirst = '6 months';
-    else if (capitalFirst === 'Alltime') capitalFirst = 'All Time';
-    else capitalFirst = capitalFirst;
-    // Try to match boss index with fieldd
+    const formattedTime: string = formatOverviewTime(time);
+    // Try to match boss index with field
     const boss: keyof TempleOtherTable = indexToBoss(
       playerObject[TempleOther.INFO][TempleOther.TOP_BOSS]
     ) as keyof TempleOtherTable;
-    embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${capitalFirst}\`\`\``);
+    embed.addField(
+      `${OsrsRandom.TIME_PERIOD}:`,
+      `\`\`\`${formattedTime}\`\`\``
+    );
     // If boss has not been found, then return no data msg
     if (boss === undefined)
       embed.addField(
@@ -145,7 +144,7 @@ const generateResult = (
         xp = 0;
       else xp = playerObject[TempleOther.TABLE][boss][TempleOther.XP];
       embed.addField(`${OsrsRandom.KILLS.toUpperCase()}:`, `\`\`\`${xp}\`\`\``);
-      if (capitalFirst === 'All Time')
+      if (formattedTime === 'All Time')
         embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     }
 

@@ -529,7 +529,7 @@ export enum OsrsRandom {
   SKILL = 'skill',
   BOSS = 'boss',
   GP_EARNED = 'Estimated GP earned',
-  GP_SPENT = 'Estimed GP lost',
+  GP_SPENT = 'Estimated GP spent',
   TIME_PERIOD = 'TIME PERIOD',
   NO_DATA = 'NO DATA',
 }
