@@ -52,7 +52,7 @@ import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: FIeld name formatter
 import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
-// UTIILS : Number formatter
+// UTILS : Number formatter
 import {
   numberFormatter,
   NumberFormatTypes,
@@ -272,7 +272,10 @@ const generateResult = (
       else if (args[0] === ValidInputCases.BOSS)
         ending = ` ${OsrsRandom.KILLS}`;
       else ending = '';
-      embed.addField('TIME PERIOD:', `\`\`\`${capitalFirst}\`\`\``);
+      embed.addField(
+        `${OsrsRandom.TIME_PERIOD}:`,
+        `\`\`\`${capitalFirst}\`\`\``
+      );
       embed.addField(
         `${formattedField}`,
         `\`\`\`${formattedValue}${ending}\`\`\``
@@ -318,9 +321,12 @@ const generateResult = (
       if (capitalFirst === 'All Time')
         embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     } else {
-      embed.addField(`TIME PERIOD:`, `\`\`\`${capitalFirst}\`\`\``);
       embed.addField(
-        `NO DATA`,
+        `${OsrsRandom.TIME_PERIOD}:`,
+        `\`\`\`${capitalFirst}\`\`\``
+      );
+      embed.addField(
+        `${OsrsRandom.NO_DATA}`,
         `No gains for this period of time for \`\`\`${formattedField}\`\`\``
       );
     }

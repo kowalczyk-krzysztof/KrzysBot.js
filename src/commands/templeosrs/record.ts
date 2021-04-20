@@ -43,7 +43,7 @@ import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: FIeld name formatter
 import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
-// UTIILS : Number formatter
+// UTILS : Number formatter
 import {
   numberFormatter,
   NumberFormatTypes,
@@ -201,7 +201,10 @@ const generateResult = (
           playerObject[field][time][TempleOther.DATE_LOWERCASE],
           NumberFormatTypes.EN_GB
         ) as string;
-        embed.addField('TIME PERIOD:', `\`\`\`${capitalFirst}\`\`\``);
+        embed.addField(
+          `${OsrsRandom.TIME_PERIOD}:`,
+          `\`\`\`${capitalFirst}\`\`\``
+        );
         embed.addField(
           `${formattedField}`,
           `\`\`\`${formattedValue}${ending}\`\`\``
@@ -210,12 +213,15 @@ const generateResult = (
       } else {
         embed.addField(`TIMED PERIOD:`, `\`\`\`${capitalFirst}\`\`\``);
         embed.addField(
-          `NO DATA`,
+          `${OsrsRandom.NO_DATA}`,
           `No records for this period of time for \`\`\`${formattedField}\`\`\``
         );
       }
     } else {
-      embed.addField(`NO DATA`, `No records for \`\`\`${formattedField}\`\`\``);
+      embed.addField(
+        `${OsrsRandom.NO_DATA}`,
+        `No records for \`\`\`${formattedField}\`\`\``
+      );
     }
     return embed;
   }

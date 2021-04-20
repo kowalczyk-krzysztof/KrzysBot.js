@@ -21,7 +21,7 @@ export interface TempleOtherInfo {
   [TempleOther.KC_PER_DAY]: number;
   [TempleOther.AVR_KCH]: number;
   [TempleOther.TOP_BOSS]: number;
-  [TempleOther.GP_EARNED]: number;
+  [TempleOther.GP_EARNED]: number | string;
 }
 // Interface for TempleOSRS overview (other) table key
 export interface TempleOtherTable extends Osrs<TempleOtherTableProps> {
@@ -45,7 +45,7 @@ export interface TempleSkillInfo {
   [TempleOther.XP_PER_DAY]: number;
   [TempleOther.AVR_XPH]: number;
   [TempleOther.TOP_SKILL]: number;
-  [TempleOther.GP_SPENT]: number;
+  [TempleOther.GP_SPENT]: number | string;
 }
 // Interface for TempleOSRS overview (skill) table key
 export interface TempleSkillTable extends Osrs<SkillTableProps> {

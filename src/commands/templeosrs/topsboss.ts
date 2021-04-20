@@ -123,10 +123,13 @@ const generateResult = (
     const boss: keyof TempleOtherTable = indexToBoss(
       playerObject[TempleOther.INFO][TempleOther.TOP_BOSS]
     ) as keyof TempleOtherTable;
-    embed.addField('TIME PERIOD:', `\`\`\`${capitalFirst}\`\`\``);
+    embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${capitalFirst}\`\`\``);
     // If boss has not been found, then return no data msg
     if (boss === undefined)
-      embed.addField(`NO DATA`, `No records for this period of time`);
+      embed.addField(
+        `${OsrsRandom.NO_DATA}`,
+        `No records for this period of time`
+      );
     else {
       embed.addField(
         `${OsrsRandom.BOSS.toUpperCase()}:`,

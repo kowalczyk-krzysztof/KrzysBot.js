@@ -15,6 +15,8 @@ import { record } from './commands/templeosrs/record';
 import { gains } from './commands/templeosrs/gains';
 import { topboss } from './commands/templeosrs/topsboss';
 import { topskill } from './commands/templeosrs/topskill';
+import { gpearned } from './commands/templeosrs/gpearned';
+import { gpspent } from './commands/templeosrs/gpspent';
 // Commands: OSRS
 import { clues } from './commands/osrs/clues';
 import { kc } from './commands/osrs/kc';
@@ -56,6 +58,8 @@ export const commandList: {
   gains,
   topboss,
   topskill,
+  gpearned,
+  gpspent,
 };
 // Alias handler - take a command name and check if it has an alias then return the original name
 export const aliasHandler = (commandName: string) => {
