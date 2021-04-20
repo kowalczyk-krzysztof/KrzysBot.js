@@ -30,7 +30,6 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Input validator
 import {
@@ -85,8 +84,10 @@ export const record = async (
     parsedInput.case !== undefined
   ) {
     // Check if rsn is valid runescape name
-    const nameCheck: string = runescapeNameValidator(parsedInput.rsn);
-    if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+    const nameCheck: string | undefined = runescapeNameValidator(
+      parsedInput.rsn
+    );
+    if (nameCheck === undefined) return msg.channel.send(invalidUsername);
     const username: string = nameCheck;
     // Check if command is on cooldown
     if (
@@ -211,7 +212,10 @@ const generateResult = (
         );
         embed.addField('RECORD SET ON:', `\`\`\`${formattedDate}\`\`\``);
       } else {
-        embed.addField(`TIMED PERIOD:`, `\`\`\`${capitalFirst}\`\`\``);
+        embed.addField(
+          `${OsrsRandom.TIME_PERIOD}:`,
+          `\`\`\`${capitalFirst}\`\`\``
+        );
         embed.addField(
           `${OsrsRandom.NO_DATA}`,
           `No records for this period of time for \`\`\`${formattedField}\`\`\``

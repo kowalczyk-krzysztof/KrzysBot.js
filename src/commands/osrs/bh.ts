@@ -24,14 +24,9 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Prefix validator
-import {
-  isPrefixValid,
-  invalidPrefix,
-  invalidPrefixMsg,
-} from '../../utils/osrs/isPrefixValid';
+import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 import { antiSpam } from '../../cache/antiSpam';
@@ -43,15 +38,14 @@ export const bh = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
-  if (args.length === 0) return msg.channel.send(invalidPrefixMsg(bhTypes));
-  const prefix: string = isPrefixValid(msg, args, bhTypes);
-  if (prefix === invalidPrefix) return;
+  const prefix: string | undefined = isPrefixValid(msg, args, bhTypes);
+  if (prefix === undefined) return;
 
   const cooldown: number = CommandCooldowns.BH;
 
   const user: string[] = args.slice(1);
-  const nameCheck: string = runescapeNameValidator(user);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(user);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;

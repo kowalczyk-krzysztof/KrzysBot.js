@@ -19,7 +19,6 @@ import { CommandCooldowns, TempleOther } from '../../utils/osrs/enums';
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Capitalize first letter
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
@@ -35,8 +34,8 @@ export const lms = async (
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.LMS;
-  const nameCheck: string | null = runescapeNameValidator(args);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(args);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;

@@ -12,7 +12,6 @@ import { Embed } from '../../utils/embed';
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
@@ -34,8 +33,8 @@ export const datapoint = async (
   ...args: string[]
 ): Promise<Message | undefined | void> => {
   if (antiSpam(msg, commandName) === true) return;
-  const nameCheck: string = runescapeNameValidator(args);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(args);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   const cacheItem: string = commandName + username.toLowerCase();
   if (cacheItem in cache)

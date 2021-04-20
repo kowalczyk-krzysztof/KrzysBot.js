@@ -14,7 +14,7 @@ export const antiSpam = (
   msg: Message,
   commandName: string
 ): boolean | undefined => {
-  const cooldownInMs: number = 3000;
+  const cooldownInMs: number = 2500;
   const cacheItem: string = msg.author.id + commandName;
   if (cacheItem in spamCache) return true;
   spamCache[cacheItem] = null;

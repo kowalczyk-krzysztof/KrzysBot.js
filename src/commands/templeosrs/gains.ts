@@ -39,7 +39,6 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Input validator
 import {
@@ -127,8 +126,10 @@ export const gains = async (
     parsedInput.case !== undefined
   ) {
     // Check is username is correct runescape name
-    const nameCheck: string = runescapeNameValidator(parsedInput.rsn);
-    if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+    const nameCheck: string | undefined = runescapeNameValidator(
+      parsedInput.rsn
+    );
+    if (nameCheck === undefined) return msg.channel.send(invalidUsername);
     const username: string = nameCheck;
     // Check cooldown
     if (

@@ -20,8 +20,8 @@ export enum CommandCooldowns {
   TEMPLEFETCH = 600,
   TOPBOSS = 30,
   TOPSKILL = 30,
-  GPEARNED = 30,
-  GPLOST = 30,
+  GP_EARNED = 30,
+  GP_SPENT = 30,
 }
 
 // TempleOSRS Player Overview Time Field Names

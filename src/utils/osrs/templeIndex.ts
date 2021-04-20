@@ -1,5 +1,5 @@
 // UTILS: Enums
-import { Bosses, TempleIndex, Skills } from './enums';
+import { Bosses, TempleIndex, Skills, SkillAliases } from './enums';
 
 // Index to boss
 export const indexToBoss = (nr: number): string | undefined => {
@@ -217,6 +217,171 @@ export const indexToSkill = (nr: number): string | undefined => {
       break;
     case TempleIndex.CON:
       skill = Skills.CON;
+      break;
+    default:
+      return;
+  }
+  return skill;
+};
+
+export const aliasToSkillIndex = (alias: string): number | undefined => {
+  let skill: number;
+  switch (alias) {
+    case SkillAliases.TOTAL_ALIAS1:
+      skill = TempleIndex.TOTAL;
+      break;
+    case SkillAliases.TOTAL_ALIAS2:
+      skill = TempleIndex.TOTAL;
+      break;
+    case SkillAliases.ATTACK_ALIAS1:
+      skill = TempleIndex.ATT;
+      break;
+    case SkillAliases.ATTACK_ALIAS2:
+      skill = TempleIndex.ATT;
+      break;
+    case SkillAliases.DEFENCE_ALIAS1:
+      skill = TempleIndex.DEF;
+      break;
+    case SkillAliases.DEFENCE_ALIAS2:
+      skill = TempleIndex.DEF;
+      break;
+    case SkillAliases.STRENGTH_ALIAS1:
+      skill = TempleIndex.STR;
+      break;
+    case SkillAliases.STRENGTH_ALIAS2:
+      skill = TempleIndex.STR;
+      break;
+    case SkillAliases.HP_ALIAS1:
+      skill = TempleIndex.HP;
+      break;
+    case SkillAliases.HP_ALIAS2:
+      skill = TempleIndex.HP;
+      break;
+    case SkillAliases.RANGED_ALIAS1:
+      skill = TempleIndex.RANGED;
+      break;
+    case SkillAliases.RANGED_ALIAS2:
+      skill = TempleIndex.RANGED;
+      break;
+    case SkillAliases.PRAYER_ALIAS1:
+      skill = TempleIndex.PRAY;
+      break;
+    case SkillAliases.PRAYER_ALIAS2:
+      skill = TempleIndex.PRAY;
+      break;
+    case SkillAliases.MAGIC_ALIAS1:
+      skill = TempleIndex.MAGIC;
+      break;
+    case SkillAliases.MAGIC_ALIAS2:
+      skill = TempleIndex.MAGIC;
+      break;
+    case SkillAliases.COOKING_ALIAS1:
+      skill = TempleIndex.COOK;
+      break;
+    case SkillAliases.COOKING_ALIAS2:
+      skill = TempleIndex.COOK;
+      break;
+    case SkillAliases.WC_ALIAS1:
+      skill = TempleIndex.WC;
+      break;
+    case SkillAliases.WC_ALIAS2:
+      skill = TempleIndex.WC;
+      break;
+    case SkillAliases.FLETCH_ALIAS1:
+      skill = TempleIndex.FLETCH;
+      break;
+    case SkillAliases.FLETCH_ALIAS2:
+      skill = TempleIndex.FLETCH;
+      break;
+    case SkillAliases.FISH_ALIAS1:
+      skill = TempleIndex.FISH;
+      break;
+    case SkillAliases.FISH_ALIAS2:
+      skill = TempleIndex.FISH;
+      break;
+    case SkillAliases.FM_ALIAS1:
+      skill = TempleIndex.FM;
+      break;
+    case SkillAliases.FM_ALIAS2:
+      skill = TempleIndex.FM;
+      break;
+    case SkillAliases.FM_ALIAS3:
+      skill = TempleIndex.FM;
+      break;
+    case SkillAliases.CRAFT_ALIAS1:
+      skill = TempleIndex.CRAFT;
+      break;
+    case SkillAliases.CRAFT_ALIAS2:
+      skill = TempleIndex.CRAFT;
+      break;
+    case SkillAliases.SMITH_ALIAS1:
+      skill = TempleIndex.SMITH;
+      break;
+    case SkillAliases.SMITH_ALIAS2:
+      skill = TempleIndex.SMITH;
+      break;
+    case SkillAliases.MINING_ALIAS1:
+      skill = TempleIndex.MINING;
+      break;
+    case SkillAliases.MINING_ALIAS2:
+      skill = TempleIndex.MINING;
+      break;
+    case SkillAliases.HERB_ALIAS1:
+      skill = TempleIndex.HERB;
+      break;
+    case SkillAliases.HERB_ALIAS2:
+      skill = TempleIndex.HERB;
+      break;
+    case SkillAliases.AGIL_ALIAS1:
+      skill = TempleIndex.AGIL;
+      break;
+    case SkillAliases.AGIL_ALIAS2:
+      skill = TempleIndex.AGIL;
+      break;
+    case SkillAliases.THIEV_ALIAS1:
+      skill = TempleIndex.THIEV;
+      break;
+    case SkillAliases.THIEV_ALIAS2:
+      skill = TempleIndex.THIEV;
+      break;
+    case SkillAliases.SLAY_ALIAS1:
+      skill = TempleIndex.SLAYER;
+      break;
+    case SkillAliases.SLAY_ALIAS2:
+      skill = TempleIndex.SLAYER;
+      break;
+    case SkillAliases.FARM_ALIAS1:
+      skill = TempleIndex.FARM;
+      break;
+    case SkillAliases.FARM_ALIAS2:
+      skill = TempleIndex.FARM;
+      break;
+    case SkillAliases.RC_ALIAS1:
+      skill = TempleIndex.RC;
+      break;
+    case SkillAliases.RC_ALIAS2:
+      skill = TempleIndex.RC;
+      break;
+    case SkillAliases.RC_ALIAS3:
+      skill = TempleIndex.RC;
+      break;
+    case SkillAliases.HUNT_ALIAS1:
+      skill = TempleIndex.HUNT;
+      break;
+    case SkillAliases.HUNT_ALIAS2:
+      skill = TempleIndex.HUNT;
+      break;
+    case SkillAliases.CONSTR_ALIAS1:
+      skill = TempleIndex.CON;
+      break;
+    case SkillAliases.CONSTR_ALIAS2:
+      skill = TempleIndex.CON;
+      break;
+    case SkillAliases.CONSTR_ALIAS3:
+      skill = TempleIndex.CON;
+      break;
+    case SkillAliases.CONSTR_ALIAS4:
+      skill = TempleIndex.CON;
       break;
     default:
       return;
