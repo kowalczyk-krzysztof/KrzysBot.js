@@ -35,13 +35,6 @@
       "category": "Temple OSRS",
       "aliases": ["fetchtemple"]
     },
-    "datapoint": {
-      "name": "datapoint",
-      "description": "Create a new datapoint for player",
-      "example": ".datapoint username",
-      "category": "Temple OSRS",
-      "aliases": []
-    },
     "record": {
       "name": "record",
       "description": "Get player's records",
@@ -81,6 +74,13 @@
       "name": "gpspent",
       "description": "Get player's estimated GP spent in specified period of time",
       "example": ".gpspent month username",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "recent200m": {
+      "name": "recent200m",
+      "description": "Get info about player who recently gained 200m exp in a specified skill",
+      "example": ".recent200m agility",
       "category": "Temple OSRS",
       "aliases": []
     }

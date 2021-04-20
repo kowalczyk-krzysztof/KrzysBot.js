@@ -16,6 +16,7 @@ export enum PrefixCategories {
   BOSS = 'boss',
   BOSS_EDGE_CASE = 'bossedge',
   SKILL = 'skill',
+  SKILL200M = '200m',
   CLUES = 'clues',
   TIME_OTHER = 'timeother',
   OTHER = 'other',
@@ -68,8 +69,14 @@ export const invalidPrefixMsg = (
       break;
     case PrefixCategories.CLUES:
       result = `Invalid clue tier. Valid tiers: **${typesList}**`;
+      break;
+    case PrefixCategories.SKILL200M:
+      result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>\nNOTE: Total level is excluded for this command`;
+      break;
     default:
       result = `Invalid ${category} type. Valid types: **${typesList}**`;
+      break;
   }
+
   return new Embed().setDescription(result);
 };

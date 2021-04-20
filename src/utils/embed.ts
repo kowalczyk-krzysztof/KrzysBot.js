@@ -25,8 +25,15 @@ export class TempleEmbed extends Embed {
     this.setDescription(
       `Data provided by: [TempleOSRS](https://templeosrs.com/ 'TempleOSRS')`
     );
-    this.setFooter(
-      'Incorrect? Fetch latest data:\n.templefetch data-type username'
+    this.setFooter('Incorrect? Fetch latest data:\n.templefetch type username');
+  }
+}
+// TempleOSRS embed - no footer
+export class TempleEmbedNoFooter extends Embed {
+  constructor() {
+    super();
+    this.setDescription(
+      `Data provided by: [TempleOSRS](https://templeosrs.com/ 'TempleOSRS')`
     );
   }
 }
@@ -52,4 +59,5 @@ export enum EmbedTitles {
   TOPSKILL = 'TOP SKILL',
   GP_EARNED = 'GP EARNED',
   GP_SPENT = 'GP SPENT',
+  RECENT_200M = 'RECENT 200M',
 }
