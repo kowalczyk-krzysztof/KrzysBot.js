@@ -37,7 +37,7 @@ import { templeOverviewTimeAliases } from '../../utils/osrs/inputValidator';
 import {
   formatOverviewTime,
   templeOverviewTimeValidator,
-} from '../../utils/osrs/templeOverviewTime';
+} from '../../utils/osrs/templetime';
 // UTILS: Temple index to key
 import { indexToBoss } from '../../utils/osrs/templeIndex';
 // Anti-spam

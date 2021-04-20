@@ -57,7 +57,7 @@ import {
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 // UTILS: Temple Overview time validator
-import { formatOverviewTime } from '../../utils/osrs/templeOverviewTime';
+import { formatOverviewTime } from '../../utils/osrs/templetime';
 
 export const gains = async (
   msg: Message,
