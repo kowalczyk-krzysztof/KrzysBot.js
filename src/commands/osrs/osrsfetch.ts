@@ -15,12 +15,15 @@ import {
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 import { CommandCooldowns } from '../../utils/osrs/enums';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const osrsfetch = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.OSRSFETCH;
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);

@@ -17,6 +17,8 @@ import {
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 import { CommandCooldowns } from '../../utils/osrs/enums';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 dotenv.config({ path: 'config.env' });
 
@@ -31,6 +33,7 @@ export const datapoint = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | void> => {
+  if (antiSpam(msg, commandName) === true) return;
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;

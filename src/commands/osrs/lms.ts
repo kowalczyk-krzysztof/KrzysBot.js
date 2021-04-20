@@ -25,12 +25,15 @@ import {
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const lms = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.LMS;
   const nameCheck: string | null = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
@@ -46,6 +49,8 @@ export const lms = async (
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
     if (isFetched === true) {
+      console.log('fetching');
+
       const result: OsrsEmbed = generateResult(embed, osrsStats[username]);
       return msg.channel.send(result);
     } else return;

@@ -27,12 +27,15 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const leaguepoints = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.LEAGUEPOINTS;
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);

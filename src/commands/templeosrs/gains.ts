@@ -57,6 +57,8 @@ import {
   numberFormatter,
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 Embed;
 export const gains = async (
@@ -64,6 +66,7 @@ export const gains = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
+  if (antiSpam(msg, commandName) === true) return;
   if (args.length === 0)
     return msg.channel.send(
       new Embed().setDescription(
@@ -184,10 +187,10 @@ export const gains = async (
       else {
         // Generate embed
         const result: TempleEmbed = generateResult(
-          field,
           embed,
           playerCache[userNameWithTime] as TempleOverviewSkill &
             TempleOverviewOther,
+          field,
           parsedInput.time,
           lowerCasedArguments
         );
@@ -212,10 +215,10 @@ export const gains = async (
         else {
           // Generate embed
           const result: TempleEmbed = generateResult(
-            field,
             embed,
             playerCache[userNameWithTime] as TempleOverviewSkill &
               TempleOverviewOther,
+            field,
             parsedInput.time,
             lowerCasedArguments
           );
@@ -228,9 +231,9 @@ export const gains = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  field: keyof TempleOtherTable & keyof TempleSkillTable,
   embed: TempleEmbed,
   playerObject: TempleOverviewOther & TempleOverviewSkill,
+  field: keyof TempleOtherTable & keyof TempleSkillTable,
   time: string,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
@@ -263,7 +266,6 @@ const generateResult = (
           value as number,
           NumberFormatTypes.INT
         );
-
       // Changing sufix depending on whether the type is skill or not
       let ending: string;
       if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
@@ -275,33 +277,43 @@ const generateResult = (
         `${formattedField}`,
         `\`\`\`${formattedValue}${ending}\`\`\``
       );
-      if (args[0] === ValidInputCases.SKILL)
+      if (args[0] === ValidInputCases.SKILL) {
+        let level: number;
+        if (fieldTocheck[TempleOther.LEVEL] === null) level = 0;
+        else level = fieldTocheck[TempleOther.LEVEL];
         embed.addField(
-          `${TempleOther.LEVEL.toUpperCase}S GAINED:`,
-          `\`\`\`${fieldTocheck[TempleOther.LEVEL]}\`\`\``
+          `${TempleOther.LEVEL.toUpperCase()}S GAINED:`,
+          `\`\`\`${level}\`\`\``
         );
-      if (args[0] === ValidInputCases.SKILL)
+      }
+      if (args[0] === ValidInputCases.SKILL) {
+        let ehp: number;
+        if (fieldTocheck[TempleOther.EHP_LOWERCASE] == null) ehp = 0;
+        else ehp = fieldTocheck[TempleOther.EHP_LOWERCASE];
         embed.addField(
           `${TempleOther.EHP.toUpperCase()} GAINED:`,
-          `\`\`\`${parseInt(
-            fieldTocheck[TempleOther.EHP_LOWERCASE].toString()
-          )}\`\`\``
+          `\`\`\`${parseInt(ehp.toString())}\`\`\``
         );
-      if (args[0] === ValidInputCases.BOSS)
+      }
+      if (args[0] === ValidInputCases.BOSS) {
+        let ehb: number;
+        if (fieldTocheck[TempleOther.EHB_LOWERCASE] === null) ehb = 0;
+        else ehb = fieldTocheck[TempleOther.EHB_LOWERCASE];
         embed.addField(
           `${TempleOther.EHB.toUpperCase()} GAINED:`,
-          `\`\`\`${parseInt(
-            fieldTocheck[TempleOther.EHB_LOWERCASE].toString()
-          )}\`\`\``
+          `\`\`\`${parseInt(ehb.toString())}\`\`\``
         );
+      }
       let plusOrMinus: string;
+      let rank: number;
+      if (fieldTocheck[TempleOther.RANK] === null) rank = 0;
+      else rank = fieldTocheck[TempleOther.RANK];
+
       if (fieldTocheck[TempleOther.RANK] > 0) plusOrMinus = '+';
       else plusOrMinus = '';
       embed.addField(
         `RANKS GAINED OR LOST:`,
-        `\`\`\`${plusOrMinus}${parseInt(
-          fieldTocheck[TempleOther.RANK].toString()
-        )}\`\`\``
+        `\`\`\`${plusOrMinus}${parseInt(rank.toString())}\`\`\``
       );
       if (capitalFirst === 'All Time')
         embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);

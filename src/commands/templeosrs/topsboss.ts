@@ -41,12 +41,15 @@ import { templeOverviewTimeAliases } from '../../utils/osrs/inputValidator';
 import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
 // UTILS: Temple index to key
 import { indexToBoss } from '../../utils/osrs/templeIndex';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const topboss = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   if (args.length === 0)
     return msg.channel.send(invalidPrefixMsg(templeOverviewTimeAliases));
   const lowerCasedArguments: string[] = args.map((e: string) => {
@@ -129,10 +132,11 @@ const generateResult = (
         `${OsrsRandom.BOSS.toUpperCase()}:`,
         `\`\`\`${boss}\`\`\``
       );
-      embed.addField(
-        `${OsrsRandom.KILLS.toUpperCase()}:`,
-        `\`\`\`${playerObject[TempleOther.TABLE][boss].xp}\`\`\``
-      );
+      let xp: number;
+      if (playerObject[TempleOther.TABLE][boss][TempleOther.XP] === null)
+        xp = 0;
+      else xp = playerObject[TempleOther.TABLE][boss][TempleOther.XP];
+      embed.addField(`${OsrsRandom.KILLS.toUpperCase()}:`, `\`\`\`${xp}\`\`\``);
       if (capitalFirst === 'All Time')
         embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     }
