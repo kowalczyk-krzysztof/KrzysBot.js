@@ -16,7 +16,6 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
@@ -57,8 +56,7 @@ export const templefetch = async (
     if (joinedArgs.toLowerCase() === TempleCacheType.PLAYER_OVERVIEW_SKILL) {
       dataType = joinedArgs.toLowerCase();
       const validTime: string | undefined = templeOverviewTimeValidator(
-        msg,
-        args.slice(2)
+        args[2]
       );
       if (validTime === undefined) return;
       else {
@@ -70,8 +68,7 @@ export const templefetch = async (
     ) {
       dataType = joinedArgs.toLowerCase();
       const validTime: string | undefined = templeOverviewTimeValidator(
-        msg,
-        args.slice(2)
+        args[2]
       );
       if (validTime === undefined) return;
       else {
@@ -95,8 +92,8 @@ export const templefetch = async (
     );
 
   const cooldown: number = CommandCooldowns.TEMPLEFETCH;
-  const nameCheck: string = runescapeNameValidator(user);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(user);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (
     isOnCooldown(

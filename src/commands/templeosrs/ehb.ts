@@ -16,7 +16,6 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Temple date parser
 import { templeDateParser } from '../../utils/osrs/templeDateParser';
@@ -33,8 +32,8 @@ export const ehb = async (
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
   if (antiSpam(msg, commandName) === true) return;
-  const nameCheck: string = runescapeNameValidator(args);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(args);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   const embed: TempleEmbed = new TempleEmbed().addField(
     usernameString,

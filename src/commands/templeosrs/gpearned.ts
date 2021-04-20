@@ -25,10 +25,9 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Prefix validator
-import { invalidPrefixMsg } from '../../utils/osrs/isPrefixValid';
+import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
 // UTILS: Capitalize first letter
 import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 // UTILS: Error handler
@@ -50,23 +49,24 @@ export const gpearned = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
-  if (args.length === 0)
-    return msg.channel.send(invalidPrefixMsg(templeOverviewTimeAliases));
+  const time: string | undefined = isPrefixValid(
+    msg,
+    args,
+    templeOverviewTimeAliases
+  );
+  if (time === undefined) return;
+  const formattedTime: string | undefined = templeOverviewTimeValidator(time);
+
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
-  const time: string | undefined = templeOverviewTimeValidator(
-    msg,
-    lowerCasedArguments
-  );
-  if (time === undefined) return;
 
   const user: string[] = args.slice(1);
 
-  const cooldown: number = CommandCooldowns.GPEARNED;
+  const cooldown: number = CommandCooldowns.GP_EARNED;
 
-  const nameCheck: string = runescapeNameValidator(user);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(user);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   // Check cooldown
   if (
@@ -79,7 +79,7 @@ export const gpearned = async (
     ) === true
   )
     return;
-  const userNameWithTime: string = username + time;
+  const userNameWithTime: string = username + formattedTime;
   const embed: TempleEmbed = new TempleEmbed()
     .setTitle(EmbedTitles.GP_EARNED)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
@@ -87,17 +87,22 @@ export const gpearned = async (
     const result: TempleEmbed = generateResult(
       embed,
       playerOverviewOther[userNameWithTime],
-      args[0]
+      formattedTime as string
     );
     return msg.channel.send(result);
   } else {
     const dataType: TempleCacheType = TempleCacheType.PLAYER_OVERVIEW_OTHER;
-    const isFetched: boolean = await fetchTemple(msg, username, dataType, time);
+    const isFetched: boolean = await fetchTemple(
+      msg,
+      username,
+      dataType,
+      formattedTime
+    );
     if (isFetched === true) {
       const result: TempleEmbed = generateResult(
         embed,
         playerOverviewOther[userNameWithTime],
-        args[0]
+        formattedTime as string
       );
       return msg.channel.send(result);
     } else return;
@@ -127,11 +132,9 @@ const generateResult = (
     if (gpEarned === '-')
       embed.addField(
         `${OsrsRandom.NO_DATA}`,
-        `No records for this period of time`
+        `\`\`\`No data for this period of time\`\`\``
       );
     else {
-      console.log(typeof gpEarned);
-
       embed.addField(
         `${OsrsRandom.GP_EARNED.toUpperCase()}:`,
         `\`\`\`${numberFormatter(gpEarned, NumberFormatTypes.EN_US)} gp\`\`\``

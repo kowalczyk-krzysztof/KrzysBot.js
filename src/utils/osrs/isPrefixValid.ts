@@ -22,18 +22,16 @@ export enum PrefixCategories {
   DEFAULT = '',
 }
 
-export const invalidPrefix = 'INVALID';
-
 export const isPrefixValid = (
   msg: Message,
   args: string[],
   types: string[],
   category: PrefixCategories = PrefixCategories.DEFAULT
-): string => {
+): string | undefined => {
   const typesList: string = types.join(', ');
   if (args.length === 0) {
     msg.channel.send(invalidPrefixMsg(typesList, category));
-    return invalidPrefix;
+    return undefined;
   }
 
   const parsedArgument: string = args[0]
@@ -42,7 +40,7 @@ export const isPrefixValid = (
     .trim();
   if (args.length === 0 || !types.includes(parsedArgument)) {
     msg.channel.send(invalidPrefixMsg(typesList, category));
-    return invalidPrefix;
+    return;
   } else return parsedArgument;
 };
 // Generate msg

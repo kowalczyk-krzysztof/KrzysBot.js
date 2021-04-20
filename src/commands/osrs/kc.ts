@@ -24,7 +24,6 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Input validator
 import { bossFields, bossList } from '../../utils/osrs/inputValidator';
@@ -75,8 +74,8 @@ export const kc = async (
 
   const cooldown: number = CommandCooldowns.KC;
 
-  const nameCheck: string = runescapeNameValidator(user);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(user);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (
     isOnCooldown(

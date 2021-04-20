@@ -19,14 +19,11 @@ import { CommandCooldowns, TempleOther } from '../../utils/osrs/enums';
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Prefix validator
 import {
   isPrefixValid,
   PrefixCategories,
-  invalidPrefix,
-  invalidPrefixMsg,
 } from '../../utils/osrs/isPrefixValid';
 // UTILS: Input validator
 import { clueFields, clueList } from '../../utils/osrs/inputValidator';
@@ -43,22 +40,19 @@ export const clues = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
-  if (args.length === 0)
-    return msg.channel.send(invalidPrefixMsg(clueList, PrefixCategories.CLUES));
-  // This is done so the cooldown is per unique command
-  const lowerCasedArguments: string[] = args.map((e: string) => {
-    return e.toLowerCase();
-  });
-  const prefix: string = isPrefixValid(
+  const prefix: string | undefined = isPrefixValid(
     msg,
     args,
     clueList,
     PrefixCategories.CLUES
   );
-  if (prefix === invalidPrefix) return;
+  if (prefix === undefined) return;
+  const lowerCasedArguments: string[] = args.map((e: string) => {
+    return e.toLowerCase();
+  });
   const cooldown: number = CommandCooldowns.CLUES;
-  const nameCheck: string = runescapeNameValidator(args.slice(1));
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(args.slice(1));
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (
     isOnCooldown(

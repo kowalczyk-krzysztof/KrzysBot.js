@@ -23,7 +23,6 @@ import {
 import {
   runescapeNameValidator,
   invalidUsername,
-  invalidRSN,
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
@@ -37,8 +36,8 @@ export const soulwars = async (
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.SOULWARS;
-  const nameCheck: string = runescapeNameValidator(args);
-  if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
+  const nameCheck: string | undefined = runescapeNameValidator(args);
+  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
