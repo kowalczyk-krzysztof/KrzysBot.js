@@ -9,6 +9,7 @@ import { isOnCooldown } from '../cache/cooldown';
 import { CommandCooldowns } from '../utils/osrs/enums';
 // Anti-spam
 import { antiSpam } from '../cache/antiSpam';
+import { Embed } from '../utils/embed';
 
 dotenv.config({ path: 'config.env' });
 const githubLink: string = process.env.GITHUB_PAGES as string;
@@ -24,5 +25,10 @@ export const commands = async (
     isOnCooldown(msg, commandName, cooldown, false, args.join('').toLowerCase())
   )
     return;
-  else return msg.channel.send(`List of commands:\n\`\`\`${githubLink}\`\`\``);
+  else
+    return msg.channel.send(
+      new Embed().setDescription(
+        `List of available commands with example usage:\n\n[Commands](${githubLink} 'Commands')`
+      )
+    );
 };
