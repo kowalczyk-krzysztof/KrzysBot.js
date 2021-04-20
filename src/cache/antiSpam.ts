@@ -1,5 +1,11 @@
 // Discord
 import { Message } from 'discord.js';
+// Dotenv
+import dotenv from 'dotenv';
+
+dotenv.config({ path: 'config.env' });
+
+const SPAM_CD_MS: number = (process.env.SPAM_CD_MS as unknown) as number;
 
 const spamCache: { [key: string]: null } = {};
 
@@ -14,11 +20,10 @@ export const antiSpam = (
   msg: Message,
   commandName: string
 ): boolean | undefined => {
-  const cooldownInMs: number = 2500;
   const cacheItem: string = msg.author.id + commandName;
   if (cacheItem in spamCache) return true;
   spamCache[cacheItem] = null;
   setTimeout(() => {
     delete spamCache[cacheItem];
-  }, cooldownInMs);
+  }, SPAM_CD_MS);
 };

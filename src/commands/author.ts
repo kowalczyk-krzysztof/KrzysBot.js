@@ -19,7 +19,7 @@ export const author = async (
     return msg.channel.send(
       new Embed().addField(
         `HELLO!`,
-        `My name is **Krzysztof** and I'm happy to provide you with **EfficiencyBOT**\n\nIf you have any questions, feature requests or bug reports, feel free to contact me on my [GitHub](${githubLink} 'GitHub') or message me on Discord:\`\`\`krzys#7414\n(UNIQUE ID: 792752768406257705)\`\`\``
+        `My name is **Krzysztof** and I'm happy to provide you with **EfficiencyBOT**\n\nIf you have any questions, feature requests or bug reports, feel free to contact me on my [GitHub](${githubLink} 'GitHub') or message me on Discord:\n\n\`\`\`krzys#7414\n(UNIQUE ID: 792752768406257705)\`\`\``
       )
     );
 };

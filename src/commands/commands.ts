@@ -24,5 +24,5 @@ export const commands = async (
     isOnCooldown(msg, commandName, cooldown, false, args.join('').toLowerCase())
   )
     return;
-  else return msg.channel.send(`List of commands:\`\`\`${githubLink}\`\`\``);
+  else return msg.channel.send(`List of commands:\n\`\`\`${githubLink}\`\`\``);
 };

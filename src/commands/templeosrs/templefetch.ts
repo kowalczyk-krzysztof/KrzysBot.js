@@ -157,7 +157,7 @@ export const templefetch = async (
         ).toUpperCase()})`;
       else formattedTypes = dataType.toUpperCase();
       embed.setDescription(
-        `Fetched latest **${formattedTypes}** data available for player:\`\`\`${username}\`\`\`To get more recent data - add a new datapoint and fetch again`
+        `Fetched latest **${formattedTypes}** data available for player:\n\`\`\`${username}\`\`\``
       );
       return msg.channel.send(embed);
     } else msg.channel.send(errorHandler());
