@@ -24,23 +24,35 @@ import { templeDateParser } from '../../utils/osrs/templeDateParser';
 import { gameModeCheck } from '../../utils/osrs/gameModeCheck';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const ehb = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
+  if (antiSpam(msg, commandName) === true) return;
   const nameCheck: string = runescapeNameValidator(args);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
+  const embed: TempleEmbed = new TempleEmbed().addField(
+    usernameString,
+    `\`\`\`${username}\`\`\``
+  );
   if (username in playerStats) {
-    const result: TempleEmbed = generateResult(playerStats[username], username);
+    const result: TempleEmbed = generateResult(
+      embed,
+      playerStats[username],
+      username
+    );
     return msg.channel.send(result);
   } else {
     const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
     const isFetched: boolean = await fetchTemple(msg, username, dataType);
     if (isFetched === true) {
       const result: TempleEmbed = generateResult(
+        embed,
         playerStats[username],
         username
       );
@@ -50,20 +62,17 @@ export const ehb = async (
 };
 // Generates embed sent to user
 const generateResult = (
+  embed: TempleEmbed,
   playerObject: TemplePlayerStats,
-  keyword: string
+  username: string
 ): TempleEmbed | ErrorEmbed => {
   if (playerObject === undefined || playerObject === null)
     return errorHandler();
   else {
-    const embed: TempleEmbed = new TempleEmbed().addField(
-      usernameString,
-      `\`\`\`${playerObject[TempleOther.INFO][TempleOther.USERNAME]}\`\`\``
-    );
     const lastChecked: { title: string; time: string } = templeDateParser(
       playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
     );
-    const TempleGameMode: string = gameModeCheck(keyword);
+    const TempleGameMode: string = gameModeCheck(username);
     embed.addField(
       `${lastChecked.title.toUpperCase()}:`,
       `\`\`\`${lastChecked.time}\`\`\``

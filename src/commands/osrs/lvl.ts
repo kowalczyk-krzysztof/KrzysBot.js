@@ -42,12 +42,15 @@ import {
   numberFormatter,
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const lvl = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   if (args.length === 0)
     return msg.channel.send(
       invalidPrefixMsg(skillList, PrefixCategories.SKILL)
@@ -87,9 +90,9 @@ export const lvl = async (
     if (field === undefined) return;
     else {
       const result: OsrsEmbed = await generateResult(
-        field,
         embed,
-        osrsStats[username]
+        osrsStats[username],
+        field
       );
       return msg.channel.send(result);
     }
@@ -102,9 +105,9 @@ export const lvl = async (
       if (field === undefined) return;
       else {
         const result: OsrsEmbed = await generateResult(
-          field,
           embed,
-          osrsStats[username]
+          osrsStats[username],
+          field
         );
         return msg.channel.send(result);
       }
@@ -113,9 +116,9 @@ export const lvl = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  field: keyof OsrsPlayer,
-  inputEmbed: OsrsEmbed,
-  playerObject: OsrsPlayer
+  embed: OsrsEmbed,
+  playerObject: OsrsPlayer,
+  field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   // keyof is how I can index objects like that
   if (playerObject === undefined || playerObject === null)
@@ -133,18 +136,18 @@ const generateResult = (
     let skillName: string;
     if (field === Skills.RC) skillName = OsrsRandom.RUNECRAFTING;
     else skillName = field;
-    inputEmbed.addField(
+    embed.addField(
       `${OsrsRandom.SKILL.toUpperCase()}:`,
       `\`\`\`${skillName}\`\`\``
     );
-    inputEmbed.addField(
+    embed.addField(
       `${TempleOther.LEVEL.toUpperCase()}:`,
       `\`\`\`${skill[TempleOther.LEVEL]}\`\`\``
     );
-    inputEmbed.addField(
+    embed.addField(
       `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
       `\`\`\`${formattedExp} ${TempleOther.EXP}\`\`\``
     );
-    return inputEmbed;
+    return embed;
   }
 };

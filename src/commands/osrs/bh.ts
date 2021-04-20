@@ -34,12 +34,15 @@ import {
 } from '../../utils/osrs/isPrefixValid';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
+import { antiSpam } from '../../cache/antiSpam';
+// Anti-spam
 
 export const bh = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   if (args.length === 0) return msg.channel.send(invalidPrefixMsg(bhTypes));
   const prefix: string = isPrefixValid(msg, args, bhTypes);
   if (prefix === invalidPrefix) return;
@@ -57,18 +60,18 @@ export const bh = async (
     .addField(usernameString, `\`\`\`${username}\`\`\``);
   if (username in osrsStats) {
     const result: OsrsEmbed = generateResult(
-      prefix,
       embed,
-      osrsStats[username]
+      osrsStats[username],
+      prefix
     );
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
     if (isFetched === true) {
       const result: OsrsEmbed = generateResult(
-        prefix,
         embed,
-        osrsStats[username]
+        osrsStats[username],
+        prefix
       );
       return msg.channel.send(result);
     } else return;
@@ -76,9 +79,9 @@ export const bh = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  prefix: string,
   embed: OsrsEmbed,
-  playerObject: OsrsPlayer
+  playerObject: OsrsPlayer,
+  prefix: string
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined || playerObject === null)
     return errorHandler();

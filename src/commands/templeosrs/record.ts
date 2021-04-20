@@ -48,12 +48,15 @@ import {
   numberFormatter,
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const record = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
+  if (antiSpam(msg, commandName) === true) return;
   if (args.length === 0)
     return msg.channel.send(
       new Embed().setDescription(
@@ -174,6 +177,7 @@ const generateResult = (
         const timeField: ExpAndDate = playerObject[field][time] as ExpAndDate;
         const value: string | number = timeField[TempleOther.XP];
         let formattedValue;
+        if (value === null) formattedValue = 0;
         if (args[0] === ValidInputCases.SKILL)
           formattedValue = numberFormatter(
             value as number,

@@ -36,12 +36,15 @@ import {
   invalidPrefixMsg,
   PrefixCategories,
 } from '../../utils/osrs/isPrefixValid';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const kc = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   if (args.length === 0)
     return msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
   const indexes: number[] = [0, 1, 2];
@@ -95,9 +98,9 @@ export const kc = async (
     if (field === undefined) return;
     else {
       const result: OsrsEmbed = generateResult(
-        field,
         embed,
-        osrsStats[username]
+        osrsStats[username],
+        field
       );
       return msg.channel.send(result);
     }
@@ -110,9 +113,9 @@ export const kc = async (
       if (field === undefined) return;
       else {
         const result: OsrsEmbed = generateResult(
-          field,
           embed,
-          osrsStats[username]
+          osrsStats[username],
+          field
         );
         return msg.channel.send(result);
       }
@@ -121,9 +124,9 @@ export const kc = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  field: keyof OsrsPlayer,
   embed: OsrsEmbed,
-  playerObject: OsrsPlayer
+  playerObject: OsrsPlayer,
+  field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined || playerObject === null)
     return errorHandler();

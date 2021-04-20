@@ -21,6 +21,8 @@ import {
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 const types: (TempleCacheType | string)[] = [
   TempleCacheType.PLAYER_NAMES,
@@ -35,6 +37,7 @@ export const templefetch = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   const embed: Embed = new Embed();
   if (args.length === 0)
     return msg.channel.send(

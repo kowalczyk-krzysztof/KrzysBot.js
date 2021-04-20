@@ -72,7 +72,7 @@ export const aliasHandler = (commandName: string) => {
   }
 };
 // Command handler
-export const commandHandler = (msg: Message) => {
+export const commandHandler = async (msg: Message) => {
   // If msg doesn't start with prefix or author is bot return
   if (!msg.content.startsWith(prefix) || msg.author.bot) return;
   // msg.content is a string, slice the prefix then remove whitespace
@@ -86,6 +86,6 @@ export const commandHandler = (msg: Message) => {
   else {
     // args is anything after the command
     const args: string[] = content.slice(1);
-    commandList[command](msg, command, ...args);
+    await commandList[command](msg, command, ...args);
   }
 };

@@ -34,12 +34,15 @@ import { clueFields, clueList } from '../../utils/osrs/inputValidator';
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: FIeld name formatter
 import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
+// Anti-spam
+import { antiSpam } from '../../cache/antiSpam';
 
 export const clues = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
+  if (antiSpam(msg, commandName) === true) return;
   if (args.length === 0)
     return msg.channel.send(invalidPrefixMsg(clueList, PrefixCategories.CLUES));
   // This is done so the cooldown is per unique command
@@ -75,7 +78,7 @@ export const clues = async (
       prefix
     ) as keyof OsrsPlayer;
     if (field === undefined) return;
-    const result: OsrsEmbed = generateResult(field, embed, osrsStats[username]);
+    const result: OsrsEmbed = generateResult(embed, osrsStats[username], field);
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
@@ -85,9 +88,9 @@ export const clues = async (
       ) as keyof OsrsPlayer;
       if (field === undefined) return;
       const result: OsrsEmbed = generateResult(
-        field,
         embed,
-        osrsStats[username]
+        osrsStats[username],
+        field
       );
       return msg.channel.send(result);
     } else return;
@@ -95,9 +98,9 @@ export const clues = async (
 };
 // Generates embed sent to user
 const generateResult = (
-  field: keyof OsrsPlayer,
   embed: OsrsEmbed,
-  playerObject: OsrsPlayer
+  playerObject: OsrsPlayer,
+  field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (playerObject === undefined || playerObject === null)
     return errorHandler();
