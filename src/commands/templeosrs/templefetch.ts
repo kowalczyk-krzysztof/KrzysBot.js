@@ -25,7 +25,7 @@ import { errorHandler } from '../../utils/errorHandler';
 import {
   formatOverviewTime,
   templeOverviewTimeValidator,
-} from '../../utils/osrs/templeOverviewTime';
+} from '../../utils/osrs/templetime';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 
