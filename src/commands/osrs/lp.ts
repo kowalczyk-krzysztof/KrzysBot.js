@@ -29,7 +29,7 @@ import { errorHandler } from '../../utils/errorHandler';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 
-export const leaguepoints = async (
+export const lp = async (
   msg: Message,
   commandName: string,
   ...args: string[]

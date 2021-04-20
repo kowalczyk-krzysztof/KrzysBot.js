@@ -37,7 +37,7 @@ const types: (TempleCacheType | string)[] = [
   TempleCacheType.PLAYER_OVERVIEW_OTHER,
 ];
 
-export const templefetch = async (
+export const temple = async (
   msg: Message,
   commandName: string,
   ...args: string[]

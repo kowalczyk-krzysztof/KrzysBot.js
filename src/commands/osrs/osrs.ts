@@ -17,7 +17,7 @@ import { CommandCooldowns } from '../../utils/osrs/enums';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 
-export const osrsfetch = async (
+export const osrs = async (
   msg: Message,
   commandName: string,
   ...args: string[]

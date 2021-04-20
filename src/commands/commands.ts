@@ -12,7 +12,7 @@ import { antiSpam } from '../cache/antiSpam';
 import { Embed } from '../utils/embed';
 
 dotenv.config({ path: 'config.env' });
-const githubLink: string = process.env.GITHUB_PAGES as string;
+const wiki: string = process.env.GITHUB_WIKI as string;
 
 export const commands = async (
   msg: Message,
@@ -28,7 +28,7 @@ export const commands = async (
   else
     return msg.channel.send(
       new Embed().setDescription(
-        `List of available commands with example usage:\n\n[Commands](${githubLink} 'Commands')`
+        `List of available commands with example usage:\n\n[Commands](${wiki} 'Commands')`
       )
     );
 };

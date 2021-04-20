@@ -15,7 +15,7 @@ export class Embed extends MessageEmbed {
 export class OsrsEmbed extends Embed {
   constructor() {
     super();
-    this.setFooter('Incorrect? Fetch latest data:\n.osrsfetch username');
+    this.setFooter('Incorrect? Fetch latest data:\n.osrs username');
   }
 }
 // TempleOSRS embed
@@ -25,7 +25,7 @@ export class TempleEmbed extends Embed {
     this.setDescription(
       `Data provided by: [TempleOSRS](https://templeosrs.com/ 'TempleOSRS')`
     );
-    this.setFooter('Incorrect? Fetch latest data:\n.templefetch type username');
+    this.setFooter('Incorrect? Fetch latest data:\n.temple type username');
   }
 }
 // TempleOSRS embed - no footer
