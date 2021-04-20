@@ -11,6 +11,8 @@ import {
   CommandCooldowns,
   TempleCacheType,
   TempleCacheTypeAliases,
+  TempleOverviewTimeAliases,
+  TempleOverviewTimes,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -19,7 +21,11 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
-import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTime';
+// UTILS: Temple Overview time validator
+import {
+  formatOverviewTime,
+  templeOverviewTimeValidator,
+} from '../../utils/osrs/templeOverviewTime';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 
@@ -114,11 +120,42 @@ export const templefetch = async (
     );
     if (isFetched === true) {
       let formattedTypes: string;
+      let formattedTime: string;
+      switch (time) {
+        case TempleOverviewTimes.FIVEMIN:
+          formattedTime = TempleOverviewTimeAliases.FIVEMIN;
+          break;
+        case TempleOverviewTimes.DAY:
+          formattedTime = TempleOverviewTimeAliases.DAY;
+          break;
+        case TempleOverviewTimes.WEEK:
+          formattedTime = TempleOverviewTimeAliases.WEEK;
+          break;
+        case TempleOverviewTimes.MONTH:
+          formattedTime = TempleOverviewTimeAliases.MONTH;
+          break;
+        case TempleOverviewTimes.HALFYEAR:
+          formattedTime = TempleOverviewTimeAliases.HALFYEAR;
+          break;
+        case TempleOverviewTimes.YEAR:
+          formattedTime = TempleOverviewTimeAliases.YEAR;
+          break;
+        case TempleOverviewTimes.ALLTIME:
+          formattedTime = TempleOverviewTimeAliases.ALLTIME;
+          break;
+        default:
+          formattedTime = time;
+          break;
+      }
       if (dataType === TempleCacheType.PLAYER_OVERVIEW_SKILL)
-        formattedTypes = TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL;
+        formattedTypes = `${TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL.toUpperCase()} (${formatOverviewTime(
+          formattedTime
+        ).toUpperCase()})`;
       else if (dataType === TempleCacheType.PLAYER_OVERVIEW_OTHER)
-        formattedTypes = TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER;
-      else formattedTypes = dataType;
+        formattedTypes = `${TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER.toUpperCase()} (${formatOverviewTime(
+          formattedTime
+        ).toUpperCase()})`;
+      else formattedTypes = dataType.toUpperCase();
       embed.setDescription(
         `Fetched latest **${formattedTypes}** data available for player:\`\`\`${username}\`\`\`To get more recent data - add a new datapoint and fetch again`
       );
