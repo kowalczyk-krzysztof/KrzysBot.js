@@ -16,7 +16,7 @@ client.on('ready', () => {
   if (client.user !== null)
     client.user.setPresence({
       activity: {
-        name: 'Fetching data',
+        name: 'Fetching Data',
         type: 'PLAYING',
       },
     });

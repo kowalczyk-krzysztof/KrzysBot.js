@@ -9,8 +9,8 @@ import { author } from './commands/author';
 import { ehp } from './commands/templeosrs/ehp';
 import { ehb } from './commands/templeosrs/ehb';
 import { rsn } from './commands/templeosrs/rsn';
-import { playercountry } from './commands/templeosrs/playercountry';
-import { templefetch } from './commands/templeosrs/templefetch';
+import { country } from './commands/templeosrs/country';
+import { temple } from './commands/templeosrs/temple';
 // import { datapoint } from './commands/templeosrs/datapoint'; // DISABLED THIS COMMAND COZ THERE'S TOO MUCH RISK OF GETTING RATELIMITED
 import { record } from './commands/templeosrs/record';
 import { gains } from './commands/templeosrs/gains';
@@ -23,11 +23,11 @@ import { recent200m } from './commands/templeosrs/recent200m';
 import { clues } from './commands/osrs/clues';
 import { kc } from './commands/osrs/kc';
 import { lvl } from './commands/osrs/lvl';
-import { osrsfetch } from './commands/osrs/osrsfetch';
+import { osrs } from './commands/osrs/osrs';
 import { lms } from './commands/osrs/lms';
 import { bh } from './commands/osrs/bh';
 import { soulwars } from './commands/osrs/soulwars';
-import { leaguepoints } from './commands/osrs/leaguepoints';
+import { lp } from './commands/osrs/lp';
 // UTILS: Embeds
 import { ErrorEmbed } from './utils/embed';
 
@@ -46,17 +46,17 @@ export const commandList: {
   ehp,
   ehb,
   rsn,
-  playercountry,
-  templefetch,
+  country,
+  temple,
   // datapoint,
   clues,
   kc,
   lvl,
-  osrsfetch,
+  osrs,
   lms,
   bh,
   soulwars,
-  leaguepoints,
+  lp,
   record,
   gains,
   topboss,
@@ -75,12 +75,6 @@ export const aliasHandler = (commandName: string) => {
       return 'author';
     case 'help':
       return 'commands';
-    case 'fetchtemple':
-      return 'templefetch';
-    case 'fetchosrs':
-      return 'osrsfetch';
-    case 'leaguepts':
-      return 'leaguepoints';
     default:
       return alias;
   }

@@ -18,7 +18,7 @@ import { errorHandler } from '../../utils/errorHandler';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 
-export const playercountry = async (
+export const country = async (
   msg: Message,
   commandName: string,
   ...args: string[]

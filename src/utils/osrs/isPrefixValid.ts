@@ -56,25 +56,25 @@ export const invalidPrefixMsg = (
 
   switch (category) {
     case PrefixCategories.BOSS:
-      result = `Invalid boss name. Valid boss names: <${BOSS_LIST}>`;
+      result = `Invalid boss name. See: [Boss List](${BOSS_LIST} 'Boss List') for a list of bosses`;
       break;
     case PrefixCategories.BOSS_EDGE_CASE:
-      result = `Invalid boss name or username. Valid boss names: <${BOSS_LIST}>`;
+      result = `Invalid boss name or username. See: [Boss List](${BOSS_LIST} 'Boss List') for a list of bosses`;
       break;
     case PrefixCategories.SKILL:
-      result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>`;
+      result = `Invalid skill name. See: [Skill List](${SKILL_LIST} 'Skill List') for a list of skills`;
       break;
     case PrefixCategories.TIME_OTHER:
-      result = `Invalid ${category} type. Valid types: **${typesList}**`;
+      result = `Invalid ${category} type. Valid arguments: **${typesList}**`;
       break;
     case PrefixCategories.CLUES:
       result = `Invalid clue tier. Valid tiers: **${typesList}**`;
       break;
     case PrefixCategories.SKILL200M:
-      result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>\nNOTE: Total level is excluded for this command`;
+      result = `Invalid skill name. See: [Skill List](${SKILL_LIST} 'Skill List') for a list of skills\nNOTE: Total level is excluded for this command`;
       break;
     default:
-      result = `Invalid ${category} type. Valid types: **${typesList}**`;
+      result = `Invalid ${category} argument. Valid arguments: **${typesList}**`;
       break;
   }
 
