@@ -13,7 +13,14 @@ const AUTH_TOKEN: string = process.env.AUTH_TOKEN as string;
 const client: Client = new Client();
 
 client.on('ready', () => {
-  console.log(`Connected`);
+  if (client.user !== null)
+    client.user.setPresence({
+      activity: {
+        name: 'Fetching data',
+        type: 'PLAYING',
+      },
+    });
+  console.log('Connected');
 });
 
 client.on('message', commandHandler);

@@ -68,10 +68,7 @@ export const fetchTemple = async (
         res.data.error.Code === 400
       ) {
         const embed: Embed = new Embed();
-        embed.addField(
-          'ERROR',
-          `Player **${playerName}** not found. Are you sure the account exists? Add a datapoint and try again.\`\`\`.datapoint username\`\`\``
-        );
+        embed.addField('ERROR', `Player **${playerName}** not found`);
         msg.channel.send(embed);
       } else msg.channel.send(errorHandler(res.data.error));
       return false;

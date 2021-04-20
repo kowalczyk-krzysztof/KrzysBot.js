@@ -2,21 +2,23 @@
 import { Message } from 'discord.js';
 // Dotenv
 import dotenv from 'dotenv';
-// Commands: Command List
+// Commands: Other
 import { commands } from './commands/commands';
+import { author } from './commands/author';
 // Commands: TempleOSRS
 import { ehp } from './commands/templeosrs/ehp';
 import { ehb } from './commands/templeosrs/ehb';
 import { rsn } from './commands/templeosrs/rsn';
 import { playercountry } from './commands/templeosrs/playercountry';
 import { templefetch } from './commands/templeosrs/templefetch';
-import { datapoint } from './commands/templeosrs/datapoint';
+// import { datapoint } from './commands/templeosrs/datapoint'; // DISABLED THIS COMMAND COZ THERE'S TOO MUCH RISK OF GETTING RATELIMITED
 import { record } from './commands/templeosrs/record';
 import { gains } from './commands/templeosrs/gains';
-import { topboss } from './commands/templeosrs/topsboss';
+import { topboss } from './commands/templeosrs/topboss';
 import { topskill } from './commands/templeosrs/topskill';
 import { gpearned } from './commands/templeosrs/gpearned';
 import { gpspent } from './commands/templeosrs/gpspent';
+import { recent200m } from './commands/templeosrs/recent200m';
 // Commands: OSRS
 import { clues } from './commands/osrs/clues';
 import { kc } from './commands/osrs/kc';
@@ -39,13 +41,14 @@ export const commandList: {
     ...args: string[]
   ) => Promise<Message | undefined | void | ErrorEmbed>;
 } = {
+  author,
   commands,
   ehp,
   ehb,
   rsn,
   playercountry,
   templefetch,
-  datapoint,
+  // datapoint,
   clues,
   kc,
   lvl,
@@ -60,11 +63,16 @@ export const commandList: {
   topskill,
   gpearned,
   gpspent,
+  recent200m,
 };
 // Alias handler - take a command name and check if it has an alias then return the original name
 export const aliasHandler = (commandName: string) => {
   const alias: string = commandName.toLowerCase();
   switch (alias) {
+    case 'contact':
+      return 'author';
+    case 'owner':
+      return 'author';
     case 'help':
       return 'commands';
     case 'fetchtemple':
