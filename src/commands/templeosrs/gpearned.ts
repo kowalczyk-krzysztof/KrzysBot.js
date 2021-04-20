@@ -19,7 +19,6 @@ import {
   OsrsRandom,
   TempleCacheType,
   TempleOther,
-  TempleOverviewTimeAliases,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -28,13 +27,15 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Prefix validator
 import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
-// UTILS: Capitalize first letter
-import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
+
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: Temple Overview time validator
 import { templeOverviewTimeAliases } from '../../utils/osrs/inputValidator';
-import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
+import {
+  templeOverviewTimeValidator,
+  formatOverviewTime,
+} from '../../utils/osrs/templeOverviewTime';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 // UTILS: Number formatter
@@ -87,7 +88,7 @@ export const gpearned = async (
     const result: TempleEmbed = generateResult(
       embed,
       playerOverviewOther[userNameWithTime],
-      formattedTime as string
+      time as string
     );
     return msg.channel.send(result);
   } else {
@@ -102,7 +103,7 @@ export const gpearned = async (
       const result: TempleEmbed = generateResult(
         embed,
         playerOverviewOther[userNameWithTime],
-        formattedTime as string
+        time as string
       );
       return msg.channel.send(result);
     } else return;
@@ -119,13 +120,12 @@ const generateResult = (
     return errorHandler();
   else {
     // Format time
-    let capitalFirst: string = capitalizeFirstLetter(time);
-    if (capitalFirst === TempleOverviewTimeAliases.HALFYEAR)
-      capitalFirst = '6 months';
-    else if (capitalFirst === 'Alltime') capitalFirst = 'All Time';
-    else capitalFirst = capitalFirst;
-    // Try to match boss index with fieldd
-    embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${capitalFirst}\`\`\``);
+    const formattedTime: string = formatOverviewTime(time);
+    // Try to match boss index with field
+    embed.addField(
+      `${OsrsRandom.TIME_PERIOD}:`,
+      `\`\`\`${formattedTime}\`\`\``
+    );
     // If boss has not been found, then return no data msg
     const gpEarned: string | number =
       playerObject[TempleOther.INFO][TempleOther.GP_EARNED];
@@ -139,7 +139,7 @@ const generateResult = (
         `${OsrsRandom.GP_EARNED.toUpperCase()}:`,
         `\`\`\`${numberFormatter(gpEarned, NumberFormatTypes.EN_US)} gp\`\`\``
       );
-      if (capitalFirst === 'All Time')
+      if (formattedTime === 'All Time')
         embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     }
 

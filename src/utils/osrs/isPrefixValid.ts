@@ -64,7 +64,7 @@ export const invalidPrefixMsg = (
       result = `Invalid skill name. Valid skill names: <${SKILL_LIST}>`;
       break;
     case PrefixCategories.TIME_OTHER:
-      result = `Invalid ${category} type. Valid types: **${typesList}**\n\nFor LMS there is no 6h record`;
+      result = `Invalid ${category} type. Valid types: **${typesList}**`;
       break;
     case PrefixCategories.CLUES:
       result = `Invalid clue tier. Valid tiers: **${typesList}**`;

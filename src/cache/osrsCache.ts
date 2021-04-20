@@ -47,7 +47,6 @@ export const fetchOsrsStats = async (
 // Cache result
 const setOsrsStats = (username: string, data: OsrsPlayer): void => {
   if (osrsCacheLength >= maxCacheSize) {
-    osrsStats = {};
     Object.keys(osrsStats).forEach((key) => {
       delete osrsStats[key];
     });

@@ -28,12 +28,13 @@ export const validInputCases: string[] = [
   ValidInputCases.OTHER,
 ];
 const timeTypes = [
+  TempleOther.SIX_HOURS,
   TempleOther.DAY,
   TempleOther.WEEK,
   TempleOther.MONTH,
   TempleOther.YEAR,
 ];
-const timeTypesAll = [TempleOther.SIX_HOURS, ...timeTypes];
+
 const otherTypes = [
   TempleOther.LMS_LOWERCASE,
   TempleOther.EHB_LOWERCASE,
@@ -183,34 +184,30 @@ export const templeGainsRecords = (
 
   let time: string | undefined;
   let rsn: string[] | undefined;
-  let fullArray: string[];
-  let notFullArray: string[];
+
+  let times: string[];
   // Change available times based on command used
-  if (usedCommand === OsrsCommands.GAINS) {
-    fullArray = templeOverviewTimeAliases;
-    notFullArray = templeOverviewTimeAliases;
-  } else {
-    fullArray = timeTypesAll;
-    notFullArray = timeTypes;
-  }
+  if (usedCommand === OsrsCommands.GAINS) times = templeOverviewTimeAliases;
+  else times = timeTypes;
+
   if (isFirstArgumentValid === true) {
-    // Check if input time is valid depending on first argument type. This is because for example bosses don't have 6h records. Slice everything before and including time. Whatever is left is username
+    // Check if input time is valid depending on first argument type. Slice everything before and including time. Whatever is left is username
     switch (firstArgumentType) {
       case FirstArgumentType.OTHER:
-        if (!fullArray.includes(lowerCasedArguments[2])) {
+        if (!times.includes(lowerCasedArguments[2])) {
           msg.channel.send(
-            invalidPrefixMsg(fullArray, PrefixCategories.TIME_OTHER)
+            invalidPrefixMsg(times, PrefixCategories.TIME_OTHER)
           );
           return;
         } else {
           rsn = lowerCasedArguments.slice(3);
           time = lowerCasedArguments[2];
-          notFullArray;
+          times;
         }
         break;
       case FirstArgumentType.CLUES:
-        if (!notFullArray.includes(lowerCasedArguments[2])) {
-          msg.channel.send(invalidPrefixMsg(notFullArray));
+        if (!times.includes(lowerCasedArguments[2])) {
+          msg.channel.send(invalidPrefixMsg(times));
           return;
         } else {
           rsn = lowerCasedArguments.slice(3);
@@ -218,8 +215,8 @@ export const templeGainsRecords = (
         }
         break;
       case FirstArgumentType.SKILL:
-        if (!fullArray.includes(lowerCasedArguments[2])) {
-          msg.channel.send(invalidPrefixMsg(fullArray));
+        if (!times.includes(lowerCasedArguments[2])) {
+          msg.channel.send(invalidPrefixMsg(times));
           return;
         } else {
           rsn = lowerCasedArguments.slice(3);
@@ -227,8 +224,8 @@ export const templeGainsRecords = (
         }
         break;
       case FirstArgumentType.BOSS_ONE_WORD:
-        if (!notFullArray.includes(lowerCasedArguments[2])) {
-          msg.channel.send(invalidPrefixMsg(notFullArray));
+        if (!times.includes(lowerCasedArguments[2])) {
+          msg.channel.send(invalidPrefixMsg(times));
           return;
         } else {
           rsn = lowerCasedArguments.slice(3);
@@ -236,8 +233,8 @@ export const templeGainsRecords = (
         }
         break;
       case FirstArgumentType.BOSS_TWO_WORD:
-        if (!notFullArray.includes(lowerCasedArguments[3])) {
-          msg.channel.send(invalidPrefixMsg(notFullArray));
+        if (!times.includes(lowerCasedArguments[3])) {
+          msg.channel.send(invalidPrefixMsg(times));
           return;
         } else {
           rsn = lowerCasedArguments.slice(4);
@@ -245,8 +242,8 @@ export const templeGainsRecords = (
         }
         break;
       case FirstArgumentType.BOSS_THREE_WORD:
-        if (!notFullArray.includes(lowerCasedArguments[4])) {
-          msg.channel.send(invalidPrefixMsg(notFullArray));
+        if (!times.includes(lowerCasedArguments[4])) {
+          msg.channel.send(invalidPrefixMsg(times));
           return;
         } else {
           rsn = lowerCasedArguments.slice(5);

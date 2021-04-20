@@ -112,15 +112,15 @@ const addToCache = (
   // Storing the length of cache as variable so I don't have to do Object.keys() every time
   if (type === TempleCacheType.PLAYER_STATS) {
     if (playerStatsLength >= maxCacheSize) {
-      playerStats = {};
+      Object.keys(playerStats).forEach((key) => {
+        delete playerStats[key];
+      });
       playerStatsLength = 0;
     }
-
     playerStatsLength++;
     playerStats[username] = data as TemplePlayerStats;
   } else if (type === TempleCacheType.PLAYER_NAMES) {
     if (playerNamesLength >= maxCacheSize) {
-      playerNames = {};
       Object.keys(playerNames).forEach((key) => {
         delete playerNames[key];
       });

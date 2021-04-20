@@ -45,8 +45,6 @@ import {
   templeGainsRecords,
   fieldNameCheck,
 } from '../../utils/osrs/inputValidator';
-// UTILS: Capitalize first letter
-import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: FIeld name formatter
@@ -58,8 +56,9 @@ import {
 } from '../../utils/numberFormatter';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
+// UTILS: Temple Overview time validator
+import { formatOverviewTime } from '../../utils/osrs/templeOverviewTime';
 
-Embed;
 export const gains = async (
   msg: Message,
   commandName: string,
@@ -241,12 +240,7 @@ const generateResult = (
   if (playerObject === undefined || playerObject === null)
     return errorHandler();
   else {
-    // Changing the time value (string) to have a first capital letter
-    let capitalFirst: string = capitalizeFirstLetter(time);
-    if (capitalFirst === TempleOverviewTimeAliases.HALFYEAR)
-      capitalFirst = '6 months';
-    else if (capitalFirst === 'Alltime') capitalFirst = 'All Time';
-    else capitalFirst = capitalFirst;
+    const formattedTime: string = formatOverviewTime(time);
     const formattedField: string = fieldNameFormatter(field);
     const table: TempleOtherTable & TempleSkillTable =
       playerObject[TempleOther.TABLE];
@@ -254,6 +248,10 @@ const generateResult = (
     // If there's no record for specific period of time then the key doesn't exist
     if (fieldTocheck !== undefined) {
       // Formatting how numbers are displayed
+      embed.addField(
+        `${OsrsRandom.TIME_PERIOD}:`,
+        `\`\`\`${formattedTime}\`\`\``
+      );
       const value: number = fieldTocheck[TempleOther.XP];
       let formattedValue;
 
@@ -262,21 +260,19 @@ const generateResult = (
           value as number,
           NumberFormatTypes.EN_US
         );
+      else if (value === null) formattedValue = 0;
       else
         formattedValue = numberFormatter(
           value as number,
           NumberFormatTypes.INT
         );
+
       // Changing sufix depending on whether the type is skill or not
       let ending: string;
       if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
       else if (args[0] === ValidInputCases.BOSS)
         ending = ` ${OsrsRandom.KILLS}`;
       else ending = '';
-      embed.addField(
-        `${OsrsRandom.TIME_PERIOD}:`,
-        `\`\`\`${capitalFirst}\`\`\``
-      );
       embed.addField(
         `${formattedField}`,
         `\`\`\`${formattedValue}${ending}\`\`\``
@@ -292,7 +288,7 @@ const generateResult = (
       }
       if (args[0] === ValidInputCases.SKILL) {
         let ehp: number;
-        if (fieldTocheck[TempleOther.EHP_LOWERCASE] == null) ehp = 0;
+        if (fieldTocheck[TempleOther.EHP_LOWERCASE] === null) ehp = 0;
         else ehp = fieldTocheck[TempleOther.EHP_LOWERCASE];
         embed.addField(
           `${TempleOther.EHP.toUpperCase()} GAINED:`,
@@ -319,13 +315,9 @@ const generateResult = (
         `RANKS GAINED OR LOST:`,
         `\`\`\`${plusOrMinus}${parseInt(rank.toString())}\`\`\``
       );
-      if (capitalFirst === 'All Time')
+      if (formattedTime === 'All Time')
         embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     } else {
-      embed.addField(
-        `${OsrsRandom.TIME_PERIOD}:`,
-        `\`\`\`${capitalFirst}\`\`\``
-      );
       embed.addField(
         `${OsrsRandom.NO_DATA}`,
         `No gains for this period of time for \`\`\`${formattedField}\`\`\``

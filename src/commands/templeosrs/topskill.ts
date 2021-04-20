@@ -23,7 +23,6 @@ import {
   Skills,
   TempleCacheType,
   TempleOther,
-  TempleOverviewTimeAliases,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -32,13 +31,14 @@ import {
 } from '../../utils/osrs/runescapeNameValidator';
 // UTILS: Prefix validator
 import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
-// UTILS: Capitalize first letter
-import { capitalizeFirstLetter } from '../../utils/capitalizeFirstLetter';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 // UTILS: Temple Overview time validator
 import { templeOverviewTimeAliases } from '../../utils/osrs/inputValidator';
-import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
+import {
+  templeOverviewTimeValidator,
+  formatOverviewTime,
+} from '../../utils/osrs/templeOverviewTime';
 // UTILS: Temple index to key
 import { indexToSkill } from '../../utils/osrs/templeIndex';
 // Anti-spam
@@ -93,7 +93,7 @@ export const topskill = async (
     const result: TempleEmbed = generateResult(
       embed,
       playerOverviewSkill[userNameWithTime],
-      formattedTime as string
+      time as string
     );
     return msg.channel.send(result);
   } else {
@@ -108,7 +108,7 @@ export const topskill = async (
       const result: TempleEmbed = generateResult(
         embed,
         playerOverviewSkill[userNameWithTime],
-        formattedTime as string
+        time as string
       );
       return msg.channel.send(result);
     } else return;
@@ -125,16 +125,15 @@ const generateResult = (
     return errorHandler();
   else {
     // Format time
-    let capitalFirst: string = capitalizeFirstLetter(time);
-    if (capitalFirst === TempleOverviewTimeAliases.HALFYEAR)
-      capitalFirst = '6 months';
-    else if (capitalFirst === 'Alltime') capitalFirst = 'All Time';
-    else capitalFirst = capitalFirst;
-    // Try to match skill index with fieldd
+    const formattedTime: string = formatOverviewTime(time);
+    // Try to match skill index with field
     const skill: keyof TempleSkillTable = indexToSkill(
       playerObject[TempleOther.INFO][TempleOther.TOP_SKILL]
     ) as keyof TempleSkillTable;
-    embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${capitalFirst}\`\`\``);
+    embed.addField(
+      `${OsrsRandom.TIME_PERIOD}:`,
+      `\`\`\`${formattedTime}\`\`\``
+    );
     // If boss has not been found, then return no data msg
     if (skill === undefined)
       embed.addField(
