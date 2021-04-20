@@ -29,8 +29,8 @@ export const bossValidator = (
   indexes: number[]
 ):
   | {
-      bossCase: number;
-      boss: string;
+      bossCase: number | undefined;
+      boss: string | undefined;
     }
   | undefined => {
   if (lowerCasedArguments.length === 0) return;
@@ -50,9 +50,8 @@ export const bossValidator = (
     .join('')
     .toLowerCase();
 
-  let boss: string;
-  let bossCase: number;
-
+  let boss: string | undefined;
+  let bossCase: number | undefined;
   if (
     specialCase === BossAliases.COX_ALIAS2 ||
     specialCase === BossAliases.TOB_ALIAS3 ||
@@ -83,21 +82,21 @@ export const bossValidator = (
       bossCase = BossCases.EDGE_CASE;
       boss = firstArgument;
     } else {
-      return;
+      (boss = undefined), (bossCase = undefined);
     }
   }
 
-  if (bossList.includes(boss))
+  if (bossList.includes(boss as string))
     return {
       bossCase,
       boss,
     };
   else {
-    if ((bossCase = BossCases.EDGE_CASE))
+    if (bossCase === BossCases.EDGE_CASE) {
       msg.channel.send(
         invalidPrefixMsg(bossList, PrefixCategories.BOSS_EDGE_CASE)
       );
-    else msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
+    } else msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
     return;
   }
 };

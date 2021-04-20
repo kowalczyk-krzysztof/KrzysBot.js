@@ -58,12 +58,13 @@ export const datapoint = async (
         `${TEMPLE_OVERVIEW}${username}`
       );
       if (res.data.error) {
-        if (res.data.error.Code === 402) {
+        if (res.data.error.Code === 402 || res.data.error.Code === 401) {
           const embed: Embed = new Embed();
           embed.addField(
             'ERROR',
             `Player **${username}** was not found on hiscores`
           );
+          msg.channel.send(embed);
         } else msg.channel.send(errorHandler(res.data.error));
       } else if (res.data.data.info.cooldown !== '-') {
         cooldown = parseInt(

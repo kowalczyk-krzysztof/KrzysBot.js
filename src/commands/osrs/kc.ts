@@ -54,7 +54,7 @@ export const kc = async (
   });
   const bossValidation:
     | {
-        bossCase: number;
+        bossCase: number | undefined;
         boss: string | undefined;
       }
     | undefined = bossValidator(msg, lowerCasedArguments, indexes);
@@ -90,7 +90,7 @@ export const kc = async (
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.KC)
-    .addField(usernameString, `${username}`);
+    .addField(usernameString, `\`\`\`${username}\`\`\``);
   if (username in osrsStats) {
     const field: keyof OsrsPlayer | undefined = bossFields(
       boss

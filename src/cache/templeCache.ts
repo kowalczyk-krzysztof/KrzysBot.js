@@ -62,7 +62,11 @@ export const fetchTemple = async (
   try {
     const res: AxiosResponse = await axios.get(`${url}`);
     if (res.data.error) {
-      if (res.data.error.Code === 402) {
+      if (
+        res.data.error.Code === 402 ||
+        res.data.error.Code === 401 ||
+        res.data.error.Code === 400
+      ) {
         const embed: Embed = new Embed();
         embed.addField(
           'ERROR',

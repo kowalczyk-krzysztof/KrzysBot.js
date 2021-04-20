@@ -49,8 +49,6 @@ export const lms = async (
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
     if (isFetched === true) {
-      console.log('fetching');
-
       const result: OsrsEmbed = generateResult(embed, osrsStats[username]);
       return msg.channel.send(result);
     } else return;

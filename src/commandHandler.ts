@@ -14,6 +14,7 @@ import { datapoint } from './commands/templeosrs/datapoint';
 import { record } from './commands/templeosrs/record';
 import { gains } from './commands/templeosrs/gains';
 import { topboss } from './commands/templeosrs/topsboss';
+import { topskill } from './commands/templeosrs/topskill';
 // Commands: OSRS
 import { clues } from './commands/osrs/clues';
 import { kc } from './commands/osrs/kc';
@@ -54,6 +55,7 @@ export const commandList: {
   record,
   gains,
   topboss,
+  topskill,
 };
 // Alias handler - take a command name and check if it has an alias then return the original name
 export const aliasHandler = (commandName: string) => {

@@ -49,4 +49,5 @@ export enum EmbedTitles {
   RECORDS = 'RECORDS',
   GAINS = 'GAINS',
   TOPBOSS = 'MOST KILLED BOSS',
+  TOPSKILL = 'TOP SKILL',
 }

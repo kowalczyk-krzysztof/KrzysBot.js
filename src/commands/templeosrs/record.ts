@@ -172,7 +172,8 @@ const generateResult = (
     // If there are no records the key value is an empty array
     if (Array.isArray(playerObject[field]) === false) {
       // If there's no record for specific period of time then the key doesn't exist
-      if (playerObject[field][time] !== undefined) {
+      if (playerObject[field] !== undefined) {
+        if (playerObject[field][time] === undefined) return errorHandler();
         // Formatting how numbers are displayed
         const timeField: ExpAndDate = playerObject[field][time] as ExpAndDate;
         const value: string | number = timeField[TempleOther.XP];
