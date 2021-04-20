@@ -156,8 +156,8 @@ export const templeGainsRecords = (
       const indexes: number[] = [1, 2, 3];
       const bossValidation:
         | {
-            bossCase: number;
-            boss: string;
+            bossCase: number | undefined;
+            boss: string | undefined;
           }
         | undefined = bossValidator(msg, lowerCasedArguments, indexes);
       if (bossValidation === undefined) return;
@@ -174,7 +174,7 @@ export const templeGainsRecords = (
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
       }
-      inputFieldName = bossValidation.boss;
+      inputFieldName = bossValidation.boss as string;
       break;
     default: {
       return;
@@ -714,6 +714,12 @@ export const bossFields = (fieldName: string): string | undefined => {
     case BossAliases.SKOTIZO_ALIAS1:
       fieldToCheck = Bosses.SKOTIZO;
       break;
+    case BossAliases.TEMPOROSS_ALIAS1:
+      fieldToCheck = Bosses.TEMPO;
+      break;
+    case BossAliases.TEMPOROSS_ALIAS2:
+      fieldToCheck = Bosses.TEMPO;
+      break;
     case BossAliases.GAUNTLET_ALIAS1:
       fieldToCheck = Bosses.GAUNTLET;
       break;
@@ -969,7 +975,3 @@ export const bossList: string[] = [
   BossAliases.ZALC_ALIAS2,
   BossAliases.ZULRAH_ALIAS1,
 ];
-// TODO: remove this check when Tempoross gets added to temple
-export const bossTypes = bossList.filter((e: string) => {
-  return e !== 'tempoross' || 'temp';
-});
