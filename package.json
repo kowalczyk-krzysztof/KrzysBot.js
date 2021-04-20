@@ -4,11 +4,8 @@
   "description": "Discord bot fetching and displaying data from OSRS Hiscores and TempleOSRS",
   "main": "main.js",
   "scripts": {
-    "dev": "tsc -w",
-    "postinstall": "tsc",
     "start": "node dist/main.js",
-    "start-dev": "nodemon dist/main.js",
-    "build": "node dist/main.js"
+    "build": "tsc"
   },
   "keywords": [
     "discord",
