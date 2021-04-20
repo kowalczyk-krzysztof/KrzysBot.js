@@ -1,7 +1,7 @@
 // Discord
 import { Message } from 'discord.js';
 // TempleOSRS Cache
-import { fetchTemple, playerOverviewSkill } from '../../cache/templeCache';
+import { fetchTemple, playerOverviewOther } from '../../cache/templeCache';
 // Cooldown cache
 import { isOnCooldown } from '../../cache/cooldown';
 // UTILS: Embeds
@@ -12,15 +12,11 @@ import {
   ErrorEmbed,
 } from '../../utils/embed';
 // UTILS: Interfaces
-import {
-  TempleSkillTable,
-  TempleOverviewSkill,
-} from '../../utils/osrs/interfaces';
+import { TempleOverviewOther } from '../../utils/osrs/interfaces';
 // UTILS: Enums
 import {
   CommandCooldowns,
   OsrsRandom,
-  Skills,
   TempleCacheType,
   TempleOther,
   TempleOverviewTimeAliases,
@@ -40,8 +36,6 @@ import { errorHandler } from '../../utils/errorHandler';
 // UTILS: Temple Overview time validator
 import { templeOverviewTimeAliases } from '../../utils/osrs/inputValidator';
 import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
-// UTILS: Temple index to key
-import { indexToSkill } from '../../utils/osrs/templeIndex';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 // UTILS: Number formatter
@@ -50,7 +44,7 @@ import {
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
 
-export const topskill = async (
+export const gpearned = async (
   msg: Message,
   commandName: string,
   ...args: string[]
@@ -69,7 +63,7 @@ export const topskill = async (
 
   const user: string[] = args.slice(1);
 
-  const cooldown: number = CommandCooldowns.TOPSKILL;
+  const cooldown: number = CommandCooldowns.GPEARNED;
 
   const nameCheck: string = runescapeNameValidator(user);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
@@ -87,22 +81,22 @@ export const topskill = async (
     return;
   const userNameWithTime: string = username + time;
   const embed: TempleEmbed = new TempleEmbed()
-    .setTitle(EmbedTitles.TOPSKILL)
+    .setTitle(EmbedTitles.GP_EARNED)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
-  if (userNameWithTime in playerOverviewSkill) {
+  if (userNameWithTime in playerOverviewOther) {
     const result: TempleEmbed = generateResult(
       embed,
-      playerOverviewSkill[userNameWithTime],
+      playerOverviewOther[userNameWithTime],
       args[0]
     );
     return msg.channel.send(result);
   } else {
-    const dataType: TempleCacheType = TempleCacheType.PLAYER_OVERVIEW_SKILL;
+    const dataType: TempleCacheType = TempleCacheType.PLAYER_OVERVIEW_OTHER;
     const isFetched: boolean = await fetchTemple(msg, username, dataType, time);
     if (isFetched === true) {
       const result: TempleEmbed = generateResult(
         embed,
-        playerOverviewSkill[userNameWithTime],
+        playerOverviewOther[userNameWithTime],
         args[0]
       );
       return msg.channel.send(result);
@@ -113,7 +107,7 @@ export const topskill = async (
 // Generates embed sent to user
 const generateResult = (
   embed: TempleEmbed,
-  playerObject: TempleOverviewSkill,
+  playerObject: TempleOverviewOther,
   time: string
 ): TempleEmbed | ErrorEmbed => {
   if (playerObject === undefined || playerObject === null)
@@ -125,37 +119,25 @@ const generateResult = (
       capitalFirst = '6 months';
     else if (capitalFirst === 'Alltime') capitalFirst = 'All Time';
     else capitalFirst = capitalFirst;
-    // Try to match skill index with fieldd
-    const skill: keyof TempleSkillTable = indexToSkill(
-      playerObject[TempleOther.INFO][TempleOther.TOP_SKILL]
-    ) as keyof TempleSkillTable;
+    // Try to match boss index with fieldd
     embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${capitalFirst}\`\`\``);
     // If boss has not been found, then return no data msg
-    if (skill === undefined)
+    const gpEarned: string | number =
+      playerObject[TempleOther.INFO][TempleOther.GP_EARNED];
+    if (gpEarned === '-')
       embed.addField(
         `${OsrsRandom.NO_DATA}`,
         `No records for this period of time`
       );
     else {
-      let formattedSkill;
-      if (skill === Skills.RC) formattedSkill = OsrsRandom.RUNECRAFTING;
-      else formattedSkill = skill;
+      console.log(typeof gpEarned);
+
       embed.addField(
-        `${OsrsRandom.SKILL.toUpperCase()}:`,
-        `\`\`\`${formattedSkill}\`\`\``
+        `${OsrsRandom.GP_EARNED.toUpperCase()}:`,
+        `\`\`\`${numberFormatter(gpEarned, NumberFormatTypes.EN_US)} gp\`\`\``
       );
-      let xp: number | string | undefined;
-      if (playerObject[TempleOther.TABLE][skill][TempleOther.XP] === null)
-        xp = 0;
-      else
-        xp = numberFormatter(
-          playerObject[TempleOther.TABLE][skill][TempleOther.XP],
-          NumberFormatTypes.EN_US
-        );
-      embed.addField(
-        `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
-        `\`\`\`${xp} ${TempleOther.EXP}\`\`\``
-      );
+      if (capitalFirst === 'All Time')
+        embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
     }
 
     return embed;

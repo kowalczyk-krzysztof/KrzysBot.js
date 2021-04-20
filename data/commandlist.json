@@ -62,6 +62,27 @@
       "example": ".topboss week username",
       "category": "Temple OSRS",
       "aliases": []
+    },
+    "topskill": {
+      "name": "topskill",
+      "description": "Get player's top skill for specified period of time",
+      "example": ".topskill week username",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "gpearned": {
+      "name": "gpearned",
+      "description": "Get player's estimated GP earned in specified period of time",
+      "example": ".gpearned 5min username",
+      "category": "Temple OSRS",
+      "aliases": []
+    },
+    "gpspent": {
+      "name": "gpspent",
+      "description": "Get player's estimated GP spent in specified period of time",
+      "example": ".gpspent month username",
+      "category": "Temple OSRS",
+      "aliases": []
     }
   },
   "osrs": {

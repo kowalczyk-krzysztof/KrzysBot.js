@@ -28,3 +28,6 @@ Aliases: </strong> [ ]<br /><strong>Example: </strong>
 username<br/>.gains skill slay 6hmonths username<br/>.gains boss theatre of
 blood year username</blockquote><br />
 <strong>Name</strong>: "topboss"<br /><strong>Description: </strong> Get player's most killed boss in specified period of time<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote> .topboss week username</blockquote><br />
+<strong>Name</strong>: "topskill"<br /><strong>Description: </strong> Get player's top skill for specified period of time<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote> .topskill alltime username</blockquote><br />
+<strong>Name</strong>: "gpearned"<br /><strong>Description: </strong> Get player's estimated GP earned in specified period of time<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote> .gpearned 5min username</blockquote><br />
+<strong>Name</strong>: "gpspent"<br /><strong>Description: </strong> Get player's estimated GP spent in specified period of time<br/><strong>Aliases: </strong> [ ]<br /><strong>Example: </strong><blockquote> .gpspent alltime username</blockquote><br />

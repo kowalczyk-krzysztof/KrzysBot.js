@@ -19,6 +19,9 @@ export enum CommandCooldowns {
   RECORD = 30,
   TEMPLEFETCH = 600,
   TOPBOSS = 30,
+  TOPSKILL = 30,
+  GPEARNED = 30,
+  GPLOST = 30,
 }
 
 // TempleOSRS Player Overview Time Field Names
@@ -525,4 +528,8 @@ export enum OsrsRandom {
   KILLS = 'kills',
   SKILL = 'skill',
   BOSS = 'boss',
+  GP_EARNED = 'Estimated GP earned',
+  GP_SPENT = 'Estimed GP lost',
+  TIME_PERIOD = 'TIME PERIOD',
+  NO_DATA = 'NO DATA',
 }

@@ -12,7 +12,8 @@ export const numberFormatter = (
 
   // en-us formatting
   const formatter: Intl.NumberFormat = new Intl.NumberFormat(
-    NumberFormatTypes.EN_US
+    NumberFormatTypes.EN_US,
+    { maximumFractionDigits: 0 }
   );
   if (type === NumberFormatTypes.EN_US && typeof nr === 'number')
     return formatter.format(nr);

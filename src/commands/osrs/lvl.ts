@@ -37,7 +37,7 @@ import {
 import { skillFields, skillList } from '../../utils/osrs/inputValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
-// UTIILS : Number formatter
+// UTILS : Number formatter
 import {
   numberFormatter,
   NumberFormatTypes,

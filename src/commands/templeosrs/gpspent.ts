@@ -12,15 +12,11 @@ import {
   ErrorEmbed,
 } from '../../utils/embed';
 // UTILS: Interfaces
-import {
-  TempleSkillTable,
-  TempleOverviewSkill,
-} from '../../utils/osrs/interfaces';
+import { TempleOverviewSkill } from '../../utils/osrs/interfaces';
 // UTILS: Enums
 import {
   CommandCooldowns,
   OsrsRandom,
-  Skills,
   TempleCacheType,
   TempleOther,
   TempleOverviewTimeAliases,
@@ -40,8 +36,6 @@ import { errorHandler } from '../../utils/errorHandler';
 // UTILS: Temple Overview time validator
 import { templeOverviewTimeAliases } from '../../utils/osrs/inputValidator';
 import { templeOverviewTimeValidator } from '../../utils/osrs/templeOverviewTIme';
-// UTILS: Temple index to key
-import { indexToSkill } from '../../utils/osrs/templeIndex';
 // Anti-spam
 import { antiSpam } from '../../cache/antiSpam';
 // UTILS: Number formatter
@@ -50,7 +44,7 @@ import {
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
 
-export const topskill = async (
+export const gpspent = async (
   msg: Message,
   commandName: string,
   ...args: string[]
@@ -69,7 +63,7 @@ export const topskill = async (
 
   const user: string[] = args.slice(1);
 
-  const cooldown: number = CommandCooldowns.TOPSKILL;
+  const cooldown: number = CommandCooldowns.GPLOST;
 
   const nameCheck: string = runescapeNameValidator(user);
   if (nameCheck === invalidRSN) return msg.channel.send(invalidUsername);
@@ -87,7 +81,7 @@ export const topskill = async (
     return;
   const userNameWithTime: string = username + time;
   const embed: TempleEmbed = new TempleEmbed()
-    .setTitle(EmbedTitles.TOPSKILL)
+    .setTitle(EmbedTitles.GP_SPENT)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
   if (userNameWithTime in playerOverviewSkill) {
     const result: TempleEmbed = generateResult(
@@ -125,36 +119,20 @@ const generateResult = (
       capitalFirst = '6 months';
     else if (capitalFirst === 'Alltime') capitalFirst = 'All Time';
     else capitalFirst = capitalFirst;
-    // Try to match skill index with fieldd
-    const skill: keyof TempleSkillTable = indexToSkill(
-      playerObject[TempleOther.INFO][TempleOther.TOP_SKILL]
-    ) as keyof TempleSkillTable;
+    // Try to match boss index with fieldd
     embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${capitalFirst}\`\`\``);
     // If boss has not been found, then return no data msg
-    if (skill === undefined)
+    const gpSpent: string | number =
+      playerObject[TempleOther.INFO][TempleOther.GP_SPENT];
+    if (gpSpent === '-')
       embed.addField(
         `${OsrsRandom.NO_DATA}`,
         `No records for this period of time`
       );
     else {
-      let formattedSkill;
-      if (skill === Skills.RC) formattedSkill = OsrsRandom.RUNECRAFTING;
-      else formattedSkill = skill;
       embed.addField(
-        `${OsrsRandom.SKILL.toUpperCase()}:`,
-        `\`\`\`${formattedSkill}\`\`\``
-      );
-      let xp: number | string | undefined;
-      if (playerObject[TempleOther.TABLE][skill][TempleOther.XP] === null)
-        xp = 0;
-      else
-        xp = numberFormatter(
-          playerObject[TempleOther.TABLE][skill][TempleOther.XP],
-          NumberFormatTypes.EN_US
-        );
-      embed.addField(
-        `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
-        `\`\`\`${xp} ${TempleOther.EXP}\`\`\``
+        `${OsrsRandom.GP_SPENT.toUpperCase()}:`,
+        `\`\`\`${numberFormatter(gpSpent, NumberFormatTypes.EN_US)} gp\`\`\``
       );
     }
 
