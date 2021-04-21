@@ -25,6 +25,7 @@ import {
   OsrsRandom,
   ValidInputCases,
   CommandCooldowns,
+  OsrsCommands,
 } from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
@@ -59,7 +60,7 @@ export const record = async (
   if (args.length === 0)
     return msg.channel.send(
       new Embed().setDescription(
-        `**Please provide arguments. Valid formats**:\`\`\`.${commandName} clues tier time username\n\n.${commandName} lms time username\n\n.${commandName} skill skill-name time username\n\n.${commandName} boss boss-name time username\`\`\``
+        `**Please provide arguments. Valid formats**:\`\`\`.${OsrsCommands.RECORD} clues tier time username\n\n.${OsrsCommands.RECORD} other ehb/ehp/lms time username\n\n.${OsrsCommands.RECORD} skill skill-name time username\n\n.${OsrsCommands.RECORD} boss boss-name time username\`\`\``
       )
     );
   // This is done so the cooldown is per unique command e.g if someone checks weekly record then wants to check monthly record then it won't give them a cooldown
