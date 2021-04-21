@@ -66,20 +66,13 @@ export const gains = async (
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
   if (antiSpam(msg, commandName) === true) return;
-  if (args.length === 0) {
-    if (commandName === OsrsCommands.GAINS)
-      return msg.channel.send(
-        new Embed().setDescription(
-          `**Please provide arguments. Valid formats**:\`\`\`.${OsrsCommands.GAINS} clues tier time username\n\n.${OsrsCommands.GAINS} other ehb/ehp/lms/imehp time username\n\n.${OsrsCommands.GAINS} skill skill-name time username\n\n.${OsrsCommands.GAINS} boss boss-name time username\`\`\``
-        )
-      );
-    else
-      return msg.channel.send(
-        new Embed().setDescription(
-          `**Please provide arguments. Valid formats**:\`\`\`.${OsrsCommands.RECORD} clues tier time username\n\n.${OsrsCommands.RECORD} other ehb/ehp/lms/ time username\n\n.${OsrsCommands.RECORD} skill skill-name time username\n\n.${OsrsCommands.RECORD} boss boss-name time username\`\`\``
-        )
-      );
-  }
+  if (args.length === 0)
+    return msg.channel.send(
+      new Embed().setDescription(
+        `**Please provide arguments. Valid formats**:\`\`\`.${OsrsCommands.GAINS} clues tier time username\n\n.${OsrsCommands.GAINS} other ehb/ehp/lms/imehp time username\n\n.${OsrsCommands.GAINS} skill skill-name time username\n\n.${OsrsCommands.GAINS} boss boss-name time username\`\`\``
+      )
+    );
+
   // This is done so the cooldown is per unique command
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
