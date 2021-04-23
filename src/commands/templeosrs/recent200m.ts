@@ -4,6 +4,8 @@ import { Message } from 'discord.js';
 import dotenv from 'dotenv';
 // Axios
 import axios, { AxiosResponse } from 'axios';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
 // UTILS: Embeds
 import {
   EmbedTitles,
@@ -13,6 +15,7 @@ import {
 } from '../../utils/embed';
 // UTILS: Enums
 import {
+  CommandCooldowns,
   OsrsRandom,
   SkillAliases,
   Skills,
@@ -45,6 +48,7 @@ export const recent200m = async (
   ...args: string[]
 ): Promise<Message | ErrorEmbed | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
+  const cooldown: number = CommandCooldowns.RECENT200M;
   const skill: string | undefined = isPrefixValid(
     msg,
     args,
@@ -52,6 +56,12 @@ export const recent200m = async (
     PrefixCategories.SKILL200M
   );
   if (skill === undefined) return;
+  const lowerCasedArguments: string = args[0].toLowerCase();
+  if (
+    isOnCooldown(msg, commandName, cooldown, false, lowerCasedArguments) ===
+    true
+  )
+    return;
   else if (
     skill === SkillAliases.TOTAL_ALIAS1 ||
     skill === SkillAliases.TOTAL_ALIAS2
