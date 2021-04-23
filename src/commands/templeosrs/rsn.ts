@@ -2,12 +2,18 @@
 import { Message } from 'discord.js';
 // TempleOSRS Cache
 import { playerNames, fetchTemple } from '../../cache/templeCache';
+// Cooldown cache
+import { isOnCooldown } from '../../cache/cooldown';
 // UTILS: Embeds
 import { Embed, ErrorEmbed, TempleEmbed } from '../../utils/embed';
 // UTILS: Interfaces
 import { TemplePlayerNames } from '../../utils/osrs/interfaces';
 // UTILS: Enums
-import { TempleOther, TempleCacheType } from '../../utils/osrs/enums';
+import {
+  TempleOther,
+  TempleCacheType,
+  CommandCooldowns,
+} from '../../utils/osrs/enums';
 // UTILS: Runescape name validator
 import {
   runescapeNameValidator,
@@ -24,9 +30,12 @@ export const rsn = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
+  const cooldown = CommandCooldowns.RSN;
   const nameCheck: string | undefined = runescapeNameValidator(args);
   if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
+  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
+    return;
   const embed: TempleEmbed = new TempleEmbed();
   if (username in playerNames) {
     const result: Embed = generateResult(embed, playerNames[username]);

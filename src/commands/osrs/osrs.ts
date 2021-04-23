@@ -23,7 +23,7 @@ export const osrs = async (
   ...args: string[]
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
-  const cooldown: number = CommandCooldowns.OSRSFETCH;
+  const cooldown: number = CommandCooldowns.OSRS;
   const nameCheck: string | undefined = runescapeNameValidator(args);
   if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;

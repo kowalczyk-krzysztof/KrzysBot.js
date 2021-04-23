@@ -97,7 +97,7 @@ export const temple = async (
       )
     );
 
-  const cooldown: number = CommandCooldowns.TEMPLEFETCH;
+  const cooldown: number = CommandCooldowns.TEMPLE;
   const nameCheck: string | undefined = runescapeNameValidator(user);
   if (nameCheck === undefined) return msg.channel.send(invalidUsername);
   const username: string = nameCheck;
