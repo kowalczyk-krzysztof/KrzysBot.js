@@ -4,7 +4,6 @@ import { Message } from 'discord.js';
 import dotenv from 'dotenv';
 // Commands: Other
 import { commands } from './commands/commands';
-import { author } from './commands/author';
 // Commands: TempleOSRS
 import { ehp } from './commands/templeosrs/ehp';
 import { ehb } from './commands/templeosrs/ehb';
@@ -41,7 +40,6 @@ export const commandList: {
     ...args: string[]
   ) => Promise<Message | undefined | void | ErrorEmbed>;
 } = {
-  author,
   commands,
   ehp,
   ehb,

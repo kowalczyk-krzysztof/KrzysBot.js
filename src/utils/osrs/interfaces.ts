@@ -201,6 +201,7 @@ export interface OsrsPlayer extends Osrs<OsrsSkill | BossOrMinigame> {
   [Bosses.GAUNTLET]: BossOrMinigame;
   [Bosses.CORR_GAUNTLET]: BossOrMinigame;
   [Bosses.TOB]: BossOrMinigame;
+  [Bosses.TOB_HM]: BossOrMinigame;
   [Bosses.THERMY]: BossOrMinigame;
   [Bosses.ZUK]: BossOrMinigame;
   [Bosses.JAD]: BossOrMinigame;

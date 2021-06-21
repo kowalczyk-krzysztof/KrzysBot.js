@@ -331,42 +331,48 @@ export const osrsDataParser = (data: string): OsrsPlayer => {
       [TempleOther.RANK]: rankLevelExp[71][0],
       [TempleOther.SCORE]: rankLevelExp[71][1],
     },
-    [Bosses.THERMY]: {
+    [Bosses.TOB_HM]: {
       [TempleOther.RANK]: rankLevelExp[72][0],
       [TempleOther.SCORE]: rankLevelExp[72][1],
     },
-    [Bosses.ZUK]: {
+    [Bosses.THERMY]: {
       [TempleOther.RANK]: rankLevelExp[73][0],
       [TempleOther.SCORE]: rankLevelExp[73][1],
     },
-    [Bosses.JAD]: {
+    [Bosses.ZUK]: {
       [TempleOther.RANK]: rankLevelExp[74][0],
       [TempleOther.SCORE]: rankLevelExp[74][1],
     },
-    [Bosses.VENE]: {
+    [Bosses.JAD]: {
       [TempleOther.RANK]: rankLevelExp[75][0],
       [TempleOther.SCORE]: rankLevelExp[75][1],
     },
-    [Bosses.VETION]: {
+    [Bosses.VENE]: {
       [TempleOther.RANK]: rankLevelExp[76][0],
       [TempleOther.SCORE]: rankLevelExp[76][1],
     },
-    [Bosses.VORKATH]: {
+    [Bosses.VETION]: {
       [TempleOther.RANK]: rankLevelExp[77][0],
       [TempleOther.SCORE]: rankLevelExp[77][1],
     },
-    [Bosses.WT]: {
+    [Bosses.VORKATH]: {
       [TempleOther.RANK]: rankLevelExp[78][0],
       [TempleOther.SCORE]: rankLevelExp[78][1],
     },
-    [Bosses.ZALCANO]: {
+    [Bosses.WT]: {
       [TempleOther.RANK]: rankLevelExp[79][0],
       [TempleOther.SCORE]: rankLevelExp[79][1],
     },
-    [Bosses.ZULRAH]: {
+    [Bosses.ZALCANO]: {
       [TempleOther.RANK]: rankLevelExp[80][0],
       [TempleOther.SCORE]: rankLevelExp[80][1],
     },
+    [Bosses.ZULRAH]: {
+      [TempleOther.RANK]: rankLevelExp[81][0],
+      [TempleOther.SCORE]: rankLevelExp[81][1],
+    },
   };
+  console.log(playerObject);
+
   return playerObject;
 };

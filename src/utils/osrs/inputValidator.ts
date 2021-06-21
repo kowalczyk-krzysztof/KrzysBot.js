@@ -747,6 +747,9 @@ export const bossFields = (fieldName: string): string | undefined => {
     case BossAliases.TOB_ALIAS3:
       fieldToCheck = Bosses.TOB;
       break;
+    case BossAliases.TOB_HM:
+      fieldToCheck = Bosses.TOB_HM;
+      break;
     case BossAliases.THERMY_ALIAS1:
       fieldToCheck = Bosses.THERMY;
       break;
@@ -954,6 +957,7 @@ export const bossList: string[] = [
   BossAliases.TOB_ALIAS1,
   BossAliases.TOB_ALIAS2,
   BossAliases.TOB_ALIAS3,
+  BossAliases.TOB_HM,
   BossAliases.THERMY_ALIAS1,
   BossAliases.THERMY_ALIAS2,
   BossAliases.THERMY_ALIAS3,
