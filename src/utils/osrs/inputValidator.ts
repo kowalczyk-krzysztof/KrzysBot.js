@@ -699,6 +699,9 @@ export const bossFields = (fieldName: string): string | undefined => {
     case BossAliases.NIGHTMARE_ALIAS1:
       fieldToCheck = Bosses.NIGHTMARE;
       break;
+    case BossAliases.PHOSANI:
+      fieldToCheck = Bosses.PHOSANI;
+      break;
     case BossAliases.OBOR_ALIAS1:
       fieldToCheck = Bosses.OBOR;
       break;
@@ -941,6 +944,7 @@ export const bossList: string[] = [
   BossAliases.ZAMMY_ALIAS5,
   BossAliases.MIMIC_ALIAS1,
   BossAliases.NIGHTMARE_ALIAS1,
+  BossAliases.PHOSANI,
   BossAliases.OBOR_ALIAS1,
   BossAliases.SARACHNIS_ALIAS1,
   BossAliases.SCORPIA_ALIAS1,

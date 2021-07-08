@@ -193,6 +193,7 @@ export interface OsrsPlayer extends Osrs<OsrsSkill | BossOrMinigame> {
   [Bosses.KRIL]: BossOrMinigame;
   [Bosses.MIMIC]: BossOrMinigame;
   [Bosses.NIGHTMARE]: BossOrMinigame;
+  [Bosses.PHOSANI]: BossOrMinigame;
   [Bosses.OBOR]: BossOrMinigame;
   [Bosses.SARACHNIS]: BossOrMinigame;
   [Bosses.SCORPIA]: BossOrMinigame;

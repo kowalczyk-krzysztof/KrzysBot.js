@@ -67,10 +67,6 @@ export const commandList: {
 export const aliasHandler = (commandName: string) => {
   const alias: string = commandName.toLowerCase();
   switch (alias) {
-    case 'contact':
-      return 'author';
-    case 'owner':
-      return 'author';
     case 'help':
       return 'commands';
     default:
