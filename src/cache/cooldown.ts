@@ -5,7 +5,7 @@ import { Embed } from '../utils/embed';
 
 // Object which contains keys with names in format user.id + command name. The value for each key is date when it was created
 export const cache: { [key: string]: number } = {};
-// Generates cache item, then checks if it exists in cache. If true, sends a msng to user with time left and returns true. If item is not in cache, add it to cache and return false
+// Generates cache item, then checks if it exists in cache. If true, sends a msg to user with time left and returns true. If item is not in cache, add it to cache and return false
 export const isOnCooldown = (
   msg: Message,
   commandName: string,

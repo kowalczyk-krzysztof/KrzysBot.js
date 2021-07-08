@@ -282,7 +282,7 @@ export const osrsDataParser = (data: string): OsrsPlayer => {
       [TempleOther.RANK]: rankLevelExp[59][0],
       [TempleOther.SCORE]: rankLevelExp[59][1],
     },
-    KreeArra: {
+    [Bosses.KREE]: {
       [TempleOther.RANK]: rankLevelExp[60][0],
       [TempleOther.SCORE]: rankLevelExp[60][1],
     },
@@ -298,81 +298,83 @@ export const osrsDataParser = (data: string): OsrsPlayer => {
       [TempleOther.RANK]: rankLevelExp[63][0],
       [TempleOther.SCORE]: rankLevelExp[63][1],
     },
-    [Bosses.OBOR]: {
+    [Bosses.PHOSANI]: {
       [TempleOther.RANK]: rankLevelExp[64][0],
       [TempleOther.SCORE]: rankLevelExp[64][1],
     },
-    [Bosses.SARACHNIS]: {
+    [Bosses.OBOR]: {
       [TempleOther.RANK]: rankLevelExp[65][0],
       [TempleOther.SCORE]: rankLevelExp[65][1],
     },
-    [Bosses.SCORPIA]: {
+    [Bosses.SARACHNIS]: {
       [TempleOther.RANK]: rankLevelExp[66][0],
       [TempleOther.SCORE]: rankLevelExp[66][1],
     },
-    [Bosses.SKOTIZO]: {
+    [Bosses.SCORPIA]: {
       [TempleOther.RANK]: rankLevelExp[67][0],
       [TempleOther.SCORE]: rankLevelExp[67][1],
     },
-    [Bosses.TEMPO]: {
+    [Bosses.SKOTIZO]: {
       [TempleOther.RANK]: rankLevelExp[68][0],
       [TempleOther.SCORE]: rankLevelExp[68][1],
     },
-    [Bosses.GAUNTLET]: {
+    [Bosses.TEMPO]: {
       [TempleOther.RANK]: rankLevelExp[69][0],
       [TempleOther.SCORE]: rankLevelExp[69][1],
     },
-    [Bosses.CORR_GAUNTLET]: {
+    [Bosses.GAUNTLET]: {
       [TempleOther.RANK]: rankLevelExp[70][0],
       [TempleOther.SCORE]: rankLevelExp[70][1],
     },
-
-    [Bosses.TOB]: {
+    [Bosses.CORR_GAUNTLET]: {
       [TempleOther.RANK]: rankLevelExp[71][0],
       [TempleOther.SCORE]: rankLevelExp[71][1],
     },
-    [Bosses.TOB_HM]: {
+
+    [Bosses.TOB]: {
       [TempleOther.RANK]: rankLevelExp[72][0],
       [TempleOther.SCORE]: rankLevelExp[72][1],
     },
-    [Bosses.THERMY]: {
+    [Bosses.TOB_HM]: {
       [TempleOther.RANK]: rankLevelExp[73][0],
       [TempleOther.SCORE]: rankLevelExp[73][1],
     },
-    [Bosses.ZUK]: {
+    [Bosses.THERMY]: {
       [TempleOther.RANK]: rankLevelExp[74][0],
       [TempleOther.SCORE]: rankLevelExp[74][1],
     },
-    [Bosses.JAD]: {
+    [Bosses.ZUK]: {
       [TempleOther.RANK]: rankLevelExp[75][0],
       [TempleOther.SCORE]: rankLevelExp[75][1],
     },
-    [Bosses.VENE]: {
+    [Bosses.JAD]: {
       [TempleOther.RANK]: rankLevelExp[76][0],
       [TempleOther.SCORE]: rankLevelExp[76][1],
     },
-    [Bosses.VETION]: {
+    [Bosses.VENE]: {
       [TempleOther.RANK]: rankLevelExp[77][0],
       [TempleOther.SCORE]: rankLevelExp[77][1],
     },
-    [Bosses.VORKATH]: {
+    [Bosses.VETION]: {
       [TempleOther.RANK]: rankLevelExp[78][0],
       [TempleOther.SCORE]: rankLevelExp[78][1],
     },
-    [Bosses.WT]: {
+    [Bosses.VORKATH]: {
       [TempleOther.RANK]: rankLevelExp[79][0],
       [TempleOther.SCORE]: rankLevelExp[79][1],
     },
-    [Bosses.ZALCANO]: {
+    [Bosses.WT]: {
       [TempleOther.RANK]: rankLevelExp[80][0],
       [TempleOther.SCORE]: rankLevelExp[80][1],
     },
-    [Bosses.ZULRAH]: {
+    [Bosses.ZALCANO]: {
       [TempleOther.RANK]: rankLevelExp[81][0],
       [TempleOther.SCORE]: rankLevelExp[81][1],
     },
+    [Bosses.ZULRAH]: {
+      [TempleOther.RANK]: rankLevelExp[82][0],
+      [TempleOther.SCORE]: rankLevelExp[82][1],
+    },
   };
-  console.log(playerObject);
-
   return playerObject;
 };
