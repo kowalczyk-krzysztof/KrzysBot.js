@@ -16,7 +16,7 @@
   "author": "Krzysztof Kowalczyk",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^15.12.4",
+    "@types/node": "^16.3.2",
     "axios": "^0.21.1",
     "discord.js": "^12.5.3",
     "dotenv": "^10.0.0",
