@@ -76,20 +76,19 @@ export const record = async (
         case: string | undefined;
       }
     | undefined = templeGainsRecords(msg, args, commandName);
-  if (parsedInput === undefined) return;
+  if (!parsedInput) return;
   const cooldown: number = CommandCooldowns.RECORD;
   if (
-    parsedInput.rsn !== undefined &&
-    parsedInput.time !== undefined &&
-    parsedInput.field !== undefined &&
-    parsedInput.case !== undefined
+    parsedInput.rsn &&
+    parsedInput.time &&
+    parsedInput.field &&
+    parsedInput.case
   ) {
     // Check if rsn is valid runescape name
-    const nameCheck: string | undefined = runescapeNameValidator(
+    const username: string | undefined = runescapeNameValidator(
       parsedInput.rsn
     );
-    if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-    const username: string = nameCheck;
+    if (!username) return msg.channel.send(invalidUsername);
     // Check if command is on cooldown
     if (
       isOnCooldown(
@@ -113,7 +112,7 @@ export const record = async (
         parsedInput.field,
         parsedInput.case
       ) as keyof TemplePlayerRecords;
-      if (field === undefined) return errorHandler();
+      if (!field) return errorHandler();
       // Generate embed
       else {
         const result: TempleEmbed = generateResult(
@@ -140,7 +139,7 @@ export const record = async (
           parsedInput.field,
           parsedInput.case
         ) as keyof TemplePlayerRecords;
-        if (field === undefined) return errorHandler();
+        if (!field) return errorHandler();
         else {
           // Generate result
           const result: TempleEmbed = generateResult(
@@ -165,8 +164,7 @@ const generateResult = (
   time: keyof PlayerRecordsTimes,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     // Changing the time value (string) to have a first capital letter
     const capitalFirst: string = capitalizeFirstLetter(time);
@@ -174,12 +172,12 @@ const generateResult = (
     // If there are no records the key value is an empty array
     if (Array.isArray(playerObject[field]) === false) {
       // If there's no record for specific period of time then the key doesn't exist
-      if (playerObject[field] !== undefined) {
+      if (!playerObject[field]) {
         embed.addField(
           `${OsrsRandom.TIME_PERIOD}:`,
           `\`\`\`${capitalFirst}\`\`\``
         );
-        if (playerObject[field][time] === undefined)
+        if (!playerObject[field][time])
           return embed.addField(
             `${OsrsRandom.NO_DATA}`,
             `No records for this period of time for \`\`\`${formattedField}\`\`\``

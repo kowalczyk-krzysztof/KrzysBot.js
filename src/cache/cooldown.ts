@@ -13,35 +13,6 @@ export const isOnCooldown = (
   isAuthorOptional: boolean = false,
   optionalArgs: string = ''
 ): boolean => {
-  // Creates cache item (string)
-  const createCacheItem = (
-    msg: Message,
-    commandName: string,
-    isAuthorOptional: boolean,
-    optionalArgs: string
-  ): string => {
-    let keyword;
-    if (optionalArgs !== '') keyword = optionalArgs.toLowerCase();
-    else keyword = '';
-
-    if (isAuthorOptional === false) {
-      const cacheItem: string = msg.author.id + commandName + keyword;
-      return cacheItem.toLowerCase();
-    } else {
-      const cacheItem: string = commandName + keyword;
-      return cacheItem.toLowerCase();
-    }
-  };
-  // Adds item to cache and sets a timer on when to delete it
-  const addCacheItem = (cacheItem: string, cooldownInSec: number): void => {
-    const cooldownInMs: number = cooldownInSec * 1000;
-    const item: string = cacheItem;
-    cache[item] = Date.now();
-    setTimeout(() => {
-      delete cache[item];
-    }, cooldownInMs);
-  };
-
   const cacheItem: string = createCacheItem(
     msg,
     commandName,
@@ -49,7 +20,7 @@ export const isOnCooldown = (
     optionalArgs
   );
   if (cacheItem in cache) {
-    isInCache(msg, cacheItem, cooldownInSec, isAuthorOptional);
+    generateCooldownMsg(msg, cacheItem, cooldownInSec, isAuthorOptional);
     return true;
   } else {
     addCacheItem(cacheItem, cooldownInSec);
@@ -57,12 +28,43 @@ export const isOnCooldown = (
   }
 };
 
-export const isInCache = (
+// Creates cache item (string)
+const createCacheItem = (
+  msg: Message,
+  commandName: string,
+  isAuthorOptional: boolean,
+  optionalArgs: string
+): string => {
+  let keyword;
+  if (optionalArgs !== '') keyword = optionalArgs.toLowerCase();
+  else keyword = '';
+
+  if (isAuthorOptional === false) {
+    const cacheItem: string = msg.author.id + commandName + keyword;
+    return cacheItem.toLowerCase();
+  } else {
+    const cacheItem: string = commandName + keyword;
+    return cacheItem.toLowerCase();
+  }
+};
+
+// Adds item to cache and sets a timer on when to delete it
+const addCacheItem = (cacheItem: string, cooldownInSec: number): void => {
+  const cooldownInMs: number = cooldownInSec * 1000;
+  const item: string = cacheItem;
+  cache[item] = Date.now();
+  setTimeout(() => {
+    delete cache[item];
+  }, cooldownInMs);
+};
+
+// Generates msg
+const generateCooldownMsg = (
   msg: Message,
   cacheItem: string,
   cooldownInSec: number,
   isAuthorOptional: boolean
-) => {
+): void => {
   const timeWhenAddedToCache: number = cache[cacheItem];
   const now: number = Date.now();
   const timeLeftSecondsDecimal: number =

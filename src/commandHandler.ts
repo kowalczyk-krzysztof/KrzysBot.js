@@ -46,7 +46,6 @@ export const commandList: {
   rsn,
   country,
   temple,
-  // datapoint,
   clues,
   kc,
   lvl,

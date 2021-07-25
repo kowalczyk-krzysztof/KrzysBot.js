@@ -55,7 +55,7 @@ export const recent200m = async (
     skillList,
     PrefixCategories.SKILL200M
   );
-  if (skill === undefined) return;
+  if (!skill) return;
   const lowerCasedArguments: string = args[0].toLowerCase();
   if (
     isOnCooldown(msg, commandName, cooldown, false, lowerCasedArguments) ===
@@ -86,8 +86,7 @@ export const recent200m = async (
 const generateResult = (
   listOfPlayers: any
 ): TempleEmbedNoFooter | ErrorEmbed => {
-  if (listOfPlayers === undefined || listOfPlayers === null)
-    return errorHandler();
+  if (!listOfPlayers) return errorHandler();
   else {
     const whatSkill: string | undefined = indexToSkill(
       listOfPlayers[0].Skill

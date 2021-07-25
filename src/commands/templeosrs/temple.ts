@@ -64,7 +64,7 @@ export const temple = async (
       const validTime: string | undefined = templeOverviewTimeValidator(
         args[2]
       );
-      if (validTime === undefined) return;
+      if (!validTime) return;
       else {
         user = args.slice(3);
         time = validTime;
@@ -76,7 +76,7 @@ export const temple = async (
       const validTime: string | undefined = templeOverviewTimeValidator(
         args[2]
       );
-      if (validTime === undefined) return;
+      if (!validTime) return;
       else {
         user = args.slice(3);
         time = validTime;
@@ -98,9 +98,8 @@ export const temple = async (
     );
 
   const cooldown: number = CommandCooldowns.TEMPLE;
-  const nameCheck: string | undefined = runescapeNameValidator(user);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(user);
+  if (!username) return msg.channel.send(invalidUsername);
   if (
     isOnCooldown(
       msg,

@@ -31,9 +31,8 @@ export const country = async (
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.COUNTRY;
-  const nameCheck: string | undefined = runescapeNameValidator(args);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(args);
+  if (!username) return msg.channel.send(invalidUsername);
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: TempleEmbed = new TempleEmbed().addField(
@@ -57,8 +56,7 @@ const generateResult = (
   embed: TempleEmbed,
   playerObject: TemplePlayerStats
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     const data: string = playerObject[TempleOther.INFO][TempleOther.COUNTRY];
     if (data === '-')

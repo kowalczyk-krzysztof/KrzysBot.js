@@ -54,7 +54,7 @@ export const topboss = async (
     args,
     templeOverviewTimeAliases
   );
-  if (time === undefined) return;
+  if (!time) return;
   const formattedTime: string | undefined = templeOverviewTimeValidator(time);
 
   const lowerCasedArguments: string[] = args.map((e: string) => {
@@ -65,9 +65,8 @@ export const topboss = async (
 
   const cooldown: number = CommandCooldowns.TOPBOSS;
 
-  const nameCheck: string | undefined = runescapeNameValidator(user);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(user);
+  if (!username) return msg.channel.send(invalidUsername);
   // Check cooldown
   if (
     isOnCooldown(
@@ -115,8 +114,7 @@ const generateResult = (
   playerObject: TempleOverviewOther,
   time: string
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     // Format time
     const formattedTime: string = formatOverviewTime(time);
@@ -129,7 +127,7 @@ const generateResult = (
       `\`\`\`${formattedTime}\`\`\``
     );
     // If boss has not been found, then return no data msg
-    if (boss === undefined)
+    if (!boss)
       embed.addField(
         `${OsrsRandom.NO_DATA}`,
         `\`\`\`No data for this period of time\`\`\``
@@ -140,8 +138,7 @@ const generateResult = (
         `\`\`\`${boss}\`\`\``
       );
       let xp: number;
-      if (playerObject[TempleOther.TABLE][boss][TempleOther.XP] === null)
-        xp = 0;
+      if (!playerObject[TempleOther.TABLE][boss][TempleOther.XP]) xp = 0;
       else xp = playerObject[TempleOther.TABLE][boss][TempleOther.XP];
       embed.addField(`${OsrsRandom.KILLS.toUpperCase()}:`, `\`\`\`${xp}\`\`\``);
       if (formattedTime === 'All Time')

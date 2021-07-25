@@ -89,7 +89,7 @@ export const gains = async (
   // There are two API endpoints, one for bosses/other and one for skills. Assign relevant cache based on "case" field. NOTE: for getting ehp or ehb user uses ".gains other" command but EHP is a key on skills object and EHB is a key on boss object
   let playerCache: { [key: string]: TempleOverviewOther & TempleOverviewSkill };
   let dataType: TempleCacheType;
-  if (parsedInput === undefined) return;
+  if (!parsedInput) return;
   else if (
     parsedInput.case === ValidInputCases.BOSS ||
     parsedInput.case === ValidInputCases.CLUES
@@ -121,17 +121,16 @@ export const gains = async (
   }
   const cooldown: number = CommandCooldowns.GAINS;
   if (
-    parsedInput.rsn !== undefined &&
-    parsedInput.time !== undefined &&
-    parsedInput.field !== undefined &&
-    parsedInput.case !== undefined
+    parsedInput.rsn &&
+    parsedInput.time &&
+    parsedInput.field &&
+    parsedInput.case
   ) {
     // Check is username is correct runescape name
-    const nameCheck: string | undefined = runescapeNameValidator(
+    const username: string | undefined = runescapeNameValidator(
       parsedInput.rsn
     );
-    if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-    const username: string = nameCheck;
+    if (!username) return msg.channel.send(invalidUsername);
     // Check cooldown
     if (
       isOnCooldown(
@@ -180,12 +179,12 @@ export const gains = async (
     // Check if object is in relevant cache
     if (userNameWithTime in playerCache) {
       // Try to match the input field with key name on player object
-      const field: keyof TempleOtherTable &
-        keyof TempleSkillTable = fieldNameCheck(
-        parsedInput.field,
-        parsedInput.case
-      ) as keyof TempleOtherTable & keyof TempleSkillTable;
-      if (field === undefined) return errorHandler();
+      const field: keyof TempleOtherTable & keyof TempleSkillTable =
+        fieldNameCheck(
+          parsedInput.field,
+          parsedInput.case
+        ) as keyof TempleOtherTable & keyof TempleSkillTable;
+      if (!field) return errorHandler();
       else {
         // Generate embed
         const result: TempleEmbed = generateResult(
@@ -213,7 +212,7 @@ export const gains = async (
           parsedInput.field,
           parsedInput.case
         ) as keyof TempleOtherTable & keyof TempleSkillTable;
-        if (field === undefined) return errorHandler();
+        if (!field) return errorHandler();
         else {
           // Generate embed
           const result: TempleEmbed = generateResult(
@@ -239,8 +238,7 @@ const generateResult = (
   time: string,
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     const formattedTime: string = formatOverviewTime(time);
     const formattedField: string = fieldNameFormatter(field);
@@ -248,7 +246,7 @@ const generateResult = (
       playerObject[TempleOther.TABLE];
     const fieldTocheck: TempleOtherTableProps & SkillTableProps = table[field];
     // If there's no record for specific period of time then the key doesn't exist
-    if (fieldTocheck !== undefined) {
+    if (fieldTocheck) {
       // Formatting how numbers are displayed
       embed.addField(
         `${OsrsRandom.TIME_PERIOD}:`,

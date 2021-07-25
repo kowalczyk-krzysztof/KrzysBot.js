@@ -55,7 +55,7 @@ export const gpearned = async (
     args,
     templeOverviewTimeAliases
   );
-  if (time === undefined) return;
+  if (!time) return;
   const formattedTime: string | undefined = templeOverviewTimeValidator(time);
 
   const lowerCasedArguments: string[] = args.map((e: string) => {
@@ -66,9 +66,8 @@ export const gpearned = async (
 
   const cooldown: number = CommandCooldowns.GP_EARNED;
 
-  const nameCheck: string | undefined = runescapeNameValidator(user);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(user);
+  if (!username) return msg.channel.send(invalidUsername);
   // Check cooldown
   if (
     isOnCooldown(
@@ -116,8 +115,7 @@ const generateResult = (
   playerObject: TempleOverviewOther,
   time: string
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     // Format time
     const formattedTime: string = formatOverviewTime(time);

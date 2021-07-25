@@ -16,6 +16,11 @@ import { PrefixCategories, invalidPrefixMsg } from './isPrefixValid';
   User to search for is args.slice(<length of args that are the boss name>)
   */
 
+export type BossValidation = {
+  bossCase: number | null;
+  boss: string | null;
+};
+
 // Indexes for which input argument is used as index
 enum Indexes {
   FIRST_WORD = 0,
@@ -27,12 +32,7 @@ export const bossValidator = (
   msg: Message,
   lowerCasedArguments: string[],
   indexes: number[]
-):
-  | {
-      bossCase: number | undefined;
-      boss: string | undefined;
-    }
-  | undefined => {
+): BossValidation | undefined => {
   if (lowerCasedArguments.length === 0) return;
   const firstArgument: string =
     lowerCasedArguments[indexes[Indexes.FIRST_WORD]];
@@ -50,8 +50,8 @@ export const bossValidator = (
     .join('')
     .toLowerCase();
 
-  let boss: string | undefined;
-  let bossCase: number | undefined;
+  let boss: string | null;
+  let bossCase: number | null;
   if (
     specialCase === BossAliases.COX_ALIAS2 ||
     specialCase === BossAliases.TOB_ALIAS3 ||
@@ -82,7 +82,8 @@ export const bossValidator = (
       bossCase = BossCases.EDGE_CASE;
       boss = firstArgument;
     } else {
-      (boss = undefined), (bossCase = undefined);
+      boss = null;
+      bossCase = null;
     }
   }
 
