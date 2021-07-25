@@ -36,9 +36,8 @@ export const ehb = async (
 ): Promise<Message | undefined | ErrorEmbed> => {
   if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.EHB;
-  const nameCheck: string | undefined = runescapeNameValidator(args);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(args);
+  if (!username) return msg.channel.send(invalidUsername);
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: TempleEmbed = new TempleEmbed().addField(
@@ -71,8 +70,7 @@ const generateResult = (
   playerObject: TemplePlayerStats,
   username: string
 ): TempleEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     const lastChecked: { title: string; time: string } = templeDateParser(
       playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]

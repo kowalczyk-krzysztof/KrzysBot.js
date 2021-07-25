@@ -54,15 +54,14 @@ export const lvl = async (
     skillList,
     PrefixCategories.SKILL
   );
-  if (prefix === undefined) return;
+  if (!prefix) return;
   // This is done so the cooldown is per unique command
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
   const cooldown: number = CommandCooldowns.LVL;
-  const nameCheck: string | undefined = runescapeNameValidator(args.slice(1));
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(args.slice(1));
+  if (!username) return msg.channel.send(invalidUsername);
   if (
     isOnCooldown(
       msg,
@@ -80,7 +79,7 @@ export const lvl = async (
     const field: keyof OsrsPlayer | undefined = skillFields(
       prefix
     ) as keyof OsrsPlayer;
-    if (field === undefined) return;
+    if (!field) return;
     else {
       const result: OsrsEmbed = await generateResult(
         embed,
@@ -95,7 +94,7 @@ export const lvl = async (
       const field: keyof OsrsPlayer | undefined = skillFields(
         prefix
       ) as keyof OsrsPlayer;
-      if (field === undefined) return;
+      if (!field) return;
       else {
         const result: OsrsEmbed = await generateResult(
           embed,
@@ -114,8 +113,7 @@ const generateResult = (
   field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   // keyof is how I can index objects like that
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     const skill = playerObject[field] as OsrsSkill;
     // Intl is how I format number to have commas

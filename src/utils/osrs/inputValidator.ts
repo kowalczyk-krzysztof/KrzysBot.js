@@ -19,7 +19,7 @@ import {
 // UTILS: Prefix validator
 import { PrefixCategories, invalidPrefixMsg } from './isPrefixValid';
 // UTILS: Boss validator
-import { bossValidator } from './bossValidator';
+import { bossValidator, BossValidation } from './bossValidator';
 
 export const validInputCases: string[] = [
   ValidInputCases.CLUES,
@@ -155,13 +155,12 @@ export const templeGainsRecords = (
     // For bosses perform boss validation using bossValidator
     case ValidInputCases.BOSS:
       const indexes: number[] = [1, 2, 3];
-      const bossValidation:
-        | {
-            bossCase: number | undefined;
-            boss: string | undefined;
-          }
-        | undefined = bossValidator(msg, lowerCasedArguments, indexes);
-      if (bossValidation === undefined) return;
+      const bossValidation: BossValidation | undefined = bossValidator(
+        msg,
+        lowerCasedArguments,
+        indexes
+      );
+      if (!bossValidation) return;
       else if (bossValidation.bossCase === BossCases.ONE_WORD) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;

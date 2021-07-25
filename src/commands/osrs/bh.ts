@@ -39,14 +39,13 @@ export const bh = async (
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
   const prefix: string | undefined = isPrefixValid(msg, args, bhTypes);
-  if (prefix === undefined) return;
+  if (!prefix) return;
 
   const cooldown: number = CommandCooldowns.BH;
 
   const user: string[] = args.slice(1);
-  const nameCheck: string | undefined = runescapeNameValidator(user);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(user);
+  if (!username) return msg.channel.send(invalidUsername);
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
@@ -77,8 +76,7 @@ const generateResult = (
   playerObject: OsrsPlayer,
   prefix: string
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     let scoreType: string | number;
     let title: string;

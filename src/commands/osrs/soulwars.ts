@@ -36,9 +36,8 @@ export const soulwars = async (
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.SOULWARS;
-  const nameCheck: string | undefined = runescapeNameValidator(args);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(args);
+  if (!username) return msg.channel.send(invalidUsername);
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
@@ -60,8 +59,7 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     embed.addField(
       `${OsrsOther.SOULWARS.toUpperCase()}:`,

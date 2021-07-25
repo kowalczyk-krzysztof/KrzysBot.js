@@ -27,18 +27,17 @@ export const fetchOsrsStats = async (
   msg: Message,
   playerName: string
 ): Promise<boolean> => {
-  const keyword: string = playerName;
   try {
-    const res: AxiosResponse = await axios.get(`${HISCORE_API}${keyword}`);
+    const res: AxiosResponse = await axios.get(`${HISCORE_API}${playerName}`);
     if (res.status === 200) {
       const data: OsrsPlayer = osrsDataParser(res.data);
-      setOsrsStats(keyword, data);
+      setOsrsStats(playerName, data);
       return true;
     } else return false;
   } catch (err) {
     if (err.response.status === 404) {
       msg.channel.send(
-        new Embed().addField('ERROR', `Player **${keyword}** not found`)
+        new Embed().addField('ERROR', `Player **${playerName}** not found`)
       );
     } else errorHandler(msg);
     return false;

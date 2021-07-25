@@ -34,9 +34,8 @@ export const lms = async (
 ): Promise<Message | undefined> => {
   if (antiSpam(msg, commandName) === true) return;
   const cooldown: number = CommandCooldowns.LMS;
-  const nameCheck: string | undefined = runescapeNameValidator(args);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(args);
+  if (!username) return msg.channel.send(invalidUsername);
   if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
@@ -58,8 +57,7 @@ const generateResult = (
   embed: OsrsEmbed,
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     embed.addField(
       `${TempleOther.LMS} ${capitalizeFirstLetter(

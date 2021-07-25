@@ -28,7 +28,7 @@ import {
 // UTILS: Input validator
 import { bossFields, bossList } from '../../utils/osrs/inputValidator';
 // UTILS: Boss validator
-import { bossValidator } from '../../utils/osrs/bossValidator';
+import { bossValidator, BossValidation } from '../../utils/osrs/bossValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 import {
@@ -51,16 +51,15 @@ export const kc = async (
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
-  const bossValidation:
-    | {
-        bossCase: number | undefined;
-        boss: string | undefined;
-      }
-    | undefined = bossValidator(msg, lowerCasedArguments, indexes);
+  const bossValidation: BossValidation | undefined = bossValidator(
+    msg,
+    lowerCasedArguments,
+    indexes
+  );
 
   let user: string[];
 
-  if (bossValidation === undefined) return;
+  if (!bossValidation) return;
   else if (bossValidation.bossCase === BossCases.ONE_WORD) {
     user = lowerCasedArguments.slice(1);
   } else if (bossValidation.bossCase === BossCases.TWO_WORD) {
@@ -74,9 +73,8 @@ export const kc = async (
 
   const cooldown: number = CommandCooldowns.KC;
 
-  const nameCheck: string | undefined = runescapeNameValidator(user);
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(user);
+  if (!username) return msg.channel.send(invalidUsername);
   if (
     isOnCooldown(
       msg,
@@ -94,7 +92,7 @@ export const kc = async (
     const field: keyof OsrsPlayer | undefined = bossFields(
       boss
     ) as keyof OsrsPlayer;
-    if (field === undefined) return;
+    if (!field) return;
     else {
       const result: OsrsEmbed = generateResult(
         embed,
@@ -109,7 +107,7 @@ export const kc = async (
       const field: keyof OsrsPlayer | undefined = bossFields(
         boss
       ) as keyof OsrsPlayer;
-      if (field === undefined) return;
+      if (!field) return;
       else {
         const result: OsrsEmbed = generateResult(
           embed,
@@ -127,8 +125,7 @@ const generateResult = (
   playerObject: OsrsPlayer,
   field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
     embed.addField(`${OsrsRandom.BOSS.toUpperCase()}:`, `\`\`\`${field}\`\`\``);

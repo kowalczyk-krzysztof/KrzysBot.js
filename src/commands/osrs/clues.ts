@@ -46,14 +46,13 @@ export const clues = async (
     clueList,
     PrefixCategories.CLUES
   );
-  if (prefix === undefined) return;
+  if (!prefix) return;
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
   const cooldown: number = CommandCooldowns.CLUES;
-  const nameCheck: string | undefined = runescapeNameValidator(args.slice(1));
-  if (nameCheck === undefined) return msg.channel.send(invalidUsername);
-  const username: string = nameCheck;
+  const username: string | undefined = runescapeNameValidator(args.slice(1));
+  if (!username) return msg.channel.send(invalidUsername);
   if (
     isOnCooldown(
       msg,
@@ -71,7 +70,7 @@ export const clues = async (
     const field: keyof OsrsPlayer | undefined = clueFields(
       prefix
     ) as keyof OsrsPlayer;
-    if (field === undefined) return;
+    if (!field) return;
     const result: OsrsEmbed = generateResult(embed, osrsStats[username], field);
     return msg.channel.send(result);
   } else {
@@ -80,7 +79,7 @@ export const clues = async (
       const field: keyof OsrsPlayer | undefined = clueFields(
         prefix
       ) as keyof OsrsPlayer;
-      if (field === undefined) return;
+      if (!field) return;
       const result: OsrsEmbed = generateResult(
         embed,
         osrsStats[username],
@@ -96,8 +95,7 @@ const generateResult = (
   playerObject: OsrsPlayer,
   field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
-  if (playerObject === undefined || playerObject === null)
-    return errorHandler();
+  if (!playerObject) return errorHandler();
   else {
     const clueType: BossOrMinigame = playerObject[field] as BossOrMinigame;
     const formattedField: string = fieldNameFormatter(field);
