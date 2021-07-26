@@ -40,14 +40,14 @@ import {
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const lvl = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const prefix: string | undefined = isPrefixValid(
     msg,
     args,
@@ -69,7 +69,7 @@ export const lvl = async (
       cooldown,
       false,
       lowerCasedArguments.join('')
-    ) === true
+    )
   )
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
@@ -90,7 +90,7 @@ export const lvl = async (
     }
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched === true) {
+    if (isFetched) {
       const field: keyof OsrsPlayer | undefined = skillFields(
         prefix
       ) as keyof OsrsPlayer;

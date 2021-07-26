@@ -10,7 +10,7 @@ import { PrefixCategories, invalidPrefixMsg } from './isPrefixValid';
   Boss list is an array of lowercase joined boss name e.g "abyssalsire". 
   User input is a string array e.g ["abyssal", "sire", "zezima"]
   
-  First check if there is any input (args.length === 0). If not return error (msg). Then check special cases (3 argument boss name eg. theatre of blood). Then filter boss list and check if args[0] (string) is included in any element (string). If true then check if [args[0], args[1]].join('') (string, exact match) is included boss array. If this check passes, then boss = [args[0], args[1]].join(''), else boss = args[0]. 
+  First check if there is any input (!args.length). If not return error (msg). Then check special cases (3 argument boss name eg. theatre of blood). Then filter boss list and check if args[0] (string) is included in any element (string). If true then check if [args[0], args[1]].join('') (string, exact match) is included boss array. If this check passes, then boss = [args[0], args[1]].join(''), else boss = args[0]. 
   Then do a final check if boss is exact match to because names like "dagannoth" pass first check but are not valid boss names
 
   User to search for is args.slice(<length of args that are the boss name>)
@@ -33,7 +33,7 @@ export const bossValidator = (
   lowerCasedArguments: string[],
   indexes: number[]
 ): BossValidation | undefined => {
-  if (lowerCasedArguments.length === 0) return;
+  if (!lowerCasedArguments.length) return;
   const firstArgument: string =
     lowerCasedArguments[indexes[Indexes.FIRST_WORD]];
   const twoArgumentsJoined: string = [
@@ -68,10 +68,10 @@ export const bossValidator = (
       const secondCheck: boolean = bossList.includes(twoArgumentsJoined);
 
       // This is for edge cases like ".kc deranged archeologist"
-      if (secondCheck === true && lowerCasedArguments.length === 2) {
+      if (secondCheck && lowerCasedArguments.length === 2) {
         boss = firstArgument;
         bossCase = BossCases.EDGE_CASE;
-      } else if (secondCheck === true) {
+      } else if (secondCheck) {
         bossCase = BossCases.TWO_WORD;
         boss = twoArgumentsJoined;
       } else {

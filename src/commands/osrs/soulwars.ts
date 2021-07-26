@@ -27,19 +27,18 @@ import {
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const soulwars = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const cooldown: number = CommandCooldowns.SOULWARS;
   const username: string | undefined = runescapeNameValidator(args);
   if (!username) return msg.channel.send(invalidUsername);
-  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
-    return;
+  if (isOnCooldown(msg, commandName, cooldown, false, username)) return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.SOULWARS)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
@@ -48,7 +47,7 @@ export const soulwars = async (
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched === true) {
+    if (isFetched) {
       const result: OsrsEmbed = generateResult(embed, osrsStats[username]);
       return msg.channel.send(result);
     } else return;

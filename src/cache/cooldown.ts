@@ -39,7 +39,7 @@ const createCacheItem = (
   if (optionalArgs !== '') keyword = optionalArgs.toLowerCase();
   else keyword = '';
 
-  if (isAuthorOptional === false) {
+  if (!isAuthorOptional) {
     const cacheItem: string = msg.author.id + commandName + keyword;
     return cacheItem.toLowerCase();
   } else {
@@ -87,7 +87,7 @@ const generateCooldownMsg = (
   const authorRequiredMsg: string = `You have used this command recently. Please wait **${time}${secondOrMin}** and try again`;
   const authorOptionalMsg: string = `This command has been used recently. Please wait **${time}${secondOrMin}** and try again`;
   let cooldownMsg: string;
-  if (isAuthorOptional === false) cooldownMsg = authorRequiredMsg;
+  if (!isAuthorOptional) cooldownMsg = authorRequiredMsg;
   else cooldownMsg = authorOptionalMsg;
   msg.channel.send(new Embed().setDescription(cooldownMsg));
 };

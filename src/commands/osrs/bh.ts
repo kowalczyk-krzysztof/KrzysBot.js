@@ -29,7 +29,7 @@ import {
 import { isPrefixValid } from '../../utils/osrs/isPrefixValid';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 // Anti-spam
 
 export const bh = async (
@@ -37,7 +37,7 @@ export const bh = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const prefix: string | undefined = isPrefixValid(msg, args, bhTypes);
   if (!prefix) return;
 
@@ -46,8 +46,7 @@ export const bh = async (
   const user: string[] = args.slice(1);
   const username: string | undefined = runescapeNameValidator(user);
   if (!username) return msg.channel.send(invalidUsername);
-  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
-    return;
+  if (isOnCooldown(msg, commandName, cooldown, false, username)) return;
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.BH)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
@@ -60,7 +59,7 @@ export const bh = async (
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched === true) {
+    if (isFetched) {
       const result: OsrsEmbed = generateResult(
         embed,
         osrsStats[username],

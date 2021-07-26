@@ -41,14 +41,14 @@ import {
 // UTILS: Temple index to key
 import { indexToBoss } from '../../utils/osrs/templeIndex';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const topboss = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const time: string | undefined = isPrefixValid(
     msg,
     args,
@@ -75,7 +75,7 @@ export const topboss = async (
       cooldown,
       false,
       lowerCasedArguments.join(', ')
-    ) === true
+    )
   )
     return;
   const userNameWithTime: string = username + formattedTime;
@@ -97,7 +97,7 @@ export const topboss = async (
       dataType,
       formattedTime
     );
-    if (isFetched === true) {
+    if (isFetched) {
       const result: TempleEmbed = generateResult(
         embed,
         playerOverviewOther[userNameWithTime],

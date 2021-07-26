@@ -56,7 +56,7 @@ import {
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 // UTILS: Temple Overview time validator
 import { formatOverviewTime } from '../../utils/osrs/templetime';
 
@@ -65,8 +65,8 @@ export const gains = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
-  if (antiSpam(msg, commandName) === true) return;
-  if (args.length === 0)
+  if (isSpamming(msg, commandName)) return;
+  if (!args.length)
     return msg.channel.send(
       new Embed().setDescription(
         `**Please provide arguments. Valid formats**:\`\`\`.${OsrsCommands.GAINS} clues tier time username\n\n.${OsrsCommands.GAINS} other ehb/ehp/lms/imehp time username\n\n.${OsrsCommands.GAINS} skill skill-name time username\n\n.${OsrsCommands.GAINS} boss boss-name time username\`\`\``
@@ -139,7 +139,7 @@ export const gains = async (
         cooldown,
         false,
         lowerCasedArguments.join('')
-      ) === true
+      )
     )
       return;
 
@@ -205,7 +205,7 @@ export const gains = async (
         dataType,
         timePeriod
       );
-      if (isFetched === true) {
+      if (isFetched) {
         const field: keyof TempleOtherTable &
           // Try to match the input field with key name on player object
           keyof TempleSkillTable = fieldNameCheck(
@@ -260,7 +260,7 @@ const generateResult = (
           value as number,
           NumberFormatTypes.EN_US
         );
-      else if (value === null) formattedValue = 0;
+      else if (!value) formattedValue = 0;
       else
         formattedValue = numberFormatter(
           value as number,
@@ -279,7 +279,7 @@ const generateResult = (
       );
       if (args[0] === ValidInputCases.SKILL) {
         let level: number;
-        if (fieldTocheck[TempleOther.LEVEL] === null) level = 0;
+        if (!fieldTocheck[TempleOther.LEVEL]) level = 0;
         else level = fieldTocheck[TempleOther.LEVEL];
         embed.addField(
           `${TempleOther.LEVEL.toUpperCase()}S GAINED:`,
@@ -288,7 +288,7 @@ const generateResult = (
       }
       if (args[0] === ValidInputCases.SKILL) {
         let ehp: number;
-        if (fieldTocheck[TempleOther.EHP_LOWERCASE] === null) ehp = 0;
+        if (!fieldTocheck[TempleOther.EHP_LOWERCASE]) ehp = 0;
         else ehp = fieldTocheck[TempleOther.EHP_LOWERCASE];
         embed.addField(
           `${TempleOther.EHP.toUpperCase()} GAINED:`,
@@ -297,7 +297,7 @@ const generateResult = (
       }
       if (args[0] === ValidInputCases.BOSS) {
         let ehb: number;
-        if (fieldTocheck[TempleOther.EHB_LOWERCASE] === null) ehb = 0;
+        if (!fieldTocheck[TempleOther.EHB_LOWERCASE]) ehb = 0;
         else ehb = fieldTocheck[TempleOther.EHB_LOWERCASE];
         embed.addField(
           `${TempleOther.EHB.toUpperCase()} GAINED:`,
@@ -306,7 +306,7 @@ const generateResult = (
       }
       let plusOrMinus: string;
       let rank: number;
-      if (fieldTocheck[TempleOther.RANK] === null) rank = 0;
+      if (!fieldTocheck[TempleOther.RANK]) rank = 0;
       else rank = fieldTocheck[TempleOther.RANK];
 
       if (fieldTocheck[TempleOther.RANK] > 0) plusOrMinus = '+';

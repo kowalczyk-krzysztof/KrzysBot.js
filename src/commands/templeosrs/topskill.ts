@@ -42,7 +42,7 @@ import {
 // UTILS: Temple index to key
 import { indexToSkill } from '../../utils/osrs/templeIndex';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 // UTILS: Number formatter
 import {
   numberFormatter,
@@ -54,7 +54,7 @@ export const topskill = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const time: string | undefined = isPrefixValid(
     msg,
     args,
@@ -81,7 +81,7 @@ export const topskill = async (
       cooldown,
       false,
       lowerCasedArguments.join(', ')
-    ) === true
+    )
   )
     return;
   const userNameWithTime: string = username + formattedTime;
@@ -103,7 +103,7 @@ export const topskill = async (
       dataType,
       formattedTime
     );
-    if (isFetched === true) {
+    if (isFetched) {
       const result: TempleEmbed = generateResult(
         embed,
         playerOverviewSkill[userNameWithTime],

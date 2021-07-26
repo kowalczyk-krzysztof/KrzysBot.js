@@ -100,7 +100,7 @@ export const templeGainsRecords = (
     conditionalTypeOther = otherTypes;
     usedCommand = OsrsCommands.RECORD;
   }
-  if (args.length === 0) {
+  if (!args.length) {
     msg.channel.send(
       new Embed().setDescription(
         `**Please provide arguments. Valid formats**:\`\`\`.${usedCommand} clues tier time username\n\n.${usedCommand} lms time username\n\n.${usedCommand} skill skill-name time username\n\n.${usedCommand} boss boss-name time username\`\`\``
@@ -189,7 +189,7 @@ export const templeGainsRecords = (
   if (usedCommand === OsrsCommands.GAINS) times = templeOverviewTimeAliases;
   else times = timeTypes;
 
-  if (isFirstArgumentValid === true) {
+  if (isFirstArgumentValid) {
     // Check if input time is valid depending on first argument type. Slice everything before and including time. Whatever is left is username
     switch (firstArgumentType) {
       case FirstArgumentType.OTHER:

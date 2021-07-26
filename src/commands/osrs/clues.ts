@@ -32,14 +32,14 @@ import { errorHandler } from '../../utils/errorHandler';
 // UTILS: FIeld name formatter
 import { fieldNameFormatter } from '../../utils/osrs/fieldNameFormatter';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const clues = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const prefix: string | undefined = isPrefixValid(
     msg,
     args,
@@ -60,7 +60,7 @@ export const clues = async (
       cooldown,
       false,
       lowerCasedArguments.join(', ')
-    ) === true
+    )
   )
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
@@ -75,7 +75,7 @@ export const clues = async (
     return msg.channel.send(result);
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched === true) {
+    if (isFetched) {
       const field: keyof OsrsPlayer | undefined = clueFields(
         prefix
       ) as keyof OsrsPlayer;
