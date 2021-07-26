@@ -42,7 +42,8 @@ export const isPrefixValid = (
   if (!args.length || !types.includes(parsedArgument)) {
     msg.channel.send(invalidPrefixMsg(typesList, category));
     return;
-  } else return parsedArgument;
+  }
+  return parsedArgument;
 };
 // Generate msg
 export const invalidPrefixMsg = (
@@ -53,7 +54,6 @@ export const invalidPrefixMsg = (
   let typesList;
   if (Array.isArray(types)) typesList = types.join(', ');
   else typesList = types;
-
   switch (category) {
     case PrefixCategories.BOSS:
       result = `Invalid boss name. See: [Boss List](${BOSS_LIST} 'Boss List') for a list of bosses`;

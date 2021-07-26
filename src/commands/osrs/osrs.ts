@@ -27,15 +27,12 @@ export const osrs = async (
   const username: string | undefined = runescapeNameValidator(args);
   if (!username) return msg.channel.send(invalidUsername);
   if (isOnCooldown(msg, commandName, cooldown, true, username)) return;
-  else {
-    const isPlayerFetched: boolean = await fetchOsrsStats(msg, username);
-
-    if (isPlayerFetched) {
-      const embed: Embed = new Embed();
-      embed.setDescription(
+  const isPlayerFetched: boolean = await fetchOsrsStats(msg, username);
+  if (isPlayerFetched)
+    return msg.channel.send(
+      new Embed().setDescription(
         `Fetched latest data available for player:\`\`\`${username}\`\`\``
-      );
-      return msg.channel.send(embed);
-    } else msg.channel.send(errorHandler());
-  }
+      )
+    );
+  msg.channel.send(errorHandler());
 };

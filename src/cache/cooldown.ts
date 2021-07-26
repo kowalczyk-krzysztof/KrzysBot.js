@@ -22,10 +22,9 @@ export const isOnCooldown = (
   if (cacheItem in cache) {
     generateCooldownMsg(msg, cacheItem, cooldownInSec, isAuthorOptional);
     return true;
-  } else {
-    addCacheItem(cacheItem, cooldownInSec);
-    return false;
   }
+  addCacheItem(cacheItem, cooldownInSec);
+  return false;
 };
 
 // Creates cache item (string)
@@ -42,10 +41,9 @@ const createCacheItem = (
   if (!isAuthorOptional) {
     const cacheItem: string = msg.author.id + commandName + keyword;
     return cacheItem.toLowerCase();
-  } else {
-    const cacheItem: string = commandName + keyword;
-    return cacheItem.toLowerCase();
   }
+  const cacheItem: string = commandName + keyword;
+  return cacheItem.toLowerCase();
 };
 
 // Adds item to cache and sets a timer on when to delete it

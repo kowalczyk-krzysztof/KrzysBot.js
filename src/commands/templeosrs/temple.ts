@@ -65,10 +65,9 @@ export const temple = async (
         args[2]
       );
       if (!validTime) return;
-      else {
-        user = args.slice(3);
-        time = validTime;
-      }
+
+      user = args.slice(3);
+      time = validTime;
     } else if (
       joinedArgs.toLowerCase() === TempleCacheType.PLAYER_OVERVIEW_OTHER
     ) {
@@ -77,10 +76,9 @@ export const temple = async (
         args[2]
       );
       if (!validTime) return;
-      else {
-        user = args.slice(3);
-        time = validTime;
-      }
+
+      user = args.slice(3);
+      time = validTime;
     } else {
       dataType = args[0].toLowerCase();
       user = args.slice(1);
@@ -96,7 +94,6 @@ export const temple = async (
         `Invalid arguments. Valid arguments:\`\`\`\n${TempleCacheType.PLAYER_NAMES}\n${TempleCacheType.PLAYER_STATS}\n${TempleCacheType.PLAYER_RECORDS}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER}\`\`\``
       )
     );
-
   const cooldown: number = CommandCooldowns.TEMPLE;
   const username: string | undefined = runescapeNameValidator(user);
   if (!username) return msg.channel.send(invalidUsername);
@@ -104,55 +101,55 @@ export const temple = async (
     isOnCooldown(msg, commandName, cooldown, true, lowerCasedArguments.join(''))
   )
     return;
-  else {
-    const isFetched: boolean = await fetchTemple(
-      msg,
-      username,
-      dataType as TempleCacheType,
-      time
+
+  const isFetched: boolean = await fetchTemple(
+    msg,
+    username,
+    dataType as TempleCacheType,
+    time
+  );
+  if (isFetched) {
+    let formattedTypes: string;
+    let formattedTime: string;
+    switch (time) {
+      case TempleOverviewTimes.FIVEMIN:
+        formattedTime = TempleOverviewTimeAliases.FIVEMIN;
+        break;
+      case TempleOverviewTimes.DAY:
+        formattedTime = TempleOverviewTimeAliases.DAY;
+        break;
+      case TempleOverviewTimes.WEEK:
+        formattedTime = TempleOverviewTimeAliases.WEEK;
+        break;
+      case TempleOverviewTimes.MONTH:
+        formattedTime = TempleOverviewTimeAliases.MONTH;
+        break;
+      case TempleOverviewTimes.HALFYEAR:
+        formattedTime = TempleOverviewTimeAliases.HALFYEAR;
+        break;
+      case TempleOverviewTimes.YEAR:
+        formattedTime = TempleOverviewTimeAliases.YEAR;
+        break;
+      case TempleOverviewTimes.ALLTIME:
+        formattedTime = TempleOverviewTimeAliases.ALLTIME;
+        break;
+      default:
+        formattedTime = time;
+        break;
+    }
+    if (dataType === TempleCacheType.PLAYER_OVERVIEW_SKILL)
+      formattedTypes = `${TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL.toUpperCase()} (${formatOverviewTime(
+        formattedTime
+      ).toUpperCase()})`;
+    else if (dataType === TempleCacheType.PLAYER_OVERVIEW_OTHER)
+      formattedTypes = `${TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER.toUpperCase()} (${formatOverviewTime(
+        formattedTime
+      ).toUpperCase()})`;
+    else formattedTypes = dataType.toUpperCase();
+    embed.setDescription(
+      `Fetched latest **${formattedTypes}** data available for player:\n\`\`\`${username}\`\`\``
     );
-    if (isFetched) {
-      let formattedTypes: string;
-      let formattedTime: string;
-      switch (time) {
-        case TempleOverviewTimes.FIVEMIN:
-          formattedTime = TempleOverviewTimeAliases.FIVEMIN;
-          break;
-        case TempleOverviewTimes.DAY:
-          formattedTime = TempleOverviewTimeAliases.DAY;
-          break;
-        case TempleOverviewTimes.WEEK:
-          formattedTime = TempleOverviewTimeAliases.WEEK;
-          break;
-        case TempleOverviewTimes.MONTH:
-          formattedTime = TempleOverviewTimeAliases.MONTH;
-          break;
-        case TempleOverviewTimes.HALFYEAR:
-          formattedTime = TempleOverviewTimeAliases.HALFYEAR;
-          break;
-        case TempleOverviewTimes.YEAR:
-          formattedTime = TempleOverviewTimeAliases.YEAR;
-          break;
-        case TempleOverviewTimes.ALLTIME:
-          formattedTime = TempleOverviewTimeAliases.ALLTIME;
-          break;
-        default:
-          formattedTime = time;
-          break;
-      }
-      if (dataType === TempleCacheType.PLAYER_OVERVIEW_SKILL)
-        formattedTypes = `${TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL.toUpperCase()} (${formatOverviewTime(
-          formattedTime
-        ).toUpperCase()})`;
-      else if (dataType === TempleCacheType.PLAYER_OVERVIEW_OTHER)
-        formattedTypes = `${TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER.toUpperCase()} (${formatOverviewTime(
-          formattedTime
-        ).toUpperCase()})`;
-      else formattedTypes = dataType.toUpperCase();
-      embed.setDescription(
-        `Fetched latest **${formattedTypes}** data available for player:\n\`\`\`${username}\`\`\``
-      );
-      return msg.channel.send(embed);
-    } else msg.channel.send(errorHandler());
+    return msg.channel.send(embed);
   }
+  msg.channel.send(errorHandler());
 };

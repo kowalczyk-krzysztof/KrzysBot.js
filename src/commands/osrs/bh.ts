@@ -57,17 +57,17 @@ export const bh = async (
       prefix
     );
     return msg.channel.send(result);
-  } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched) {
-      const result: OsrsEmbed = generateResult(
-        embed,
-        osrsStats[username],
-        prefix
-      );
-      return msg.channel.send(result);
-    } else return;
   }
+  const isFetched: boolean = await fetchOsrsStats(msg, username);
+  if (isFetched) {
+    const result: OsrsEmbed = generateResult(
+      embed,
+      osrsStats[username],
+      prefix
+    );
+    return msg.channel.send(result);
+  }
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -76,22 +76,20 @@ const generateResult = (
   prefix: string
 ): OsrsEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    let scoreType: string | number;
-    let title: string;
-    if (prefix === OsrsOtherAliases.BH_ROGUE) {
-      scoreType = playerObject[OsrsOther.BH_ROGUE][TempleOther.SCORE];
-      title = OsrsOther.BH_ROGUE;
-    } else {
-      scoreType = playerObject[OsrsOther.BH_HUNTER][TempleOther.SCORE];
-      title = OsrsOther.BH_HUNTER;
-    }
-    embed.addField(
-      `${title.toUpperCase()} ${TempleOther.SCORE.toUpperCase()}:`,
-      `\`\`\`${scoreType}\`\`\``
-    );
-    return embed;
+  let scoreType: string | number;
+  let title: string;
+  if (prefix === OsrsOtherAliases.BH_ROGUE) {
+    scoreType = playerObject[OsrsOther.BH_ROGUE][TempleOther.SCORE];
+    title = OsrsOther.BH_ROGUE;
+  } else {
+    scoreType = playerObject[OsrsOther.BH_HUNTER][TempleOther.SCORE];
+    title = OsrsOther.BH_HUNTER;
   }
+  embed.addField(
+    `${title.toUpperCase()} ${TempleOther.SCORE.toUpperCase()}:`,
+    `\`\`\`${scoreType}\`\`\``
+  );
+  return embed;
 };
 
 const bhTypes: string[] = [

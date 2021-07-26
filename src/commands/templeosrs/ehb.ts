@@ -43,25 +43,17 @@ export const ehb = async (
     usernameString,
     `\`\`\`${username}\`\`\``
   );
-  if (username in playerStats) {
-    const result: TempleEmbed = generateResult(
-      embed,
-      playerStats[username],
-      username
+  if (username in playerStats)
+    return msg.channel.send(
+      generateResult(embed, playerStats[username], username)
     );
-    return msg.channel.send(result);
-  } else {
-    const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
-    const isFetched: boolean = await fetchTemple(msg, username, dataType);
-    if (isFetched) {
-      const result: TempleEmbed = generateResult(
-        embed,
-        playerStats[username],
-        username
-      );
-      return msg.channel.send(result);
-    } else return;
-  }
+  const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
+  const isFetched: boolean = await fetchTemple(msg, username, dataType);
+  if (isFetched)
+    return msg.channel.send(
+      generateResult(embed, playerStats[username], username)
+    );
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -70,23 +62,21 @@ const generateResult = (
   username: string
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    const lastChecked: { title: string; time: string } = templeDateParser(
-      playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
-    );
-    const TempleGameMode: string = gameModeCheck(username);
-    embed.addField(
-      `${lastChecked.title.toUpperCase()}:`,
-      `\`\`\`${lastChecked.time}\`\`\``
-    );
-    let data: number;
-    if (TempleGameMode === TempleGameModeFormatted.NORMAL)
-      data = parseInt(playerObject[TempleOther.EHB].toString());
-    else data = parseInt(playerObject[TempleOther.IM_EHB].toString());
-    embed.addField(
-      `${TempleOther.EHB.toUpperCase()} ${TempleGameMode}:`,
-      `\`\`\`${data}\`\`\``
-    );
-    return embed;
-  }
+  const lastChecked: { title: string; time: string } = templeDateParser(
+    playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
+  );
+  const TempleGameMode: string = gameModeCheck(username);
+  embed.addField(
+    `${lastChecked.title.toUpperCase()}:`,
+    `\`\`\`${lastChecked.time}\`\`\``
+  );
+  let data: number;
+  if (TempleGameMode === TempleGameModeFormatted.NORMAL)
+    data = parseInt(playerObject[TempleOther.EHB].toString());
+  else data = parseInt(playerObject[TempleOther.IM_EHB].toString());
+  embed.addField(
+    `${TempleOther.EHB.toUpperCase()} ${TempleGameMode}:`,
+    `\`\`\`${data}\`\`\``
+  );
+  return embed;
 };

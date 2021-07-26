@@ -84,9 +84,7 @@ export const commandHandler = async (msg: Message) => {
   // if there is no command with name = command return, else execute the command and pass msg (so I can get properties like author, etc) and args (string[])
   // in keyword  checks if a key exists on an object returns a boolean
   if (!(command in commandList)) return;
-  else {
-    // args is anything after the command
-    const args: string[] = content.slice(1);
-    await commandList[command](msg, command, ...args);
-  }
+  // args is anything after the command
+  const args: string[] = content.slice(1);
+  await commandList[command](msg, command, ...args);
 };

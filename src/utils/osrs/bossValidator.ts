@@ -92,12 +92,10 @@ export const bossValidator = (
       bossCase,
       boss,
     };
-  else {
-    if (bossCase === BossCases.EDGE_CASE) {
-      msg.channel.send(
-        invalidPrefixMsg(bossList, PrefixCategories.BOSS_EDGE_CASE)
-      );
-    } else msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
-    return;
-  }
+  if (bossCase === BossCases.EDGE_CASE) {
+    msg.channel.send(
+      invalidPrefixMsg(bossList, PrefixCategories.BOSS_EDGE_CASE)
+    );
+  } else msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
+  return;
 };

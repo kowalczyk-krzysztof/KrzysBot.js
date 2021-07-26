@@ -112,9 +112,8 @@ export const templeGainsRecords = (
   if (!validInputCases.includes(lowerCasedArguments[0])) {
     msg.channel.send(invalidPrefixMsg(validInputCases));
     return;
-  } else {
-    validFirstArgument = lowerCasedArguments[0];
   }
+  validFirstArgument = lowerCasedArguments[0];
   let inputFieldName: string;
   let isFirstArgumentValid: boolean;
   let firstArgumentType: number;
@@ -124,11 +123,11 @@ export const templeGainsRecords = (
       if (!clueList.includes(lowerCasedArguments[1])) {
         msg.channel.send(invalidPrefixMsg(clueList, PrefixCategories.CLUES));
         return;
-      } else {
-        isFirstArgumentValid = true;
-        firstArgumentType = FirstArgumentType.CLUES;
-        inputFieldName = lowerCasedArguments[1];
       }
+      isFirstArgumentValid = true;
+      firstArgumentType = FirstArgumentType.CLUES;
+      inputFieldName = lowerCasedArguments[1];
+
       break;
     case ValidInputCases.OTHER:
       if (!conditionalTypeOther.includes(lowerCasedArguments[1])) {
@@ -136,21 +135,21 @@ export const templeGainsRecords = (
           invalidPrefixMsg(conditionalTypeOther, PrefixCategories.OTHER)
         );
         return;
-      } else {
-        isFirstArgumentValid = true;
-        firstArgumentType = FirstArgumentType.OTHER;
-        inputFieldName = lowerCasedArguments[1];
       }
+      isFirstArgumentValid = true;
+      firstArgumentType = FirstArgumentType.OTHER;
+      inputFieldName = lowerCasedArguments[1];
+
       break;
     case ValidInputCases.SKILL:
       if (!skillList.includes(lowerCasedArguments[1])) {
         msg.channel.send(invalidPrefixMsg(skillList, PrefixCategories.SKILL));
         return;
-      } else {
-        isFirstArgumentValid = true;
-        firstArgumentType = FirstArgumentType.SKILL;
-        inputFieldName = lowerCasedArguments[1];
       }
+      isFirstArgumentValid = true;
+      firstArgumentType = FirstArgumentType.SKILL;
+      inputFieldName = lowerCasedArguments[1];
+
       break;
     // For bosses perform boss validation using bossValidator
     case ValidInputCases.BOSS:
@@ -161,7 +160,7 @@ export const templeGainsRecords = (
         indexes
       );
       if (!bossValidation) return;
-      else if (bossValidation.bossCase === BossCases.ONE_WORD) {
+      if (bossValidation.bossCase === BossCases.ONE_WORD) {
         isFirstArgumentValid = true;
         firstArgumentType = FirstArgumentType.BOSS_ONE_WORD;
       } else if (bossValidation.bossCase === BossCases.TWO_WORD) {
@@ -198,56 +197,55 @@ export const templeGainsRecords = (
             invalidPrefixMsg(times, PrefixCategories.TIME_OTHER)
           );
           return;
-        } else {
-          rsn = lowerCasedArguments.slice(3);
-          time = lowerCasedArguments[2];
-          times;
         }
+        rsn = lowerCasedArguments.slice(3);
+        time = lowerCasedArguments[2];
+        times;
         break;
       case FirstArgumentType.CLUES:
         if (!times.includes(lowerCasedArguments[2])) {
           msg.channel.send(invalidPrefixMsg(times));
           return;
-        } else {
-          rsn = lowerCasedArguments.slice(3);
-          time = lowerCasedArguments[2];
         }
+        rsn = lowerCasedArguments.slice(3);
+        time = lowerCasedArguments[2];
+
         break;
       case FirstArgumentType.SKILL:
         if (!times.includes(lowerCasedArguments[2])) {
           msg.channel.send(invalidPrefixMsg(times));
           return;
-        } else {
-          rsn = lowerCasedArguments.slice(3);
-          time = lowerCasedArguments[2];
         }
+        rsn = lowerCasedArguments.slice(3);
+        time = lowerCasedArguments[2];
+
         break;
       case FirstArgumentType.BOSS_ONE_WORD:
         if (!times.includes(lowerCasedArguments[2])) {
           msg.channel.send(invalidPrefixMsg(times));
           return;
-        } else {
-          rsn = lowerCasedArguments.slice(3);
-          time = lowerCasedArguments[2];
         }
+        rsn = lowerCasedArguments.slice(3);
+        time = lowerCasedArguments[2];
+
         break;
       case FirstArgumentType.BOSS_TWO_WORD:
         if (!times.includes(lowerCasedArguments[3])) {
           msg.channel.send(invalidPrefixMsg(times));
           return;
-        } else {
-          rsn = lowerCasedArguments.slice(4);
-          time = lowerCasedArguments[3];
         }
+        rsn = lowerCasedArguments.slice(4);
+        time = lowerCasedArguments[3];
+
         break;
       case FirstArgumentType.BOSS_THREE_WORD:
         if (!times.includes(lowerCasedArguments[4])) {
           msg.channel.send(invalidPrefixMsg(times));
           return;
-        } else {
-          rsn = lowerCasedArguments.slice(5);
-          time = lowerCasedArguments[4];
         }
+        rsn = lowerCasedArguments.slice(5);
+        time = lowerCasedArguments[4];
+
         break;
 
       default:

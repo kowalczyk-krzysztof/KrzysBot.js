@@ -19,7 +19,7 @@ export const runescapeNameValidator = (args: string[]): string | undefined => {
   const regex: RegExp = new RegExp(/^[\w_  -]{1,12}$/);
   const isValid: boolean = regex.test(formattedUsername);
   if (isValid) return formattedUsername;
-  else return;
+  return;
 };
 
 export const invalidUsername: Embed = new Embed().setDescription(

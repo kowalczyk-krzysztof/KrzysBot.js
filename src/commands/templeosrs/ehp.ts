@@ -44,25 +44,17 @@ export const ehp = async (
     usernameString,
     `\`\`\`${username}\`\`\``
   );
-  if (username in playerStats) {
-    const result: TempleEmbed = generateResult(
-      embed,
-      playerStats[username],
-      username
+  if (username in playerStats)
+    return msg.channel.send(
+      generateResult(embed, playerStats[username], username)
     );
-    return msg.channel.send(result);
-  } else {
-    const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
-    const isFetched: boolean = await fetchTemple(msg, username, dataType);
-    if (isFetched) {
-      const result: TempleEmbed = generateResult(
-        embed,
-        playerStats[username],
-        username
-      );
-      return msg.channel.send(result);
-    } else return;
-  }
+  const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
+  const isFetched: boolean = await fetchTemple(msg, username, dataType);
+  if (isFetched)
+    return msg.channel.send(
+      generateResult(embed, playerStats[username], username)
+    );
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -71,18 +63,17 @@ const generateResult = (
   username: string
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    const lastChecked: { title: string; time: string } = templeDateParser(
-      playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
-    );
-    embed.addField(
-      `${lastChecked.title.toUpperCase()}:`,
-      `\`\`\`${lastChecked.time}\`\`\``
-    );
-    const f2pOrSkiller: string = skillerOrF2P(username);
-    const TempleGameMode: string = gameModeCheck(username);
-    let data: number;
-    /*
+  const lastChecked: { title: string; time: string } = templeDateParser(
+    playerObject[TempleOther.INFO][TempleOther.LAST_CHECKED]
+  );
+  embed.addField(
+    `${lastChecked.title.toUpperCase()}:`,
+    `\`\`\`${lastChecked.time}\`\`\``
+  );
+  const f2pOrSkiller: string = skillerOrF2P(username);
+  const TempleGameMode: string = gameModeCheck(username);
+  let data: number;
+  /*
     First check if player is ironman, if so add ironman ehp (the value is the same for all ironman accounts)
     Then check if account is f2p or skiller, if both add both fields else add respective fields. If none of the checks passes then just return normal EHP
     
@@ -95,42 +86,41 @@ const generateResult = (
     4064
 
   */
-    if (TempleGameMode !== TempleGameModeFormatted.NORMAL) {
-      data = parseInt(playerObject[TempleOther.IM_EHP_CAPITAL].toString());
-      embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}:`,
-        `\`\`\`${data}\`\`\``
-      );
-    }
-    if (f2pOrSkiller === SkillerOrF2p.BOTH) {
-      embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}:`,
-        `\`\`\`${parseInt(playerObject[TempleOther.F2P_EHP].toString())}\`\`\``
-      );
-      embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}:`,
-        `\`\`\`${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}\`\`\``
-      );
-    } else if (f2pOrSkiller === SkillerOrF2p.SKILLER)
-      embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}:`,
-        `\`\`\`${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}\`\`\``
-      );
-    else if (f2pOrSkiller === SkillerOrF2p.F2P)
-      embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}:`,
-        `\`\`\`${parseInt(playerObject[TempleOther.F2P_EHP].toString())}\`\`\``
-      );
-    else if (
-      f2pOrSkiller === SkillerOrF2p.NONE &&
-      TempleGameMode === TempleGameModeFormatted.NORMAL
-    ) {
-      data = parseInt(playerObject[TempleOther.EHP].toString());
-      embed.addField(
-        `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}:`,
-        `\`\`\`${data}\`\`\``
-      );
-    }
-    return embed;
+  if (TempleGameMode !== TempleGameModeFormatted.NORMAL) {
+    data = parseInt(playerObject[TempleOther.IM_EHP_CAPITAL].toString());
+    embed.addField(
+      `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}:`,
+      `\`\`\`${data}\`\`\``
+    );
   }
+  if (f2pOrSkiller === SkillerOrF2p.BOTH) {
+    embed.addField(
+      `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}:`,
+      `\`\`\`${parseInt(playerObject[TempleOther.F2P_EHP].toString())}\`\`\``
+    );
+    embed.addField(
+      `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}:`,
+      `\`\`\`${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}\`\`\``
+    );
+  } else if (f2pOrSkiller === SkillerOrF2p.SKILLER)
+    embed.addField(
+      `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.SKILLER}:`,
+      `\`\`\`${parseInt(playerObject[TempleOther.LVL3_EHP].toString())}\`\`\``
+    );
+  else if (f2pOrSkiller === SkillerOrF2p.F2P)
+    embed.addField(
+      `${TempleOther.EHP.toUpperCase()} ${SkillerOrF2p.F2P}:`,
+      `\`\`\`${parseInt(playerObject[TempleOther.F2P_EHP].toString())}\`\`\``
+    );
+  else if (
+    f2pOrSkiller === SkillerOrF2p.NONE &&
+    TempleGameMode === TempleGameModeFormatted.NORMAL
+  ) {
+    data = parseInt(playerObject[TempleOther.EHP].toString());
+    embed.addField(
+      `${TempleOther.EHP.toUpperCase()} ${TempleGameMode}:`,
+      `\`\`\`${data}\`\`\``
+    );
+  }
+  return embed;
 };

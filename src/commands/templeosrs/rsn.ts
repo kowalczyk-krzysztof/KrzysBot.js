@@ -5,7 +5,7 @@ import { playerNames, fetchTemple } from '../../cache/templeCache';
 // Cooldown cache
 import { isOnCooldown } from '../../cache/cooldown';
 // UTILS: Embeds
-import { Embed, ErrorEmbed, TempleEmbed } from '../../utils/embed';
+import { ErrorEmbed, TempleEmbed } from '../../utils/embed';
 // UTILS: Interfaces
 import { TemplePlayerNames } from '../../utils/osrs/interfaces';
 // UTILS: Enums
@@ -35,17 +35,14 @@ export const rsn = async (
   if (!username) return msg.channel.send(invalidUsername);
   if (isOnCooldown(msg, commandName, cooldown, false, username)) return;
   const embed: TempleEmbed = new TempleEmbed();
-  if (username in playerNames) {
-    const result: Embed = generateResult(embed, playerNames[username]);
-    return msg.channel.send(result);
-  } else {
-    const dataType: TempleCacheType = TempleCacheType.PLAYER_NAMES;
-    const isFetched: boolean = await fetchTemple(msg, username, dataType);
-    if (isFetched) {
-      const result: Embed = generateResult(embed, playerNames[username]);
-      return msg.channel.send(result);
-    } else return;
-  }
+  if (username in playerNames)
+    return msg.channel.send(generateResult(embed, playerNames[username]));
+
+  const dataType: TempleCacheType = TempleCacheType.PLAYER_NAMES;
+  const isFetched: boolean = await fetchTemple(msg, username, dataType);
+  if (isFetched)
+    return msg.channel.send(generateResult(embed, playerNames[username]));
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -53,13 +50,11 @@ const generateResult = (
   playerObject: TemplePlayerNames
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    const names: string[] = [];
-    for (const alias in playerObject[TempleOther.ALIASES]) {
-      names.push(alias);
-    }
-    const data: string = names.join('\n');
-    embed.addField('NAMES:', `\`\`\`${data}\`\`\``);
-    return embed;
+  const names: string[] = [];
+  for (const alias in playerObject[TempleOther.ALIASES]) {
+    names.push(alias);
   }
+  const data: string = names.join('\n');
+  embed.addField('NAMES:', `\`\`\`${data}\`\`\``);
+  return embed;
 };

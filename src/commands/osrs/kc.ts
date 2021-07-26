@@ -93,31 +93,20 @@ export const kc = async (
       boss
     ) as keyof OsrsPlayer;
     if (!field) return;
-    else {
-      const result: OsrsEmbed = generateResult(
-        embed,
-        osrsStats[username],
-        field
-      );
-      return msg.channel.send(result);
-    }
-  } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched) {
-      const field: keyof OsrsPlayer | undefined = bossFields(
-        boss
-      ) as keyof OsrsPlayer;
-      if (!field) return;
-      else {
-        const result: OsrsEmbed = generateResult(
-          embed,
-          osrsStats[username],
-          field
-        );
-        return msg.channel.send(result);
-      }
-    } else return;
+
+    const result: OsrsEmbed = generateResult(embed, osrsStats[username], field);
+    return msg.channel.send(result);
   }
+  const isFetched: boolean = await fetchOsrsStats(msg, username);
+  if (isFetched) {
+    const field: keyof OsrsPlayer | undefined = bossFields(
+      boss
+    ) as keyof OsrsPlayer;
+    if (!field) return;
+    const result: OsrsEmbed = generateResult(embed, osrsStats[username], field);
+    return msg.channel.send(result);
+  }
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -126,13 +115,11 @@ const generateResult = (
   field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
-    embed.addField(`${OsrsRandom.BOSS.toUpperCase()}:`, `\`\`\`${field}\`\`\``);
-    embed.addField(
-      `${OsrsRandom.KILLS.toUpperCase()}:`,
-      `\`\`\`${boss[TempleOther.SCORE]}\`\`\``
-    );
-    return embed;
-  }
+  const boss: BossOrMinigame = playerObject[field] as BossOrMinigame;
+  embed.addField(`${OsrsRandom.BOSS.toUpperCase()}:`, `\`\`\`${field}\`\`\``);
+  embed.addField(
+    `${OsrsRandom.KILLS.toUpperCase()}:`,
+    `\`\`\`${boss[TempleOther.SCORE]}\`\`\``
+  );
+  return embed;
 };
