@@ -37,7 +37,7 @@ import {
   formatOverviewTime,
 } from '../../utils/osrs/templetime';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 // UTILS: Number formatter
 import {
   numberFormatter,
@@ -49,7 +49,7 @@ export const gpearned = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const time: string | undefined = isPrefixValid(
     msg,
     args,
@@ -76,7 +76,7 @@ export const gpearned = async (
       cooldown,
       false,
       lowerCasedArguments.join(', ')
-    ) === true
+    )
   )
     return;
   const userNameWithTime: string = username + formattedTime;
@@ -98,7 +98,7 @@ export const gpearned = async (
       dataType,
       formattedTime
     );
-    if (isFetched === true) {
+    if (isFetched) {
       const result: TempleEmbed = generateResult(
         embed,
         playerOverviewOther[userNameWithTime],

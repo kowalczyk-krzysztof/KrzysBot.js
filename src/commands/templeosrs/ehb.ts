@@ -27,19 +27,18 @@ import { gameModeCheck } from '../../utils/osrs/gameModeCheck';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const ehb = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const cooldown: number = CommandCooldowns.EHB;
   const username: string | undefined = runescapeNameValidator(args);
   if (!username) return msg.channel.send(invalidUsername);
-  if (isOnCooldown(msg, commandName, cooldown, false, username) === true)
-    return;
+  if (isOnCooldown(msg, commandName, cooldown, false, username)) return;
   const embed: TempleEmbed = new TempleEmbed().addField(
     usernameString,
     `\`\`\`${username}\`\`\``
@@ -54,7 +53,7 @@ export const ehb = async (
   } else {
     const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
     const isFetched: boolean = await fetchTemple(msg, username, dataType);
-    if (isFetched === true) {
+    if (isFetched) {
       const result: TempleEmbed = generateResult(
         embed,
         playerStats[username],

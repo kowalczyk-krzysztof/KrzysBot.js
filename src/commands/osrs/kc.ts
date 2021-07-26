@@ -36,15 +36,15 @@ import {
   PrefixCategories,
 } from '../../utils/osrs/isPrefixValid';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const kc = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
-  if (args.length === 0)
+  if (isSpamming(msg, commandName)) return;
+  if (!args.length)
     return msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
   const indexes: number[] = [0, 1, 2];
   // This is done so the cooldown is per unique command + boss validation needs lowercase
@@ -82,7 +82,7 @@ export const kc = async (
       cooldown,
       false,
       lowerCasedArguments.join('')
-    ) === true
+    )
   )
     return;
   const embed: OsrsEmbed = new OsrsEmbed()
@@ -103,7 +103,7 @@ export const kc = async (
     }
   } else {
     const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched === true) {
+    if (isFetched) {
       const field: keyof OsrsPlayer | undefined = bossFields(
         boss
       ) as keyof OsrsPlayer;

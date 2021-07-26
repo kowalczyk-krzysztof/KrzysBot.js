@@ -49,15 +49,15 @@ import {
   NumberFormatTypes,
 } from '../../utils/numberFormatter';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const record = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined | ErrorEmbed> => {
-  if (antiSpam(msg, commandName) === true) return;
-  if (args.length === 0)
+  if (isSpamming(msg, commandName)) return;
+  if (!args.length)
     return msg.channel.send(
       new Embed().setDescription(
         `**Please provide arguments. Valid formats**:\`\`\`.${OsrsCommands.RECORD} clues tier time username\n\n.${OsrsCommands.RECORD} other ehb/ehp/lms time username\n\n.${OsrsCommands.RECORD} skill skill-name time username\n\n.${OsrsCommands.RECORD} boss boss-name time username\`\`\``
@@ -97,7 +97,7 @@ export const record = async (
         cooldown,
         false,
         lowerCasedArguments.join('')
-      ) === true
+      )
     )
       return;
     // Because there are multiple time options, I want to have separate keys for each option, so instead of passing username I'm passing username + time so the key name becomes "zezimaweek" instead of just "zezima"
@@ -133,7 +133,7 @@ export const record = async (
         dataType,
         parsedInput.time
       );
-      if (isFetched === true) {
+      if (isFetched) {
         // Try to match the input field with key name on player object
         const field: keyof TemplePlayerRecords | undefined = fieldNameCheck(
           parsedInput.field,
@@ -170,7 +170,7 @@ const generateResult = (
     const capitalFirst: string = capitalizeFirstLetter(time);
     const formattedField: string = fieldNameFormatter(field);
     // If there are no records the key value is an empty array
-    if (Array.isArray(playerObject[field]) === false) {
+    if (!Array.isArray(playerObject[field])) {
       // If there's no record for specific period of time then the key doesn't exist
       if (!playerObject[field]) {
         embed.addField(
@@ -186,7 +186,7 @@ const generateResult = (
         const timeField: ExpAndDate = playerObject[field][time] as ExpAndDate;
         const value: string | number = timeField[TempleOther.XP];
         let formattedValue;
-        if (value === null) formattedValue = 0;
+        if (!value) formattedValue = 0;
         if (args[0] === ValidInputCases.SKILL)
           formattedValue = numberFormatter(
             value as number,

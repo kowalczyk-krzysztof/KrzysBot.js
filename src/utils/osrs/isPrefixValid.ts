@@ -30,7 +30,7 @@ export const isPrefixValid = (
   category: PrefixCategories = PrefixCategories.DEFAULT
 ): string | undefined => {
   const typesList: string = types.join(', ');
-  if (args.length === 0) {
+  if (!args.length) {
     msg.channel.send(invalidPrefixMsg(typesList, category));
     return undefined;
   }
@@ -39,7 +39,7 @@ export const isPrefixValid = (
     .replace(/\n/g, '')
     .toLowerCase()
     .trim();
-  if (args.length === 0 || !types.includes(parsedArgument)) {
+  if (!args.length || !types.includes(parsedArgument)) {
     msg.channel.send(invalidPrefixMsg(typesList, category));
     return;
   } else return parsedArgument;

@@ -27,7 +27,7 @@ import {
   templeOverviewTimeValidator,
 } from '../../utils/osrs/templetime';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 const types: (TempleCacheType | string)[] = [
   TempleCacheType.PLAYER_NAMES,
@@ -42,9 +42,9 @@ export const temple = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const embed: Embed = new Embed();
-  if (args.length === 0)
+  if (!args.length)
     return msg.channel.send(
       embed.setDescription(
         `Invalid arguments. Valid arguments:\`\`\`\n${TempleCacheType.PLAYER_NAMES}\n${TempleCacheType.PLAYER_STATS}\n${TempleCacheType.PLAYER_RECORDS}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_SKILL}\n${TempleCacheTypeAliases.PLAYER_OVERVIEW_OTHER}\`\`\``
@@ -101,13 +101,7 @@ export const temple = async (
   const username: string | undefined = runescapeNameValidator(user);
   if (!username) return msg.channel.send(invalidUsername);
   if (
-    isOnCooldown(
-      msg,
-      commandName,
-      cooldown,
-      true,
-      lowerCasedArguments.join('')
-    ) === true
+    isOnCooldown(msg, commandName, cooldown, true, lowerCasedArguments.join(''))
   )
     return;
   else {
@@ -117,7 +111,7 @@ export const temple = async (
       dataType as TempleCacheType,
       time
     );
-    if (isFetched === true) {
+    if (isFetched) {
       let formattedTypes: string;
       let formattedTime: string;
       switch (time) {

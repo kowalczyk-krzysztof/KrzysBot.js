@@ -4,7 +4,7 @@ import { Embed } from '../embed';
 import { capitalizeFirstLetter } from '../capitalizeFirstLetter';
 
 export const runescapeNameValidator = (args: string[]): string | undefined => {
-  if (args.length === 0) return;
+  if (!args.length) return;
   let split;
   if (args.length === 1)
     split = args[0].split(/_/g).filter((e: string) => {
@@ -18,7 +18,7 @@ export const runescapeNameValidator = (args: string[]): string | undefined => {
   const formattedUsername: string = formatArguments.join(' ');
   const regex: RegExp = new RegExp(/^[\w_  -]{1,12}$/);
   const isValid: boolean = regex.test(formattedUsername);
-  if (isValid === true) return formattedUsername;
+  if (isValid) return formattedUsername;
   else return;
 };
 

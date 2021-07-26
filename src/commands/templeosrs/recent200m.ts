@@ -34,7 +34,7 @@ import { skillList } from '../../utils/osrs/inputValidator';
 // UTILS: Error handler
 import { errorHandler } from '../../utils/errorHandler';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 // UTILS: Temple index to key
 import { aliasToSkillIndex, indexToSkill } from '../../utils/osrs/templeIndex';
 
@@ -47,7 +47,7 @@ export const recent200m = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | ErrorEmbed | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const cooldown: number = CommandCooldowns.RECENT200M;
   const skill: string | undefined = isPrefixValid(
     msg,
@@ -119,7 +119,7 @@ const generateResult = (
       `\`\`\`${listOfPlayers[0].Rank}\`\`\``
     );
 
-    if (listOfPlayers[0][TempleOther.COUNTRY] === null)
+    if (!listOfPlayers[0][TempleOther.COUNTRY])
       embed.addField(`${TempleOther.COUNTRY}`, `\`\`\`NO INFO\`\`\``);
     else
       embed.addField(

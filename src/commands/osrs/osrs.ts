@@ -15,22 +15,22 @@ import {
 import { errorHandler } from '../../utils/errorHandler';
 import { CommandCooldowns } from '../../utils/osrs/enums';
 // Anti-spam
-import { antiSpam } from '../../cache/antiSpam';
+import { isSpamming } from '../../cache/antiSpam';
 
 export const osrs = async (
   msg: Message,
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const cooldown: number = CommandCooldowns.OSRS;
   const username: string | undefined = runescapeNameValidator(args);
   if (!username) return msg.channel.send(invalidUsername);
-  if (isOnCooldown(msg, commandName, cooldown, true, username) === true) return;
+  if (isOnCooldown(msg, commandName, cooldown, true, username)) return;
   else {
     const isPlayerFetched: boolean = await fetchOsrsStats(msg, username);
 
-    if (isPlayerFetched === true) {
+    if (isPlayerFetched) {
       const embed: Embed = new Embed();
       embed.setDescription(
         `Fetched latest data available for player:\`\`\`${username}\`\`\``

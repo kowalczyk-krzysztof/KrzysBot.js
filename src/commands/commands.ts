@@ -8,7 +8,7 @@ import { isOnCooldown } from '../cache/cooldown';
 // import { createCommandList } from '../utils/createCommandList';
 import { CommandCooldowns } from '../utils/osrs/enums';
 // Anti-spam
-import { antiSpam } from '../cache/antiSpam';
+import { isSpamming } from '../cache/antiSpam';
 import { Embed } from '../utils/embed';
 
 dotenv.config({ path: 'config.env' });
@@ -19,7 +19,7 @@ export const commands = async (
   commandName: string,
   ...args: string[]
 ): Promise<Message | undefined> => {
-  if (antiSpam(msg, commandName) === true) return;
+  if (isSpamming(msg, commandName)) return;
   const cooldown: number = CommandCooldowns.COMMAND_LIST;
   if (
     isOnCooldown(msg, commandName, cooldown, false, args.join('').toLowerCase())
