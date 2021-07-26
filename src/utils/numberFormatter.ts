@@ -9,7 +9,6 @@ export const numberFormatter = (
   type: string
 ): string | number | undefined => {
   if (typeof nr !== 'number' && typeof nr !== 'string') return;
-
   // en-us formatting
   const formatter: Intl.NumberFormat = new Intl.NumberFormat(
     NumberFormatTypes.EN_US,
@@ -17,10 +16,11 @@ export const numberFormatter = (
   );
   if (type === NumberFormatTypes.EN_US && typeof nr === 'number')
     return formatter.format(nr);
-  else if (type === NumberFormatTypes.EN_GB && typeof nr === 'string') {
+  if (type === NumberFormatTypes.EN_GB && typeof nr === 'string') {
     const stringToDate: Date = new Date(nr);
     return new Intl.DateTimeFormat(NumberFormatTypes.EN_GB).format(
       stringToDate
     );
-  } else return parseInt(nr.toString());
+  }
+  return parseInt(nr.toString());
 };

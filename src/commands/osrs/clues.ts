@@ -73,21 +73,17 @@ export const clues = async (
     if (!field) return;
     const result: OsrsEmbed = generateResult(embed, osrsStats[username], field);
     return msg.channel.send(result);
-  } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched) {
-      const field: keyof OsrsPlayer | undefined = clueFields(
-        prefix
-      ) as keyof OsrsPlayer;
-      if (!field) return;
-      const result: OsrsEmbed = generateResult(
-        embed,
-        osrsStats[username],
-        field
-      );
-      return msg.channel.send(result);
-    } else return;
   }
+  const isFetched: boolean = await fetchOsrsStats(msg, username);
+  if (isFetched) {
+    const field: keyof OsrsPlayer | undefined = clueFields(
+      prefix
+    ) as keyof OsrsPlayer;
+    if (!field) return;
+    const result: OsrsEmbed = generateResult(embed, osrsStats[username], field);
+    return msg.channel.send(result);
+  }
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -96,13 +92,12 @@ const generateResult = (
   field: keyof OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    const clueType: BossOrMinigame = playerObject[field] as BossOrMinigame;
-    const formattedField: string = fieldNameFormatter(field);
-    embed.addField(
-      `${formattedField.toUpperCase()}:`,
-      `\`\`\`${clueType[TempleOther.SCORE]}\`\`\``
-    );
-    return embed;
-  }
+
+  const clueType: BossOrMinigame = playerObject[field] as BossOrMinigame;
+  const formattedField: string = fieldNameFormatter(field);
+  embed.addField(
+    `${formattedField.toUpperCase()}:`,
+    `\`\`\`${clueType[TempleOther.SCORE]}\`\`\``
+  );
+  return embed;
 };

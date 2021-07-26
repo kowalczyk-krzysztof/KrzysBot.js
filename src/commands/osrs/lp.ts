@@ -42,16 +42,13 @@ export const lp = async (
   const embed: OsrsEmbed = new OsrsEmbed()
     .setTitle(EmbedTitles.LEAGUEPTS)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
-  if (username in osrsStats) {
-    const result: OsrsEmbed = generateResult(embed, osrsStats[username]);
-    return msg.channel.send(result);
-  } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched) {
-      const result: OsrsEmbed = generateResult(embed, osrsStats[username]);
-      return msg.channel.send(result);
-    } else return;
-  }
+  if (username in osrsStats)
+    return msg.channel.send(generateResult(embed, osrsStats[username]));
+
+  const isFetched: boolean = await fetchOsrsStats(msg, username);
+  if (isFetched)
+    return msg.channel.send(generateResult(embed, osrsStats[username]));
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -59,11 +56,9 @@ const generateResult = (
   playerObject: OsrsPlayer
 ): OsrsEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    embed.addField(
-      `${OsrsOther.LEAGUE.toUpperCase()}:`,
-      `\`\`\`${playerObject[OsrsOther.LEAGUE][TempleOther.SCORE]}\`\`\``
-    );
-    return embed;
-  }
+  embed.addField(
+    `${OsrsOther.LEAGUE.toUpperCase()}:`,
+    `\`\`\`${playerObject[OsrsOther.LEAGUE][TempleOther.SCORE]}\`\`\``
+  );
+  return embed;
 };

@@ -25,10 +25,10 @@ export const commands = async (
     isOnCooldown(msg, commandName, cooldown, false, args.join('').toLowerCase())
   )
     return;
-  else
-    return msg.channel.send(
-      new Embed().setDescription(
-        `List of available commands with example usage:\n\n[Commands](${wiki} 'Commands')`
-      )
-    );
+
+  return msg.channel.send(
+    new Embed().setDescription(
+      `List of available commands with example usage:\n\n[Commands](${wiki} 'Commands')`
+    )
+  );
 };

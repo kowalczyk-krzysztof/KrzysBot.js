@@ -19,11 +19,9 @@ This will prevent people from spamming the command
 export const isSpamming = (msg: Message, commandName: string): boolean => {
   const cacheItem: string = msg.author.id + commandName;
   if (cacheItem in spamCache) return true;
-  else {
-    spamCache[cacheItem] = null;
-    setTimeout(() => {
-      delete spamCache[cacheItem];
-    }, SPAM_CD_MS);
-    return false;
-  }
+  spamCache[cacheItem] = null;
+  setTimeout(() => {
+    delete spamCache[cacheItem];
+  }, SPAM_CD_MS);
+  return false;
 };

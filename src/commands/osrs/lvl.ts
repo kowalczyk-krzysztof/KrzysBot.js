@@ -80,31 +80,23 @@ export const lvl = async (
       prefix
     ) as keyof OsrsPlayer;
     if (!field) return;
-    else {
-      const result: OsrsEmbed = await generateResult(
-        embed,
-        osrsStats[username],
-        field
-      );
-      return msg.channel.send(result);
-    }
-  } else {
-    const isFetched: boolean = await fetchOsrsStats(msg, username);
-    if (isFetched) {
-      const field: keyof OsrsPlayer | undefined = skillFields(
-        prefix
-      ) as keyof OsrsPlayer;
-      if (!field) return;
-      else {
-        const result: OsrsEmbed = await generateResult(
-          embed,
-          osrsStats[username],
-          field
-        );
-        return msg.channel.send(result);
-      }
-    } else return;
+
+    const result: OsrsEmbed = await generateResult(
+      embed,
+      osrsStats[username],
+      field
+    );
+    return msg.channel.send(result);
   }
+  const isFetched: boolean = await fetchOsrsStats(msg, username);
+  if (isFetched) {
+    const field: keyof OsrsPlayer | undefined = skillFields(
+      prefix
+    ) as keyof OsrsPlayer;
+    if (!field) return;
+    return msg.channel.send(generateResult(embed, osrsStats[username], field));
+  }
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -114,31 +106,29 @@ const generateResult = (
 ): OsrsEmbed | ErrorEmbed => {
   // keyof is how I can index objects like that
   if (!playerObject) return errorHandler();
-  else {
-    const skill = playerObject[field] as OsrsSkill;
-    // Intl is how I format number to have commas
-    let formattedExp: Intl.NumberFormat | string;
-    if (typeof skill[TempleOther.EXP] === 'number')
-      formattedExp = numberFormatter(
-        skill[TempleOther.EXP],
-        NumberFormatTypes.EN_US
-      ) as string;
-    else formattedExp = skill[TempleOther.EXP] as string;
-    let skillName: string;
-    if (field === Skills.RC) skillName = OsrsRandom.RUNECRAFTING;
-    else skillName = field;
-    embed.addField(
-      `${OsrsRandom.SKILL.toUpperCase()}:`,
-      `\`\`\`${skillName}\`\`\``
-    );
-    embed.addField(
-      `${TempleOther.LEVEL.toUpperCase()}:`,
-      `\`\`\`${skill[TempleOther.LEVEL]}\`\`\``
-    );
-    embed.addField(
-      `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
-      `\`\`\`${formattedExp} ${TempleOther.EXP}\`\`\``
-    );
-    return embed;
-  }
+  const skill = playerObject[field] as OsrsSkill;
+  // Intl is how I format number to have commas
+  let formattedExp: Intl.NumberFormat | string;
+  if (typeof skill[TempleOther.EXP] === 'number')
+    formattedExp = numberFormatter(
+      skill[TempleOther.EXP],
+      NumberFormatTypes.EN_US
+    ) as string;
+  else formattedExp = skill[TempleOther.EXP] as string;
+  let skillName: string;
+  if (field === Skills.RC) skillName = OsrsRandom.RUNECRAFTING;
+  else skillName = field;
+  embed.addField(
+    `${OsrsRandom.SKILL.toUpperCase()}:`,
+    `\`\`\`${skillName}\`\`\``
+  );
+  embed.addField(
+    `${TempleOther.LEVEL.toUpperCase()}:`,
+    `\`\`\`${skill[TempleOther.LEVEL]}\`\`\``
+  );
+  embed.addField(
+    `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
+    `\`\`\`${formattedExp} ${TempleOther.EXP}\`\`\``
+  );
+  return embed;
 };

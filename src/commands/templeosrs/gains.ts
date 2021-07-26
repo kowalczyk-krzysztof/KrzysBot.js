@@ -185,49 +185,46 @@ export const gains = async (
           parsedInput.case
         ) as keyof TempleOtherTable & keyof TempleSkillTable;
       if (!field) return errorHandler();
-      else {
-        // Generate embed
-        const result: TempleEmbed = generateResult(
-          embed,
-          playerCache[userNameWithTime] as TempleOverviewSkill &
-            TempleOverviewOther,
-          field,
-          parsedInput.time,
-          lowerCasedArguments
-        );
-        return msg.channel.send(result);
-      }
-    } else {
-      // Fetch data
-      const isFetched: boolean = await fetchTemple(
-        msg,
-        username,
-        dataType,
-        timePeriod
+      // Generate embed
+      const result: TempleEmbed = generateResult(
+        embed,
+        playerCache[userNameWithTime] as TempleOverviewSkill &
+          TempleOverviewOther,
+        field,
+        parsedInput.time,
+        lowerCasedArguments
       );
-      if (isFetched) {
-        const field: keyof TempleOtherTable &
-          // Try to match the input field with key name on player object
-          keyof TempleSkillTable = fieldNameCheck(
-          parsedInput.field,
-          parsedInput.case
-        ) as keyof TempleOtherTable & keyof TempleSkillTable;
-        if (!field) return errorHandler();
-        else {
-          // Generate embed
-          const result: TempleEmbed = generateResult(
-            embed,
-            playerCache[userNameWithTime] as TempleOverviewSkill &
-              TempleOverviewOther,
-            field,
-            parsedInput.time,
-            lowerCasedArguments
-          );
-
-          return msg.channel.send(result);
-        }
-      } else return;
+      return msg.channel.send(result);
     }
+    // Fetch data
+    const isFetched: boolean = await fetchTemple(
+      msg,
+      username,
+      dataType,
+      timePeriod
+    );
+    if (isFetched) {
+      const field: keyof TempleOtherTable &
+        // Try to match the input field with key name on player object
+        keyof TempleSkillTable = fieldNameCheck(
+        parsedInput.field,
+        parsedInput.case
+      ) as keyof TempleOtherTable & keyof TempleSkillTable;
+      if (!field) return errorHandler();
+
+      // Generate embed
+      const result: TempleEmbed = generateResult(
+        embed,
+        playerCache[userNameWithTime] as TempleOverviewSkill &
+          TempleOverviewOther,
+        field,
+        parsedInput.time,
+        lowerCasedArguments
+      );
+
+      return msg.channel.send(result);
+    }
+    return;
   }
 };
 // Generates embed sent to user
@@ -239,90 +236,83 @@ const generateResult = (
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    const formattedTime: string = formatOverviewTime(time);
-    const formattedField: string = fieldNameFormatter(field);
-    const table: TempleOtherTable & TempleSkillTable =
-      playerObject[TempleOther.TABLE];
-    const fieldTocheck: TempleOtherTableProps & SkillTableProps = table[field];
-    // If there's no record for specific period of time then the key doesn't exist
-    if (fieldTocheck) {
-      // Formatting how numbers are displayed
-      embed.addField(
-        `${OsrsRandom.TIME_PERIOD}:`,
-        `\`\`\`${formattedTime}\`\`\``
-      );
-      const value: number = fieldTocheck[TempleOther.XP];
-      let formattedValue;
+  const formattedTime: string = formatOverviewTime(time);
+  const formattedField: string = fieldNameFormatter(field);
+  const table: TempleOtherTable & TempleSkillTable =
+    playerObject[TempleOther.TABLE];
+  const fieldTocheck: TempleOtherTableProps & SkillTableProps = table[field];
+  // If there's no record for specific period of time then the key doesn't exist
+  if (fieldTocheck) {
+    // Formatting how numbers are displayed
+    embed.addField(
+      `${OsrsRandom.TIME_PERIOD}:`,
+      `\`\`\`${formattedTime}\`\`\``
+    );
+    const value: number = fieldTocheck[TempleOther.XP];
+    let formattedValue;
 
-      if (args[0] === ValidInputCases.SKILL)
-        formattedValue = numberFormatter(
-          value as number,
-          NumberFormatTypes.EN_US
-        );
-      else if (!value) formattedValue = 0;
-      else
-        formattedValue = numberFormatter(
-          value as number,
-          NumberFormatTypes.INT
-        );
-
-      // Changing sufix depending on whether the type is skill or not
-      let ending: string;
-      if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
-      else if (args[0] === ValidInputCases.BOSS)
-        ending = ` ${OsrsRandom.KILLS}`;
-      else ending = '';
-      embed.addField(
-        `${formattedField}`,
-        `\`\`\`${formattedValue}${ending}\`\`\``
+    if (args[0] === ValidInputCases.SKILL)
+      formattedValue = numberFormatter(
+        value as number,
+        NumberFormatTypes.EN_US
       );
-      if (args[0] === ValidInputCases.SKILL) {
-        let level: number;
-        if (!fieldTocheck[TempleOther.LEVEL]) level = 0;
-        else level = fieldTocheck[TempleOther.LEVEL];
-        embed.addField(
-          `${TempleOther.LEVEL.toUpperCase()}S GAINED:`,
-          `\`\`\`${level}\`\`\``
-        );
-      }
-      if (args[0] === ValidInputCases.SKILL) {
-        let ehp: number;
-        if (!fieldTocheck[TempleOther.EHP_LOWERCASE]) ehp = 0;
-        else ehp = fieldTocheck[TempleOther.EHP_LOWERCASE];
-        embed.addField(
-          `${TempleOther.EHP.toUpperCase()} GAINED:`,
-          `\`\`\`${parseInt(ehp.toString())}\`\`\``
-        );
-      }
-      if (args[0] === ValidInputCases.BOSS) {
-        let ehb: number;
-        if (!fieldTocheck[TempleOther.EHB_LOWERCASE]) ehb = 0;
-        else ehb = fieldTocheck[TempleOther.EHB_LOWERCASE];
-        embed.addField(
-          `${TempleOther.EHB.toUpperCase()} GAINED:`,
-          `\`\`\`${parseInt(ehb.toString())}\`\`\``
-        );
-      }
-      let plusOrMinus: string;
-      let rank: number;
-      if (!fieldTocheck[TempleOther.RANK]) rank = 0;
-      else rank = fieldTocheck[TempleOther.RANK];
-
-      if (fieldTocheck[TempleOther.RANK] > 0) plusOrMinus = '+';
-      else plusOrMinus = '';
+    else if (!value) formattedValue = 0;
+    else
+      formattedValue = numberFormatter(value as number, NumberFormatTypes.INT);
+    // Changing sufix depending on whether the type is skill or not
+    let ending: string;
+    if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
+    else if (args[0] === ValidInputCases.BOSS) ending = ` ${OsrsRandom.KILLS}`;
+    else ending = '';
+    embed.addField(
+      `${formattedField}`,
+      `\`\`\`${formattedValue}${ending}\`\`\``
+    );
+    if (args[0] === ValidInputCases.SKILL) {
+      let level: number;
+      if (!fieldTocheck[TempleOther.LEVEL]) level = 0;
+      else level = fieldTocheck[TempleOther.LEVEL];
       embed.addField(
-        `RANKS GAINED OR LOST:`,
-        `\`\`\`${plusOrMinus}${parseInt(rank.toString())}\`\`\``
-      );
-      if (formattedTime === 'All Time')
-        embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
-    } else {
-      embed.addField(
-        `${OsrsRandom.NO_DATA}`,
-        `No gains for this period of time for \`\`\`${formattedField}\`\`\``
+        `${TempleOther.LEVEL.toUpperCase()}S GAINED:`,
+        `\`\`\`${level}\`\`\``
       );
     }
-    return embed;
+    if (args[0] === ValidInputCases.SKILL) {
+      let ehp: number;
+      if (!fieldTocheck[TempleOther.EHP_LOWERCASE]) ehp = 0;
+      else ehp = fieldTocheck[TempleOther.EHP_LOWERCASE];
+      embed.addField(
+        `${TempleOther.EHP.toUpperCase()} GAINED:`,
+        `\`\`\`${parseInt(ehp.toString())}\`\`\``
+      );
+    }
+    if (args[0] === ValidInputCases.BOSS) {
+      let ehb: number;
+      if (!fieldTocheck[TempleOther.EHB_LOWERCASE]) ehb = 0;
+      else ehb = fieldTocheck[TempleOther.EHB_LOWERCASE];
+      embed.addField(
+        `${TempleOther.EHB.toUpperCase()} GAINED:`,
+        `\`\`\`${parseInt(ehb.toString())}\`\`\``
+      );
+    }
+    let plusOrMinus: string;
+    let rank: number;
+    if (!fieldTocheck[TempleOther.RANK]) rank = 0;
+    else rank = fieldTocheck[TempleOther.RANK];
+
+    if (fieldTocheck[TempleOther.RANK] > 0) plusOrMinus = '+';
+    else plusOrMinus = '';
+    embed.addField(
+      `RANKS GAINED OR LOST:`,
+      `\`\`\`${plusOrMinus}${parseInt(rank.toString())}\`\`\``
+    );
+    if (formattedTime === 'All Time')
+      embed.addField('NOTE:', `Temple boss tracking started on 01/01/2020`);
+  } else {
+    embed.addField(
+      `${OsrsRandom.NO_DATA}`,
+      `No gains for this period of time for \`\`\`${formattedField}\`\`\``
+    );
   }
+  return embed;
 };

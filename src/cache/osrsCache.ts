@@ -33,7 +33,8 @@ export const fetchOsrsStats = async (
       const data: OsrsPlayer = osrsDataParser(res.data);
       setOsrsStats(playerName, data);
       return true;
-    } else return false;
+    }
+    return false;
   } catch (err) {
     if (err.response.status === 404) {
       msg.channel.send(

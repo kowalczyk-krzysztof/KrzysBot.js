@@ -14,12 +14,10 @@ export const templeDateParser = (
       title,
       time: `${secondsAsInt}s ago`,
     };
-  else {
-    const minutesDecimal: number = secondsAsInt / 60;
-    const minutes: number = parseInt(minutesDecimal.toString());
-    return {
-      title,
-      time: `${minutes} min ago`,
-    };
-  }
+  const minutesDecimal: number = secondsAsInt / 60;
+  const minutes: number = parseInt(minutesDecimal.toString());
+  return {
+    title,
+    time: `${minutes} min ago`,
+  };
 };

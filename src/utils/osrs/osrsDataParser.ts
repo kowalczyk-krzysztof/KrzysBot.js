@@ -12,7 +12,7 @@ export const osrsDataParser = (data: string): OsrsPlayer => {
     (el: string[]) => {
       return el.map((el: string) => {
         if (el === '-1') return 'Unranked';
-        else return parseInt(el);
+        return parseInt(el);
       });
     }
   );

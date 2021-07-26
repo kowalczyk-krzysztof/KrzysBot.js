@@ -114,48 +114,46 @@ export const record = async (
       ) as keyof TemplePlayerRecords;
       if (!field) return errorHandler();
       // Generate embed
-      else {
-        const result: TempleEmbed = generateResult(
-          field,
-          embed,
-          playerRecords[userNameWithTime],
-          parsedInput.time as keyof PlayerRecordsTimes,
-          lowerCasedArguments
-        );
-        return msg.channel.send(result);
-      }
-    } else {
-      const dataType: TempleCacheType = TempleCacheType.PLAYER_RECORDS;
-      // Fetch data from API endpoint
-      const isFetched: boolean = await fetchTemple(
-        msg,
-        username,
-        dataType,
-        parsedInput.time
+      const result: TempleEmbed = generateResult(
+        field,
+        embed,
+        playerRecords[userNameWithTime],
+        parsedInput.time as keyof PlayerRecordsTimes,
+        lowerCasedArguments
       );
-      if (isFetched) {
-        // Try to match the input field with key name on player object
-        const field: keyof TemplePlayerRecords | undefined = fieldNameCheck(
-          parsedInput.field,
-          parsedInput.case
-        ) as keyof TemplePlayerRecords;
-        if (!field) return errorHandler();
-        else {
-          // Generate result
-          const result: TempleEmbed = generateResult(
-            field,
-            embed,
-            playerRecords[userNameWithTime],
-            parsedInput.time as keyof PlayerRecordsTimes,
-            lowerCasedArguments
-          );
-
-          return msg.channel.send(result);
-        }
-      } else return;
+      return msg.channel.send(result);
     }
+    const dataType: TempleCacheType = TempleCacheType.PLAYER_RECORDS;
+    // Fetch data from API endpoint
+    const isFetched: boolean = await fetchTemple(
+      msg,
+      username,
+      dataType,
+      parsedInput.time
+    );
+    if (isFetched) {
+      // Try to match the input field with key name on player object
+      const field: keyof TemplePlayerRecords | undefined = fieldNameCheck(
+        parsedInput.field,
+        parsedInput.case
+      ) as keyof TemplePlayerRecords;
+      if (!field) return errorHandler();
+
+      // Generate result
+      const result: TempleEmbed = generateResult(
+        field,
+        embed,
+        playerRecords[userNameWithTime],
+        parsedInput.time as keyof PlayerRecordsTimes,
+        lowerCasedArguments
+      );
+
+      return msg.channel.send(result);
+    }
+    return;
   }
 };
+
 // Generates embed sent to user
 const generateResult = (
   field: keyof TemplePlayerRecords,
@@ -165,68 +163,66 @@ const generateResult = (
   args: string[]
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    // Changing the time value (string) to have a first capital letter
-    const capitalFirst: string = capitalizeFirstLetter(time);
-    const formattedField: string = fieldNameFormatter(field);
-    // If there are no records the key value is an empty array
-    if (!Array.isArray(playerObject[field])) {
-      // If there's no record for specific period of time then the key doesn't exist
-      if (!playerObject[field]) {
-        embed.addField(
-          `${OsrsRandom.TIME_PERIOD}:`,
-          `\`\`\`${capitalFirst}\`\`\``
-        );
-        if (!playerObject[field][time])
-          return embed.addField(
-            `${OsrsRandom.NO_DATA}`,
-            `No records for this period of time for \`\`\`${formattedField}\`\`\``
-          );
-        // Formatting how numbers are displayed
-        const timeField: ExpAndDate = playerObject[field][time] as ExpAndDate;
-        const value: string | number = timeField[TempleOther.XP];
-        let formattedValue;
-        if (!value) formattedValue = 0;
-        if (args[0] === ValidInputCases.SKILL)
-          formattedValue = numberFormatter(
-            value as number,
-            NumberFormatTypes.EN_US
-          );
-        else
-          formattedValue = numberFormatter(
-            value as number,
-            NumberFormatTypes.INT
-          );
-
-        // Changing sufix depending on whether the type is skill or not
-        let ending: string;
-        if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
-        else if (args[0] === ValidInputCases.BOSS)
-          ending = ` ${OsrsRandom.KILLS}`;
-        else ending = '';
-        // Formatting date
-        const formattedDate: string = numberFormatter(
-          playerObject[field][time][TempleOther.DATE_LOWERCASE],
-          NumberFormatTypes.EN_GB
-        ) as string;
-
-        embed.addField(
-          `${formattedField}`,
-          `\`\`\`${formattedValue}${ending}\`\`\``
-        );
-        embed.addField('RECORD SET ON:', `\`\`\`${formattedDate}\`\`\``);
-      } else {
-        embed.addField(
+  // Changing the time value (string) to have a first capital letter
+  const capitalFirst: string = capitalizeFirstLetter(time);
+  const formattedField: string = fieldNameFormatter(field);
+  // If there are no records the key value is an empty array
+  if (!Array.isArray(playerObject[field])) {
+    // If there's no record for specific period of time then the key doesn't exist
+    if (!playerObject[field]) {
+      embed.addField(
+        `${OsrsRandom.TIME_PERIOD}:`,
+        `\`\`\`${capitalFirst}\`\`\``
+      );
+      if (!playerObject[field][time])
+        return embed.addField(
           `${OsrsRandom.NO_DATA}`,
           `No records for this period of time for \`\`\`${formattedField}\`\`\``
         );
-      }
+      // Formatting how numbers are displayed
+      const timeField: ExpAndDate = playerObject[field][time] as ExpAndDate;
+      const value: string | number = timeField[TempleOther.XP];
+      let formattedValue;
+      if (!value) formattedValue = 0;
+      if (args[0] === ValidInputCases.SKILL)
+        formattedValue = numberFormatter(
+          value as number,
+          NumberFormatTypes.EN_US
+        );
+      else
+        formattedValue = numberFormatter(
+          value as number,
+          NumberFormatTypes.INT
+        );
+
+      // Changing sufix depending on whether the type is skill or not
+      let ending: string;
+      if (args[0] === ValidInputCases.SKILL) ending = ` ${TempleOther.XP}`;
+      else if (args[0] === ValidInputCases.BOSS)
+        ending = ` ${OsrsRandom.KILLS}`;
+      else ending = '';
+      // Formatting date
+      const formattedDate: string = numberFormatter(
+        playerObject[field][time][TempleOther.DATE_LOWERCASE],
+        NumberFormatTypes.EN_GB
+      ) as string;
+
+      embed.addField(
+        `${formattedField}`,
+        `\`\`\`${formattedValue}${ending}\`\`\``
+      );
+      embed.addField('RECORD SET ON:', `\`\`\`${formattedDate}\`\`\``);
     } else {
       embed.addField(
         `${OsrsRandom.NO_DATA}`,
-        `No records for \`\`\`${formattedField}\`\`\``
+        `No records for this period of time for \`\`\`${formattedField}\`\`\``
       );
     }
-    return embed;
+  } else {
+    embed.addField(
+      `${OsrsRandom.NO_DATA}`,
+      `No records for \`\`\`${formattedField}\`\`\``
+    );
   }
+  return embed;
 };

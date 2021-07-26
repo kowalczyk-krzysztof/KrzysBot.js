@@ -88,30 +88,31 @@ export const topskill = async (
   const embed: TempleEmbed = new TempleEmbed()
     .setTitle(EmbedTitles.TOPSKILL)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
-  if (userNameWithTime in playerOverviewSkill) {
-    const result: TempleEmbed = generateResult(
-      embed,
-      playerOverviewSkill[userNameWithTime],
-      time as string
-    );
-    return msg.channel.send(result);
-  } else {
-    const dataType: TempleCacheType = TempleCacheType.PLAYER_OVERVIEW_SKILL;
-    const isFetched: boolean = await fetchTemple(
-      msg,
-      username,
-      dataType,
-      formattedTime
-    );
-    if (isFetched) {
-      const result: TempleEmbed = generateResult(
+  if (userNameWithTime in playerOverviewSkill)
+    return msg.channel.send(
+      generateResult(
         embed,
         playerOverviewSkill[userNameWithTime],
         time as string
-      );
-      return msg.channel.send(result);
-    } else return;
-  }
+      )
+    );
+
+  const dataType: TempleCacheType = TempleCacheType.PLAYER_OVERVIEW_SKILL;
+  const isFetched: boolean = await fetchTemple(
+    msg,
+    username,
+    dataType,
+    formattedTime
+  );
+  if (isFetched)
+    return msg.channel.send(
+      generateResult(
+        embed,
+        playerOverviewSkill[userNameWithTime],
+        time as string
+      )
+    );
+  return;
 };
 
 // Generates embed sent to user
@@ -121,44 +122,39 @@ const generateResult = (
   time: string
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    // Format time
-    const formattedTime: string = formatOverviewTime(time);
-    // Try to match skill index with field
-    const skill: keyof TempleSkillTable = indexToSkill(
-      playerObject[TempleOther.INFO][TempleOther.TOP_SKILL]
-    ) as keyof TempleSkillTable;
-    embed.addField(
-      `${OsrsRandom.TIME_PERIOD}:`,
-      `\`\`\`${formattedTime}\`\`\``
-    );
-    // If boss has not been found, then return no data msg
-    if (!skill)
-      embed.addField(
-        `${OsrsRandom.NO_DATA}`,
-        `\`\`\`No data for this period of time\`\`\``
-      );
-    else {
-      let formattedSkill;
-      if (skill === Skills.RC) formattedSkill = OsrsRandom.RUNECRAFTING;
-      else formattedSkill = skill;
-      embed.addField(
-        `${OsrsRandom.SKILL.toUpperCase()}:`,
-        `\`\`\`${formattedSkill}\`\`\``
-      );
-      let xp: number | string | undefined;
-      if (!playerObject[TempleOther.TABLE][skill][TempleOther.XP]) xp = 0;
-      else
-        xp = numberFormatter(
-          playerObject[TempleOther.TABLE][skill][TempleOther.XP],
-          NumberFormatTypes.EN_US
-        );
-      embed.addField(
-        `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
-        `\`\`\`${xp} ${TempleOther.EXP}\`\`\``
-      );
-    }
 
-    return embed;
+  // Format time
+  const formattedTime: string = formatOverviewTime(time);
+  // Try to match skill index with field
+  const skill: keyof TempleSkillTable = indexToSkill(
+    playerObject[TempleOther.INFO][TempleOther.TOP_SKILL]
+  ) as keyof TempleSkillTable;
+  embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${formattedTime}\`\`\``);
+  // If boss has not been found, then return no data msg
+  if (!skill)
+    embed.addField(
+      `${OsrsRandom.NO_DATA}`,
+      `\`\`\`No data for this period of time\`\`\``
+    );
+  else {
+    let formattedSkill;
+    if (skill === Skills.RC) formattedSkill = OsrsRandom.RUNECRAFTING;
+    else formattedSkill = skill;
+    embed.addField(
+      `${OsrsRandom.SKILL.toUpperCase()}:`,
+      `\`\`\`${formattedSkill}\`\`\``
+    );
+    let xp: number | string | undefined;
+    if (!playerObject[TempleOther.TABLE][skill][TempleOther.XP]) xp = 0;
+    else
+      xp = numberFormatter(
+        playerObject[TempleOther.TABLE][skill][TempleOther.XP],
+        NumberFormatTypes.EN_US
+      );
+    embed.addField(
+      `${OsrsRandom.EXP_LONG.toUpperCase()}:`,
+      `\`\`\`${xp} ${TempleOther.EXP}\`\`\``
+    );
   }
+  return embed;
 };

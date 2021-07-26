@@ -38,17 +38,14 @@ export const country = async (
     usernameString,
     `\`\`\`${username}\`\`\``
   );
-  if (username in playerStats) {
-    const result: TempleEmbed = generateResult(embed, playerStats[username]);
-    return msg.channel.send(result);
-  } else {
-    const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
-    const isFetched: boolean = await fetchTemple(msg, username, dataType);
-    if (isFetched) {
-      const result: TempleEmbed = generateResult(embed, playerStats[username]);
-      return msg.channel.send(result);
-    } else return;
-  }
+  if (username in playerStats)
+    return msg.channel.send(generateResult(embed, playerStats[username]));
+
+  const dataType: TempleCacheType = TempleCacheType.PLAYER_STATS;
+  const isFetched: boolean = await fetchTemple(msg, username, dataType);
+  if (isFetched)
+    return msg.channel.send(generateResult(embed, playerStats[username]));
+  return;
 };
 // Generates embed sent to user
 const generateResult = (
@@ -56,15 +53,13 @@ const generateResult = (
   playerObject: TemplePlayerStats
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    const data: string = playerObject[TempleOther.INFO][TempleOther.COUNTRY];
-    if (data === '-')
-      embed.addField(`${TempleOther.COUNTRY}`, `\`\`\`NO INFO\`\`\``);
-    else
-      embed.addField(
-        `${TempleOther.COUNTRY.toUpperCase()}:`,
-        `\`\`\`${data}\`\`\``
-      );
-    return embed;
-  }
+  const data: string = playerObject[TempleOther.INFO][TempleOther.COUNTRY];
+  if (data === '-')
+    embed.addField(`${TempleOther.COUNTRY}`, `\`\`\`NO INFO\`\`\``);
+  else
+    embed.addField(
+      `${TempleOther.COUNTRY.toUpperCase()}:`,
+      `\`\`\`${data}\`\`\``
+    );
+  return embed;
 };

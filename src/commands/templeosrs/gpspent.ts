@@ -82,30 +82,31 @@ export const gpspent = async (
   const embed: TempleEmbed = new TempleEmbed()
     .setTitle(EmbedTitles.GP_SPENT)
     .addField(usernameString, `\`\`\`${username}\`\`\``);
-  if (userNameWithTime in playerOverviewSkill) {
-    const result: TempleEmbed = generateResult(
-      embed,
-      playerOverviewSkill[userNameWithTime],
-      time as string
-    );
-    return msg.channel.send(result);
-  } else {
-    const dataType: TempleCacheType = TempleCacheType.PLAYER_OVERVIEW_SKILL;
-    const isFetched: boolean = await fetchTemple(
-      msg,
-      username,
-      dataType,
-      formattedTime
-    );
-    if (isFetched) {
-      const result: TempleEmbed = generateResult(
+  if (userNameWithTime in playerOverviewSkill)
+    return msg.channel.send(
+      generateResult(
         embed,
         playerOverviewSkill[userNameWithTime],
         time as string
-      );
-      return msg.channel.send(result);
-    } else return;
-  }
+      )
+    );
+
+  const dataType: TempleCacheType = TempleCacheType.PLAYER_OVERVIEW_SKILL;
+  const isFetched: boolean = await fetchTemple(
+    msg,
+    username,
+    dataType,
+    formattedTime
+  );
+  if (isFetched)
+    return msg.channel.send(
+      generateResult(
+        embed,
+        playerOverviewSkill[userNameWithTime],
+        time as string
+      )
+    );
+  return;
 };
 
 // Generates embed sent to user
@@ -115,29 +116,24 @@ const generateResult = (
   time: string
 ): TempleEmbed | ErrorEmbed => {
   if (!playerObject) return errorHandler();
-  else {
-    // Format time
-    const formattedTime: string = formatOverviewTime(time);
-    // Try to match boss index with field
-    embed.addField(
-      `${OsrsRandom.TIME_PERIOD}:`,
-      `\`\`\`${formattedTime}\`\`\``
-    );
-    // If boss has not been found, then return no data msg
-    const gpSpent: string | number =
-      playerObject[TempleOther.INFO][TempleOther.GP_SPENT];
-    if (gpSpent === '-')
-      embed.addField(
-        `${OsrsRandom.NO_DATA}`,
-        `\`\`\`No data for this period of time\`\`\``
-      );
-    else {
-      embed.addField(
-        `${OsrsRandom.GP_SPENT.toUpperCase()}:`,
-        `\`\`\`${numberFormatter(gpSpent, NumberFormatTypes.EN_US)} gp\`\`\``
-      );
-    }
 
-    return embed;
+  // Format time
+  const formattedTime: string = formatOverviewTime(time);
+  // Try to match boss index with field
+  embed.addField(`${OsrsRandom.TIME_PERIOD}:`, `\`\`\`${formattedTime}\`\`\``);
+  // If boss has not been found, then return no data msg
+  const gpSpent: string | number =
+    playerObject[TempleOther.INFO][TempleOther.GP_SPENT];
+  if (gpSpent === '-')
+    embed.addField(
+      `${OsrsRandom.NO_DATA}`,
+      `\`\`\`No data for this period of time\`\`\``
+    );
+  else {
+    embed.addField(
+      `${OsrsRandom.GP_SPENT.toUpperCase()}:`,
+      `\`\`\`${numberFormatter(gpSpent, NumberFormatTypes.EN_US)} gp\`\`\``
+    );
   }
+  return embed;
 };
