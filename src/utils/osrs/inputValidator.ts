@@ -153,11 +153,14 @@ export const templeGainsRecords = (
       break;
     // For bosses perform boss validation using bossValidator
     case ValidInputCases.BOSS:
-      const indexes: number[] = [1, 2, 3];
+      const args: string[] = [
+        lowerCasedArguments[1],
+        lowerCasedArguments[2],
+        lowerCasedArguments[3],
+      ];
       const bossValidation: BossValidation | undefined = bossValidator(
         msg,
-        lowerCasedArguments,
-        indexes
+        args
       );
       if (!bossValidation) return;
       if (bossValidation.bossCase === BossCases.ONE_WORD) {

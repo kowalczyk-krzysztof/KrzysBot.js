@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node dist/main.js",
+    "dev": "nodemon dist/main.js",
     "build": "tsc"
   },
   "keywords": [
