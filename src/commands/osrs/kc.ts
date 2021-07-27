@@ -46,29 +46,32 @@ export const kc = async (
   if (isSpamming(msg, commandName)) return;
   if (!args.length)
     return msg.channel.send(invalidPrefixMsg(bossList, PrefixCategories.BOSS));
-  const indexes: number[] = [0, 1, 2];
   // This is done so the cooldown is per unique command + boss validation needs lowercase
   const lowerCasedArguments: string[] = args.map((e: string) => {
     return e.toLowerCase();
   });
   const bossValidation: BossValidation | undefined = bossValidator(
     msg,
-    lowerCasedArguments,
-    indexes
+    lowerCasedArguments
   );
 
   let user: string[];
-
   if (!bossValidation) return;
-  else if (bossValidation.bossCase === BossCases.ONE_WORD) {
-    user = lowerCasedArguments.slice(1);
-  } else if (bossValidation.bossCase === BossCases.TWO_WORD) {
-    user = lowerCasedArguments.slice(2);
-  } else if (bossValidation.bossCase === BossCases.THREE_WORDS) {
-    user = lowerCasedArguments.slice(3);
-  } else {
-    user = lowerCasedArguments.slice(1);
+  switch (bossValidation.bossCase) {
+    case BossCases.ONE_WORD:
+      user = lowerCasedArguments.slice(1);
+      break;
+    case BossCases.TWO_WORD:
+      user = lowerCasedArguments.slice(2);
+      break;
+    case BossCases.THREE_WORDS:
+      user = lowerCasedArguments.slice(3);
+      break;
+    default:
+      user = lowerCasedArguments.slice(1);
+      break;
   }
+
   const boss: keyof OsrsPlayer = bossValidation.boss as keyof OsrsPlayer;
 
   const cooldown: number = CommandCooldowns.KC;
@@ -106,7 +109,6 @@ export const kc = async (
     const result: OsrsEmbed = generateResult(embed, osrsStats[username], field);
     return msg.channel.send(result);
   }
-  return;
 };
 // Generates embed sent to user
 const generateResult = (
